@@ -1,0 +1,18 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 7C3D-95B3
+
+ Directory of C:\Users\ReBorn\Desktop\FOCUS MK3\fényszórók,lámpák
+
+2020.07.27.  00:48    <DIR>          .
+2020.07.27.  00:48    <DIR>          ..
+2020.07.27.  00:48               869 futómû_kormánymû_és_fék_alkatrészk-1250.txt
+2020.07.27.  00:48               141 fényszórók
+2020.07.27.  00:48                 0 fényszórók_lámpák-1250.txt
+2020.07.26.  23:58               836 fényszórók_lámpák.txt
+2019.10.16.  13:11         4 144 468 MK3  KÖDLÁMPA 5000.-DB.jpg
+2020.07.07.  15:22         6 808 786 MK3 FÉNYSZÓRÓK 25000.-DB.jpg
+2019.06.28.  13:43         3 754 136 MK3 KOMBI BELSÕ HÁTSÓ LÁMPA CSOMAGTÉR AJTÓ 8-12000.-DB.jpg
+2019.09.07.  12:53         2 190 486 MK3 KOMBI HÁTSÓ LÁMPA CSOMAGTÉR AJTÓ BELSÕ 8-12000.-DB.jpg
+2019.09.07.  15:50         4 655 882 MK3 KOMBI HÁTSÓ LÁMPA KÜLSÕ 15000.-DB.jpg
+               9 File(s)     21 555 604 bytes
+               2 Dir(s)   1 869 148 160 bytes free

@@ -1,0 +1,21 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 7C3D-95B3
+
+ Directory of C:\Users\ReBorn\Desktop\FOCUS MK3\futómû,kormánymû és fék alkatrészek
+
+2020.07.27.  00:48    <DIR>          .
+2020.07.27.  00:48    <DIR>          ..
+2020.07.27.  00:48                 0 futómû_kormánymû_és_fék_alkatrészek-1250.txt
+2020.07.26.  23:59             1 126 futómû_kormánymû_és_fék_alkatrészek.txt
+2020.01.24.  15:02         4 233 030 MK3  FÉKRÁSEGÍTÕ  SZERVÓDOB 15000.-.jpg
+2019.07.03.  17:25         3 219 551 MK3 ABS KOCKA ELEKTRONIKA 25000.- 2.jpg
+2019.09.17.  12:22         6 168 830 MK3 BÖLCSÕ 25000.-.jpg
+2019.06.29.  14:16         3 790 910 MK3 CSONKÁLLVÁNY 15000.-DB.jpg
+2015.03.09.  13:56           943 561 MK3 FÉKNYEREG 8000.-DB.JPG
+2019.06.29.  14:16         4 066 896 MK3 GÓLYALÁB CSONKÁLLVÁNNYAL 25000.-.jpg
+2019.06.29.  14:15         3 771 884 MK3 KANYARSTABILIZÁTOR RÚD 10000.-.jpg
+2019.05.30.  20:22         4 481 387 MK3 KOMBI HÁTSÓ FUTÓMÛ 40000.-.jpg
+2019.09.17.  12:11         7 091 258 MK3 KORMÁNYMÛ 90000.-.jpg
+2019.09.17.  21:01         5 986 669 MK3 LENGÕKAR 20000.-DB.jpg
+              12 File(s)     43 755 102 bytes
+               2 Dir(s)   1 870 741 504 bytes free
