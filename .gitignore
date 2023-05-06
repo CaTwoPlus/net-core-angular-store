@@ -13,6 +13,28 @@
 *.jpeg
 *.png
 *.gif
+.DS_Store             # macOS specific file
+Thumbs.db             # Windows specific file
+*.log                 # Log files
+npm-debug.log*        # npm debug logs
+yarn-debug.log*       # yarn debug logs
+yarn-error.log*       # yarn error logs
+.env.*                # Environment-specific configuration files
+.env.local            # Local environment configuration file
+.env.development      # Development environment configuration file
+.env.production       # Production environment configuration file
+*.swp                 # Vim swap files
+*.swo                 # Vim session files
+.log.                 # Log files with specific extensions (e.g., .log.1, .log.2)
+.env.test             # Test environment configuration file
+.vscode/              # Visual Studio Code configuration folder
+.idea/                # JetBrains IDEs configuration folder
+*.sublime-project     # Sublime Text project files
+*.sublime-workspace   # Sublime Text workspace files
+*.suo                 # Visual Studio solution user options
+*.swp                 # Vim swap files
+*.code-workspace      # Visual Studio Code workspace file
+*.ipr                 # IntelliJ IDEA project file
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -40,7 +62,18 @@ bld/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
-#wwwroot/
+wwwroot/
+angular-bonto-api/node_modules/         # Directory where npm packages are installed
+angular-bonto-api/dist/                 # Directory where the build output is generated
+angular-bonto-api/.tmp/                 # Directory used for temporary files during development
+angular-bonto-api/src/assets/uploads/   # Directory for uploaded files or user-generated content
+angular-bonto-api/.angular/cache/       # Directory for Angular CLI cache files
+angular-bonto-api/.env/                 # Directory for environment-specific configuration files
+angular-bonto-api/coverage/             # Directory for code coverage reports
+angular-bonto-api/logs/                 # Directory for application logs
+angular-bonto-api/tmp/                  # Directory for temporary files
+angular-bonto-api/public/uploads/       # Directory for public file uploads
+angular-bonto-api/node_modules
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/

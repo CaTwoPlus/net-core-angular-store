@@ -1,0 +1,32 @@
+<form id="view-alkatresz-form" *ngIf="alkatresz$ | async as item">
+    <div class="mb-3">
+        <label for="nev" class="form-label">Név</label>
+        <span class="input-group-text" id="nevInput" name="nevInput">{{item.nev}}</span>
+    </div>
+    <div class="input group mb-3"> 
+        <label for="kategoriak" class="form-label">Kategóriák</label>
+        <span class="input-group-text" id="kategoriakInput" name="kategoriakInput">{{item.kategoriak}}</span>
+    </div>
+    <div class="mb-3">
+        <label for="ar" class="form-label">Ár</label>
+        <span class="input-group-text" id="arInput"  name="arInput">{{item.ar}}</span>
+    </div>
+    <div class="mb-3">
+        <label for="megjegyzes" class="form-label">Megjegyzés</label>
+        <span class="input-group-text" id="megjegyzesInput" name="megjegyzesInput">{{item.megjegyzes}}</span>
+    </div>
+    <div class="mb-3">
+        <label for="generacio" class="form-label">Generáció</label>
+        <span class="input-group-text" id="generacioInput" name="generacioInput">{{item.generacio}}</span>
+    </div>
+    <ng-container *ngFor="let img of item.kepek.split(';')">
+        <div>
+            <img class="img-thumbnail" [src]="'http://localhost:7094/images/' + img" style="max-height: 100px;"
+            (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="showImage(img, $event)">
+        </div>
+    </ng-container>
+    <div *ngIf="selectedImage">
+        <img [src]="'http://localhost:7094/images/' + selectedImage">
+        <button (click)="selectedImage = null">Close</button>
+    </div>
+</form>

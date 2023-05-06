@@ -1,0 +1,13 @@
+.zoom {
+    transition: transform .2s; /* Animation duration */
+  }
+
+  .zoom:hover {
+    transform: scale(1.5); /* Scale up the image on hover */
+  }
+
+  .img-thumbnail.hovered {
+    transition: all 0.3s ease-in-out;
+    transform: scale(2);
+    z-index: 1;
+  }

@@ -1,0 +1,34 @@
+<form id="add-edit-alkatresz-form">
+    <div class="mb-3">
+        <label for="nev" class="form-label">Név</label>
+        <input class="form-control" id="nevInput" [(ngModel)]="nev" name="nevInput">
+    </div>
+    <div class="input group mb-3"> 
+        <label for="kategoriak" class="form-label">Kategóriák</label>
+        <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriakInput" multiple>
+            <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
+        </select>
+        <label for="autoTipusok" class="form-label">Típusok</label>
+        <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusokInput" multiple>
+            <option *ngFor="let type of autoTipusList$|async" [value]="type.nev">{{type.nev}}</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="ar" class="form-label">Ár</label>
+        <input class="form-control" id="arInput" [(ngModel)]="ar" name="arInput">
+    </div>
+    <div class="mb-3">
+        <label for="megjegyzes" class="form-label">Megjegyzés</label>
+        <input class="form-control" id="megjegyzesInput" [(ngModel)]="megjegyzes" name="megjegyzesInput">
+    </div>
+    <div class="mb-3">
+        <label for="generacio" class="form-label">Generáció</label>
+        <input class="form-control" id="generacioInput" [(ngModel)]="generacio" name="generacioInput">
+    </div>
+    <button (click)="addAlkatresz()" *ngIf="alkatresz?.id===0" class="btn btn-primary">
+        Hozzáadás
+    </button>
+    <button (click)="updateAlkatresz()" *ngIf="alkatresz?.id!=0" class="btn btn-primary">
+        Módosítás
+    </button>
+</form>
