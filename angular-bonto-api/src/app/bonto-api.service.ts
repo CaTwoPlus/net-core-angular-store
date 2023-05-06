@@ -8,7 +8,7 @@ import { Observable, combineLatest, concatAll, concatMap, forkJoin, from, map, r
 
 export class BontoApiService {
 
-  readonly bontoAPIUrl = "http://localhost:7094/api";
+  readonly bontoAPIUrl = "https://localhost:7094/api";
 
   constructor(private http:HttpClient) { 
   }

@@ -20,5 +20,8 @@ namespace BontoAPI
         [StringLength(50)]
         public string Generacio { get; set; } = string.Empty;
         public int Ar { get; set; }
+
+        [StringLength(1024)]
+        public string Kepek { get; set; } = string.Empty;
     }
 }

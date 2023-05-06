@@ -21,12 +21,12 @@
     </div>
     <ng-container *ngFor="let img of item.kepek.split(';')">
         <div>
-            <img class="img-thumbnail" [src]="'http://localhost:7094/images/' + img" style="max-height: 100px;"
+            <img class="img-thumbnail" [src]="'https://localhost:7094/images/' + img" style="max-height: 100px;"
             (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="showImage(img, $event)">
         </div>
     </ng-container>
     <div *ngIf="selectedImage">
-        <img [src]="'http://localhost:7094/images/' + selectedImage">
+        <img [src]="'https://localhost:7094/images/' + selectedImage">
         <button (click)="selectedImage = null">Close</button>
     </div>
 </form>
