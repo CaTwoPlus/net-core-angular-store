@@ -1,3 +1,0 @@
-Okay, modify this ```const nevRegex = nev.toLowerCase().replace(/\s+/g, '');
-const regex = new RegExp(`^${nevRegex}\\w*`, 'i');
-```, so only repeating whitespaces are ignored (one whitespaces after a word character is fine).
