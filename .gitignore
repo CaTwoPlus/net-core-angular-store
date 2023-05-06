@@ -398,3 +398,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/angular-bonto-api/.angular/cache/15.2.2
