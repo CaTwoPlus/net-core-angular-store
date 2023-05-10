@@ -11,7 +11,7 @@ import { AlkatreszComponent } from './alkatresz/alkatresz.component';
 import { ShowAlkatreszComponent } from './alkatresz/show-alkatresz/show-alkatresz.component';
 import { AddEditAlkatreszComponent } from './alkatresz/add-edit-alkatresz/add-edit-alkatresz.component';
 import { BontoApiService } from './bonto-api.service';
-import { SearchBarComponent } from './search/search.component';
+import { SearchBarComponent } from './alkatresz/search/search.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatresz.component';
 
@@ -22,7 +22,7 @@ import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatres
     ShowAlkatreszComponent,
     AddEditAlkatreszComponent,
     SearchBarComponent,
-    ViewAlkatreszComponent,
+    ViewAlkatreszComponent
   ],
   imports: [
     BrowserModule,

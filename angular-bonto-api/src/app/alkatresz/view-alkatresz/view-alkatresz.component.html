@@ -19,14 +19,38 @@
         <label for="generacio" class="form-label">Generáció</label>
         <span class="input-group-text" id="generacioInput" name="generacioInput">{{item.generacio}}</span>
     </div>
-    <ng-container *ngFor="let img of item.kepek.split(';')">
-        <div>
+    <div class="image-container" *ngIf="activateImageGallery === false">
+        <ng-container *ngFor="let img of item.kepek.split(';')">
+          <div>
             <img class="img-thumbnail" [src]="'https://localhost:7094/images/' + img" style="max-height: 100px;"
-            (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="showImage(img, $event)">
+            (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="openCarousel()" 
+            >
+          </div>
+        </ng-container>
+    </div>
+    <a id="scrollToCarousel"></a>
+    <div id="imageCarousel" class="carousel slide" data-bs-keyboard="true" *ngIf="activateImageGallery" #imageCarousel>
+        <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
+            <button type="button" [attr.data-bs-target]="'#imageCarousel'" [attr.data-bs-slide-to]="i" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';');
+             let i = index" [attr.aria-label]="'Slide ' + (i + 1)"></button>
         </div>
-    </ng-container>
-    <div *ngIf="selectedImage">
-        <img [src]="'https://localhost:7094/images/' + selectedImage">
-        <button (click)="selectedImage = null">Close</button>
+        <div class="carousel-inner">
+            <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
+                <img class="d-block w-100" [src]="'https://localhost:7094/images/' + img" style="max-height: 100vh; max-width: 100%;">
+            </div>
+            <button type="button" class="btn btn-outline-secondary close-overlay position-absolute top-0 end-0" aria-label="Close" (click)="closeCarousel()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                </svg>
+            </button>
+        </div>
+        <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Előző</span>
+        </button>
+        <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Következő</span>
+        </button>
     </div>
 </form>

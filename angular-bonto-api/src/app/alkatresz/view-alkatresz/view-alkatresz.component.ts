@@ -1,4 +1,4 @@
-import { Component, OnInit, } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from "rxjs";
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
@@ -9,14 +9,19 @@ import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
   styleUrls: ['./view-alkatresz.component.css']
 })
 export class ViewAlkatreszComponent implements OnInit{
-
   alkatresz$!:Observable<any>;
   selectedId: number = 0;
   selectedImage: string | null = null;
+  activateImageGallery: boolean = false;
+  kepek: string = '';
 
   constructor(private service: BontoApiService, private ViewAlkatresz: ViewAlkatreszService,) {}
 
   ngOnInit(): void {
+    this.fetchAlkatresz();
+  }
+
+  fetchAlkatresz() {
     this.selectedId = this.ViewAlkatresz.getSelectedId();
     this.alkatresz$ = this.service.getAlkatresz(this.selectedId);
   }
@@ -30,8 +35,17 @@ export class ViewAlkatreszComponent implements OnInit{
     }
   }
 
-  showImage(imgUrl: string, $event: any) {
-    $event.preventDefault(); // Prevents the default action of the click event
-    this.selectedImage = imgUrl;
+  openCarousel() {
+    this.activateImageGallery = true;
   }
+
+  closeCarousel() {
+    this.activateImageGallery = false;
+  }
+  
+  /*modalClose(kepekArg: string) {
+    this.activateImageGallery = true;
+    this.kepek = kepekArg;
+    this.ViewAlkatresz.setImages(this.kepek);
+  }*/
 }

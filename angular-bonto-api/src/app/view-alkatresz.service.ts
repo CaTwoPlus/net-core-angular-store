@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class ViewAlkatreszService {
 
   private selectedId!: number;
+  private selectedKepek!: string;
 
   constructor() { }
 
@@ -15,5 +16,13 @@ export class ViewAlkatreszService {
 
   getSelectedId() {
     return this.selectedId;
+  }
+
+  setImages(kepek: string) {
+    this.selectedKepek = kepek;
+  }
+
+  getImages() {
+    return this.selectedKepek;
   }
 }

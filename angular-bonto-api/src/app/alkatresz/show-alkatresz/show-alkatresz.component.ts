@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
-import { SearchBarComponent } from 'src/app/search/search.component';
+import { SearchBarComponent } from 'src/app/alkatresz/search/search.component';
 
 @Component({
   selector: 'app-show-alkatresz',
@@ -117,13 +117,12 @@ export class ShowAlkatreszComponent implements OnInit{
     }
   }
 
-  @HostListener('document:click', ['$event'])
+  /*@HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    console.log(this.viewAlkatreszModal.nativeElement.contains(event.target));
     if (this.viewAlkatreszModal.nativeElement.contains(event.target) && this.activateViewAlkatreszComponent) {
       this.modalClose();
     }
-  }
+  }*/
 
   modalClose() {
     this.activateAddEditAlkatreszComponent = false;
