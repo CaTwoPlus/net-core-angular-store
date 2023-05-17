@@ -14,6 +14,12 @@ import { BontoApiService } from './bonto-api.service';
 import { SearchBarComponent } from './alkatresz/search/search.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatresz.component';
+import { LoginComponent } from './login/login.component';
+import { JwtModule } from '@auth0/angular-jwt';
+
+export function tokenGetter() {
+  return localStorage.getItem("access_token");
+}
 
 @NgModule({
   declarations: [
@@ -22,7 +28,8 @@ import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatres
     ShowAlkatreszComponent,
     AddEditAlkatreszComponent,
     SearchBarComponent,
-    ViewAlkatreszComponent
+    ViewAlkatreszComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +39,14 @@ import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatres
     ReactiveFormsModule,
     BrowserAnimationsModule,
     MatAutocompleteModule,
-    MatInputModule
+    MatInputModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ["localhost:4200/admin/login"],
+        disallowedRoutes: [""],
+      },
+    }),
   ],
   exports: [
     SearchBarComponent

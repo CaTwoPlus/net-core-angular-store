@@ -1,21 +1,25 @@
 <form id="add-edit-alkatresz-form">
     <div class="mb-3">
         <label for="nev" class="form-label">Név</label>
-        <input class="form-control" id="nevInput" [(ngModel)]="nev" name="nevInput">
+        <input type="text" class="form-control" [class.is-invalid]="!nev" id="nevInput" [(ngModel)]="nev" name="nevInput">
+        <label for="nevInput" *ngIf="!nev">Név megadása kötelező!</label>
     </div>
     <div class="input group mb-3"> 
         <label for="kategoriak" class="form-label">Kategóriák</label>
+        <input type="text" class="form-control" id="kategoriakOutput" [(ngModel)]="kategoriak" name="kategoriakOutput" readonly>
         <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriakInput" multiple>
             <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
         </select>
         <label for="autoTipusok" class="form-label">Típusok</label>
+        <!--input type="text" readonly class="form-control" id="autoTipusokOutput" name="autoTipusokOutput" 
+         *ngIf="alkatresz$ | async as item" value={{item.autoTipusok}}-->
         <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusokInput" multiple>
             <option *ngFor="let type of autoTipusList$|async" [value]="type.nev">{{type.nev}}</option>
         </select>
     </div>
     <div class="mb-3">
         <label for="ar" class="form-label">Ár</label>
-        <input class="form-control" id="arInput" [(ngModel)]="ar" name="arInput">
+        <input type="number" class="form-control" id="arInput" [(ngModel)]="ar" name="arInput">
     </div>
     <div class="mb-3">
         <label for="megjegyzes" class="form-label">Megjegyzés</label>
@@ -24,6 +28,18 @@
     <div class="mb-3">
         <label for="generacio" class="form-label">Generáció</label>
         <input class="form-control" id="generacioInput" [(ngModel)]="generacio" name="generacioInput">
+    </div>
+    <div class="input-group mb-3">
+        <input class="form-control" type="file" id="formFileMultiple" multiple #fileInput>
+        <button class="btn btn-outline-secondary" type="button" id="inputGroupFileAddon03"
+        (click)="uploadImages()">Képek feltöltése</button>
+    </div>
+    <div class="image-container" *ngIf="activateImagePreview === true">
+        <ng-container *ngFor="let img of kepek.split(';')">
+          <div>
+            <img class="img-thumbnail" [src]="'https://localhost:7094/images/' + img" style="max-height: 100px;">
+          </div>
+        </ng-container>
     </div>
     <button (click)="addAlkatresz()" *ngIf="alkatresz?.id===0" class="btn btn-primary">
         Hozzáadás

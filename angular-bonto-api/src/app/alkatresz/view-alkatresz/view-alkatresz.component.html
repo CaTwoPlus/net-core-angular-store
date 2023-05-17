@@ -23,12 +23,11 @@
         <ng-container *ngFor="let img of item.kepek.split(';')">
           <div>
             <img class="img-thumbnail" [src]="'https://localhost:7094/images/' + img" style="max-height: 100px;"
-            (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="openCarousel()" 
+            (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="openCarousel()"
             >
           </div>
         </ng-container>
     </div>
-    <a id="scrollToCarousel"></a>
     <div id="imageCarousel" class="carousel slide" data-bs-keyboard="true" *ngIf="activateImageGallery" #imageCarousel>
         <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
             <button type="button" [attr.data-bs-target]="'#imageCarousel'" [attr.data-bs-slide-to]="i" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';');

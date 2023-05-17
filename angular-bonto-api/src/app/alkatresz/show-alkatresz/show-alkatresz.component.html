@@ -47,7 +47,7 @@
         <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modalClose()" id="add-edit-modal-close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" #viewAlkatreszModalBody>
         <app-view-alkatresz *ngIf="activateViewAlkatreszComponent"></app-view-alkatresz>
       </div>
     </div>
@@ -56,15 +56,14 @@
 
 <table class="table table-striped">
     <thead>
-        <th>Id</th>
-        <th>Név</th>
-        <th>Megjegyzés</th>
-        <th>Kategóriák</th>
-        <th>Generáció</th>
-        <th>Ár</th>
-        <th>Opciók</th>
+        <th scope="col">Id</th>
+        <th scope="col">Név</th>
+        <th scope="col">Megjegyzés</th>
+        <th scope="col">Kategóriák/Típusok</th>
+        <th scope="col">Generáció</th>
+        <th scope="col">Ár</th>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
         <tr *ngFor="let item of filteredAlkatreszek$ | async">
             <td>{{item.id}}</td>
             <td>{{item.nev}}</td>

@@ -24,6 +24,11 @@ export class ViewAlkatreszComponent implements OnInit{
   fetchAlkatresz() {
     this.selectedId = this.ViewAlkatresz.getSelectedId();
     this.alkatresz$ = this.service.getAlkatresz(this.selectedId);
+    this.ViewAlkatresz.setAlkatresz(this.alkatresz$);
+  }
+
+  getAlkatreszForEdit(): Observable<any> {
+    return this.alkatresz$;
   }
 
   onHover(event: MouseEvent) {
@@ -38,14 +43,8 @@ export class ViewAlkatreszComponent implements OnInit{
   openCarousel() {
     this.activateImageGallery = true;
   }
-
+  
   closeCarousel() {
     this.activateImageGallery = false;
   }
-  
-  /*modalClose(kepekArg: string) {
-    this.activateImageGallery = true;
-    this.kepek = kepekArg;
-    this.ViewAlkatresz.setImages(this.kepek);
-  }*/
 }

@@ -117,12 +117,12 @@ export class ShowAlkatreszComponent implements OnInit{
     }
   }
 
-  /*@HostListener('document:click', ['$event'])
+  @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     if (this.viewAlkatreszModal.nativeElement.contains(event.target) && this.activateViewAlkatreszComponent) {
       this.modalClose();
     }
-  }*/
+  }
 
   modalClose() {
     this.activateAddEditAlkatreszComponent = false;

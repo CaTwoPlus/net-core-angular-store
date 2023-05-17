@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, } from '@angular/core';
 import { Observable } from "rxjs";
 import { BontoApiService } from 'src/app/bonto-api.service';
+import { ViewAlkatreszService } from 'src/app/view-alkatresz.service';
 
 @Component({
   selector: 'app-add-edit-alkatresz',
@@ -8,12 +9,13 @@ import { BontoApiService } from 'src/app/bonto-api.service';
   styleUrls: ['./add-edit-alkatresz.component.css']
 })
 export class AddEditAlkatreszComponent implements OnInit {
-
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   alkatreszList$!:Observable<any[]>;
+  alkatresz$!:Observable<any>;
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
 
-  constructor(private service:BontoApiService) {}
+  constructor(private service:BontoApiService, private viewAlkatresz: ViewAlkatreszService) {}
 
   @Input() alkatresz: any;
   id: number = 0;
@@ -22,27 +24,30 @@ export class AddEditAlkatreszComponent implements OnInit {
   kategoriak: string = "";
   generacio: string = "";
   ar: number = 0;
+  kepek: string = "";
   kategoriakInput: string[] = [];
   autoTipusokInput: string[] = [];
-  allKategoriak: any;
+  activateImagePreview: boolean = false;
 
   ngOnInit(): void{
     this.id = this.alkatresz.id;
     this.nev = this.alkatresz.nev;
     this.megjegyzes = this.alkatresz.megjegyzes;
-    this.kategoriak = this.kategoriak;
+    this.kategoriak = this.alkatresz.kategoriak;
     this.generacio = this.alkatresz.generacio;
     this.ar = this.alkatresz.ar;
+    this.kepek = this.alkatresz.kepek;
     this.kategoriakInput = this.kategoriakInput;
     this.autoTipusokInput = this.autoTipusokInput;
-    this.allKategoriak = this.allKategoriak;
 
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
+    this.alkatresz$ = this.viewAlkatresz.getAlkatresz();
   }
 
   addAlkatresz() {
     this.kategoriakInput = this.kategoriakInput.map(kategoria => kategoria.trim());
+    this.kategoriak = "";
     this.kategoriak = this.kategoriakInput.concat(this.autoTipusokInput).join(';').replace(/\s*,\s*/g, ';');
         
     var alkatresz = {
@@ -50,7 +55,8 @@ export class AddEditAlkatreszComponent implements OnInit {
       megjegyzes:this.megjegyzes,
       kategoriak:this.kategoriak,
       generacio:this.generacio,
-      ar:this.ar
+      ar:this.ar,
+      kepek:this.kepek
     }
     this.service.addAlkatresz(alkatresz).subscribe(res => {
       var closeModalBtn = document.getElementById('add-edit-modal-close');
@@ -70,9 +76,12 @@ export class AddEditAlkatreszComponent implements OnInit {
     })
   }
 
-  updateAlkatresz() {     
+  updateAlkatresz() {
     this.kategoriakInput = this.kategoriakInput.map(kategoria => kategoria.trim());
-    this.kategoriak = this.kategoriakInput.concat(this.autoTipusokInput).join(';').replace(/\s*,\s*/g, ';');
+
+    if (this.kategoriakInput.toString() != "") {
+      this.kategoriak = this.kategoriakInput.concat(this.autoTipusokInput).join(';').replace(/\s*,\s*/g, ';');
+    }     
     
     var alkatresz = {
       id: this.id,
@@ -80,7 +89,8 @@ export class AddEditAlkatreszComponent implements OnInit {
       megjegyzes:this.megjegyzes,
       kategoriak:this.kategoriak,
       generacio:this.generacio,
-      ar:this.ar
+      ar:this.ar,
+      kepek:this.kepek
     }
     var id:number = this.id;
     this.service.updateAlkatresz(id, alkatresz).subscribe(res => {
@@ -101,4 +111,23 @@ export class AddEditAlkatreszComponent implements OnInit {
     })
   }
 
+  uploadImages() {
+    const files: FileList | null = this.fileInput.nativeElement.files;
+
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Append file name to kepek property
+        this.kepek += file.name;
+        
+        // Add delimiter if not the last file
+        if (i !== files.length - 1) {
+          this.kepek += ';';
+        }
+      }
+      this.activateImagePreview = true;
+    }
+    this.fileInput.nativeElement.value = '';
+  }
 }

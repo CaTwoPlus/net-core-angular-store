@@ -1,0 +1,44 @@
+<!-- Passwrod reset modal -->
+<div class="modal fade" id="passwordReset" *ngIf="activatePasswordResetModal" tabindex="-1" 
+    aria-labelledby="passwordResetLabel" #passwordReset>  
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Jelszó visszaállítása</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modalClose()" id="passwordReset-modal-close"></button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="passwordInput" placeholder="Password" 
+                 name="passwordInput" [(ngModel)]="password">
+                <label for="passwordInput">Jelszó</label>
+            </div>
+            <button type="submit" class="btn btn-primary" (click)="resetPassword()">Küldés</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <form class="row gy-2 gx-3 align-items-center" (ngSubmit)="onSubmit()">
+        <div class="col-auto text-center">
+            <div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="usernameInput" placeholder="name@example.com" 
+                     name="usernameInput" [(ngModel)]="username">
+                    <label for="usernameInput">Felhasználónév</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="passwordInput" placeholder="Password" 
+                     name="passwordInput" [(ngModel)]="password">
+                    <label for="passwordInput">Jelszó</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Bejelentkezés</button>
+            </div>
+            <button type="button" class="btn btn-link btn-sm" style="padding-top: 10px;" data-bs-toggle="modal"
+             data-bs-target="#passwordReset" (click)="modalOpen()">Jelszó visszaállítása</button>
+        </div>
+    </form>
+</div>
