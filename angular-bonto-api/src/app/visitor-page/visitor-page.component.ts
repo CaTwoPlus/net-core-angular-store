@@ -11,14 +11,14 @@ import { Router } from '@angular/router';
 export class VisitorPageComponent {
   title = 'ford';
   navbarfixed: boolean = false;
-  @HostListener('window:scroll', ['$event']) onscroll() {
+  /*@HostListener('window:scroll', ['$event']) onscroll() {
     if (window.scrollY > 100) {
       this.navbarfixed = true
     }
     else {
       this.navbarfixed = false
     }
-  }
+  }*/
   viewtype: boolean = false;   
   @HostListener('window:resize', ['$event']) onresize() {
     if (window.innerWidth < 768) {
