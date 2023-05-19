@@ -1,6 +1,4 @@
 import { Component, HostListener } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-visitor-page',

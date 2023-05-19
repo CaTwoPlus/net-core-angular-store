@@ -14,6 +14,7 @@ import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatres
 import { LoginComponent } from './login/login.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { VisitorPageComponent } from './visitor-page/visitor-page.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -116,6 +117,7 @@ export function tokenGetter() {
     MatPaginatorModule,
     MatSortModule,
     MatTableModule,
+    FlexLayoutModule,
     
     JwtModule.forRoot({
       config: {
