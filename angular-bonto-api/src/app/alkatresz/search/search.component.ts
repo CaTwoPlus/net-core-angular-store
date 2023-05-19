@@ -4,13 +4,18 @@ import { Observable } from 'rxjs';
 @Component({
   selector: 'app-search-bar',
   template: `
-    <input class="form-control" [(ngModel)]="searchTermValue" (input)="onSearchInput(searchTermValue)" [placeholder]="placeholder" />
-    <div *ngIf="showOptions && options?.length">
-      <div *ngFor="let option of options">
-        {{ option }}
+  <div class="container">
+    <div class="input-wrapper">
+      <input class="form-control" style="width: 480px" [(ngModel)]="searchTermValue" (input)="onSearchInput(searchTermValue)" [placeholder]="placeholder" />
+      <div *ngIf="showOptions && options?.length">
+        <div *ngFor="let option of options">
+          {{ option }}
+        </div>
       </div>
     </div>
+  </div>
   `,
+  styleUrls: ['./search.component.css']
 })
 export class SearchBarComponent {
   @Input() alkatreszList$!: Observable<any[]>;
