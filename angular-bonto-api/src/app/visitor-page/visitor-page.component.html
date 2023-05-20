@@ -1,25 +1,21 @@
 <!-- Header -->
 <header>
   <div>
-    <mat-toolbar color="primary" (resize)="onresize()" [ngClass]="[navbarfixed ? 'fixed' : 'notfixed', viewtype? 'mobileview' : 'notmobileview']">
-      <a mat-icon-button href="" style="color: white">
+    <nav class="navbar">
+      <a mat-icon-button href="" class="icon-button">
         <mat-icon>home</mat-icon>
       </a>
-      <span [hidden]="viewtype === false">
-        <button mat-icon-button [matMenuTriggerFor]="menu"> 
+      <span fxHide.gt-sm>
+        <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menu"> 
           <mat-icon>menu</mat-icon>
         </button>
       </span>
       <span class="navbarcontents">
-        <span [hidden]="viewtype === true">
-          <button mat-stroked-button style="color: white;" [matMenuTriggerFor]="menu"><b>Alkatrészek</b></button>
-          <button mat-stroked-button style="color: white;"><b>Szolgáltatások</b></button>
-          <button mat-stroked-button style="color: white;"><b>Vásárlási információk</b></button>
-          <button mat-stroked-button style="color: white;"><b>Elérhetőség</b></button>
-          <mat-form-field class="large-height-input">
-            <input matInput placeholder="Keresés" style="position: relative; top: -0.525em;">
-            <mat-icon matSuffix color="primary" style="position: relative; top: -0.435em;">search</mat-icon>
-          </mat-form-field>
+        <span fxHide.lt-md>
+          <button type="button" class="btn btn-primary" [matMenuTriggerFor]="menu"><b>Alkatrészek</b></button>
+          <button type="button" class="btn btn-primary"><b>Szolgáltatások</b></button>
+          <button type="button" class="btn btn-primary"><b>Vásárlási információk</b></button>
+          <button type="button" class="btn btn-primary"><b>Elérhetőség</b></button>
         </span>
         <mat-menu #menu="matMenu">
           <button mat-menu-item>Autóhifi</button>
@@ -35,15 +31,8 @@
           <button mat-menu-item>Üzemanyag ellátó rendszer</button>
         </mat-menu>
       </span>
-      <span [hidden]="viewtype === false">
-        <mat-form-field class="small-height-input">
-          <input matInput placeholder="Keresés" style="position: relative; top: -0.65em;">
-        </mat-form-field>
-        <button mat-icon-button style="position: relative; top: 0.25em;">
-          <mat-icon>search</mat-icon>
-        </button>
-      </span>
-    </mat-toolbar>
+      <input class="form-control" style="width: 240px; margin-right: 20px;" placeholder="Keresés">
+    </nav>
   </div>
 </header>
   

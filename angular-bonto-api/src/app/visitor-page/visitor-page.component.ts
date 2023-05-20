@@ -1,4 +1,5 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
+import { FormControl, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-visitor-page',
@@ -8,22 +9,27 @@ import { Component, HostListener } from '@angular/core';
 
 export class VisitorPageComponent {
   title = 'ford';
-  navbarfixed: boolean = false;
-  /*@HostListener('window:scroll', ['$event']) onscroll() {
-    if (window.scrollY > 100) {
-      this.navbarfixed = true
-    }
-    else {
-      this.navbarfixed = false
-    }
-  }*/
-  viewtype: boolean = false;   
-  @HostListener('window:resize', ['$event']) onresize() {
-    if (window.innerWidth < 768) {
-      this.viewtype = true
-    }
-    else {
-      this.viewtype = false
-    }
+  sequenceValidator(sequence: string): ValidatorFn {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      
+      if (!value) {
+        // If the control value is empty, consider it as valid
+        return null;
+      }
+      
+      if (!value.toLowerCase().includes(sequence.toLowerCase())) {
+        // If the sequence is not found in the value, return the validation error
+        return { noMatch: true };
+      }
+      
+      // Valid input
+      return null;
+    };
   }
+  
+  // Usage in the component
+  searchFormControl = new FormControl('', [
+    this.sequenceValidator('apple')
+  ]);
 }
