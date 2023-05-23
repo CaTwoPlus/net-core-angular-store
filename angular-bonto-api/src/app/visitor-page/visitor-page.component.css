@@ -1,60 +1,41 @@
 body { 
-    margin: 0;
-    padding: 0;
-    width: 100%; 
-    height: auto;
-    font-family: Roboto, "Helvetica Neue", sans-serif; 
-  }
-  
-  :host {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-    font-size: 14px;
-    color: #333;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+  margin: 0;
+  padding: 0;
+  width: 100%; 
+  height: auto;
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
 
-  .searchBar{
-    transform: translateY(13%);
-    width: 20%;
-    display: flex;
-    margin-right: 2.5%;
-  }
-  
-  header{
-    text-align: center;
-    width: auto; 
-    height: 64px;
-  }
-  
-  .navbarcontents {
-    display: flex;
-    align-items: center;
-    margin-left: 20%;
-    margin-right: auto;
-  }
-  
-  .spacer {
-    flex: 1 1 auto;
-  }
-  
-  img {
-    width: 100%; 
-    height: auto;
-  }
-  
-  footer {
-    margin: 0;
-  }
+.navbarmenu {
+  justify-items: left;
+}
 
-  .navbar {
-    background-color: #3F51B5;
-  }
+img {
+  width: 100%; 
+  height: auto;
+}
 
-  .icon-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-  }
+footer {
+  color: white;
+  background-color: #3F51B5;
+  display: flex; 
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+}
+
+.navbar {
+  color: white;
+  background-color: #3F51B5;
+}
+
+.icon-button {
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+h6 {
+  font-size: smaller;
+  margin: 0;
+}

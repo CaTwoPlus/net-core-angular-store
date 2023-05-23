@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
-import { FormControl, ValidatorFn, AbstractControl, Validators } from '@angular/forms';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Observable, map, startWith, switchMap } from 'rxjs';
+import { BontoApiService } from 'src/app/bonto-api.service';
+import { SearchBarComponent } from 'src/app/alkatresz/search/search.component';
 
 @Component({
   selector: 'app-visitor-page',
@@ -7,29 +9,36 @@ import { FormControl, ValidatorFn, AbstractControl, Validators } from '@angular/
   styleUrls: ['./visitor-page.component.css']
 })
 
-export class VisitorPageComponent {
+export class VisitorPageComponent implements OnInit{
+  @ViewChild('searchBar') searchBar!: SearchBarComponent;
   title = 'ford';
-  sequenceValidator(sequence: string): ValidatorFn {
-    return (control: AbstractControl) => {
-      const value = control.value;
-      
-      if (!value) {
-        // If the control value is empty, consider it as valid
-        return null;
-      }
-      
-      if (!value.toLowerCase().includes(sequence.toLowerCase())) {
-        // If the sequence is not found in the value, return the validation error
-        return { noMatch: true };
-      }
-      
-      // Valid input
-      return null;
-    };
+  kategoriaList$!:Observable<any[]>;
+  alkatreszList$!:Observable<any[]>;
+  filteredAlkatreszek$!:Observable<any[]>;
+
+  constructor(private service: BontoApiService) {}
+
+  ngOnInit(): void {
+    this.kategoriaList$ = this.service.getKategoriaList();
+    this.alkatreszList$ = this.service.getAlkatreszList();
   }
-  
-  // Usage in the component
-  searchFormControl = new FormControl('', [
-    this.sequenceValidator('apple')
-  ]);
+
+  ngAfterViewInit(): void {
+    this.filteredAlkatreszek$ = this.searchBar.searchTerm.pipe(
+      startWith(''),
+      switchMap(term => {
+        if (!term) {
+          return this.alkatreszList$;
+        } else {
+          return this.alkatreszList$.pipe(
+            map(alkatreszek =>
+              alkatreszek.filter(alkatresz =>
+                alkatresz.nev.toLowerCase().includes(term.toLowerCase())
+              )
+            )
+          );
+        }
+      })
+    );
+  }
 }

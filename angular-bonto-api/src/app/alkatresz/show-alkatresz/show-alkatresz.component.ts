@@ -7,9 +7,6 @@ import { SearchBarComponent } from 'src/app/alkatresz/search/search.component';
 
 @Component({
   selector: 'app-show-alkatresz',
-  template: `
-    <app-search-bar [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
-  `,
   templateUrl: './show-alkatresz.component.html',
   styleUrls: ['./show-alkatresz.component.css']
 })
@@ -18,30 +15,32 @@ export class ShowAlkatreszComponent implements OnInit{
   @ViewChild('viewAlkatreszModal') viewAlkatreszModal!: ElementRef;
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
+  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
+
   alkatreszList$!:Observable<any[]>;
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
-  imageURLList$: any[] = [];
   filteredAlkatreszek$!:Observable<any[]>;
-  filteredAlkatreszList: any[] = [];
+
   searchText: string = '';
+  modalTitle: string = '';
+  kategoriak: string = '';
+  autoTipusok: string = '';
+
   alkatreszService: any;
-
-  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
-
-  // Variables (properties)
-  modalTitle:string = '';
-  activateAddEditAlkatreszComponent:boolean = false;
-  activateViewAlkatreszComponent:boolean = false;
   alkatresz:any;
   kategoria:any;
   autoTipus:any;
   imageFiles:any;
   appPath:any;
 
+  activateAddEditAlkatreszComponent:boolean = false;
+  activateViewAlkatreszComponent:boolean = false;
+
   async ngOnInit() {
     this.alkatreszList$ = this.service.getAlkatreszList();
     this.kategoriaList$ = this.service.getKategoriaList();
+    this.autoTipusList$ = this.service.getAutoTipusList();
   }
 
   ngAfterViewInit(): void {
@@ -132,7 +131,19 @@ export class ShowAlkatreszComponent implements OnInit{
 
   onSearchTextEntered(searchValue: string){
     this.searchText = searchValue;
-    console.log(this.searchText);
+  }
+
+  filterByCategory(){
+    if (this.kategoriak.length > 0) {
+      this.searchText = this.kategoriak;
+    }
+    else if (this.autoTipusok.length > 0) {
+      this.searchText = this.autoTipusok;
+    }
+    var closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
+      if(closeModalBtn) {
+        closeModalBtn.click();
+      }
   }
 }
 

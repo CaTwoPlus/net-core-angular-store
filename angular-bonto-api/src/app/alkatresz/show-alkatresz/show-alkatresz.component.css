@@ -25,3 +25,8 @@
     50% {opacity: 1;}
     100% {opacity: 0;}
 }
+
+.navbar {
+    color: white;
+    background-color: #3F51B5;
+  }

@@ -74,6 +74,7 @@ angular-bonto-api/logs/                 # Directory for application logs
 angular-bonto-api/tmp/                  # Directory for temporary files
 angular-bonto-api/public/uploads/       # Directory for public file uploads
 angular-bonto-api/node_modules
+angular-bonto-api/src/assets/bootstrap-main
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/

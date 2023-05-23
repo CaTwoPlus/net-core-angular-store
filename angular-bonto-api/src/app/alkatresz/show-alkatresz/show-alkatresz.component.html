@@ -8,14 +8,22 @@
   Alkatrész sikeresen törölve!
 </div>
 
-<ng-container *ngIf="alkatreszList$">
-  <app-search-bar #searchBar [alkatreszList$]="alkatreszList$"></app-search-bar>
-</ng-container>
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#addNewAlkatresz" (click)="modalAdd()">
-    Alkatrész hozzáadása
-</button>
+<nav class="navbar">
+  <div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#addNewAlkatresz" (click)="modalAdd()">
+      Alkatrész hozzáadás
+    </button>
+    <button type="button" class="btn btn-primary float-start m-2" data-bs-toggle="modal" data-bs-target="#filterAlkatreszList">
+      Szűrés
+    </button>
+  </div>
+  <div>
+    <ng-container *ngIf="alkatreszList$">
+      <app-search-bar #searchBar [alkatreszList$]="alkatreszList$"></app-search-bar>
+    </ng-container>
+  </div>
+</nav>
 
 <!-- Add or edit alkatresz modal -->
 <div class="modal fade" id="addNewAlkatresz" data-bs-backdrop="static" tabindex="-1" aria-labelledby="addNewAlkatreszLabel" #addEditAlkatreszModal>  
@@ -54,14 +62,41 @@
   </div>
 </div>
 
+<!-- Filter modal -->
+<div class="modal fade" id="filterAlkatreszList" tabindex="-1" aria-labelledby="filterAlkatreszListLabel" #filterAlkatreszListModal>  
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Szűrés</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modalClose()" id="filter-alkatresz-modal-close"></button>
+      </div>
+      <div class="modal-body">
+        <ng-container>
+          <div class="input group mb-3"> 
+            <label for="kategoriak" class="form-label">Kategóriák</label>
+            <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriak" multiple>
+                <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
+            </select>
+            <label for="autoTipusok" class="form-label">Típusok</label>
+            <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusok" multiple>
+                <option *ngFor="let type of autoTipusList$|async" [value]="type.nev">{{type.nev}}</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-primary" (click)="filterByCategory()">Szűrés</button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+
 <table class="table table-striped">
     <thead>
-        <th scope="col">Id</th>
-        <th scope="col">Név</th>
-        <th scope="col">Megjegyzés</th>
-        <th scope="col">Kategóriák/Típusok</th>
-        <th scope="col">Generáció</th>
-        <th scope="col">Ár</th>
+        <th scope="col" style="text-align: left;">Id</th>
+        <th scope="col" style="text-align: left;">Név</th>
+        <th scope="col" style="text-align: left;">Megjegyzés</th>
+        <th scope="col" style="text-align: left;">Kategóriák/Típusok</th>
+        <th scope="col" style="text-align: left;">Generáció</th>
+        <th scope="col" style="text-align: right;">Ár</th>
     </thead>
     <tbody class="table-group-divider">
         <tr *ngFor="let item of filteredAlkatreszek$ | async">

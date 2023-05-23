@@ -15,6 +15,7 @@ import { LoginComponent } from './login/login.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { VisitorPageComponent } from './visitor-page/visitor-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -59,6 +60,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { CategoryPageComponent } from './category-page/category-page.component';
+import { ProductPageComponent } from './product-page/product-page.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -73,7 +76,9 @@ export function tokenGetter() {
     SearchBarComponent,
     ViewAlkatreszComponent,
     LoginComponent,
-    VisitorPageComponent
+    VisitorPageComponent,
+    CategoryPageComponent,
+    ProductPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -118,7 +123,8 @@ export function tokenGetter() {
     MatSortModule,
     MatTableModule,
     FlexLayoutModule,
-    
+    TypeaheadModule,
+
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

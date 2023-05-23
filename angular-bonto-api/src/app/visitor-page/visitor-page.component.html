@@ -2,21 +2,23 @@
 <header>
   <div>
     <nav class="navbar">
-      <a mat-icon-button href="" class="icon-button">
-        <mat-icon>home</mat-icon>
-      </a>
-      <span fxHide.gt-sm>
-        <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menu"> 
-          <mat-icon>menu</mat-icon>
-        </button>
-      </span>
-      <span class="navbarcontents">
+      <div class="d-flex justify-content-start align-items-center">
+        <a mat-icon-button href="" class="icon-button">
+          <mat-icon>home</mat-icon>
+        </a>
+        <span fxHide.gt-sm>
+          <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menu"> 
+            <mat-icon>menu</mat-icon>
+          </button>
+        </span>
         <span fxHide.lt-md>
           <button type="button" class="btn btn-primary" [matMenuTriggerFor]="menu"><b>Alkatrészek</b></button>
           <button type="button" class="btn btn-primary"><b>Szolgáltatások</b></button>
           <button type="button" class="btn btn-primary"><b>Vásárlási információk</b></button>
           <button type="button" class="btn btn-primary"><b>Elérhetőség</b></button>
         </span>
+      </div>
+      <div>
         <mat-menu #menu="matMenu">
           <button mat-menu-item>Autóhifi</button>
           <button mat-menu-item>Biztonsági alkatrészek</button>
@@ -30,18 +32,22 @@
           <button mat-menu-item>Utastér, csomagtér, egyéb</button>
           <button mat-menu-item>Üzemanyag ellátó rendszer</button>
         </mat-menu>
-      </span>
-      <input class="form-control" style="width: 240px; margin-right: 20px;" placeholder="Keresés">
+        <ng-container *ngIf="alkatreszList$">
+          <app-search-bar #searchBar [alkatreszList$]="alkatreszList$"></app-search-bar>
+        </ng-container>
+      </div>
     </nav>
   </div>
 </header>
   
-  <!-- Body -->
-  <body>
-    <img src="assets\20170822_180636.jpg">
-  </body>
-  
-  <footer>
-    <mat-toolbar color="primary">
-    </mat-toolbar>
-  </footer>  
+<!-- Body -->
+<body>
+  <img src="assets\20170822_180636.jpg">
+</body>
+
+<!--Footer-->
+<footer>
+  <nav class="footer">
+    <h6>2023 Ford Focus C-Max Bontó</h6>
+  </nav>
+</footer>  
