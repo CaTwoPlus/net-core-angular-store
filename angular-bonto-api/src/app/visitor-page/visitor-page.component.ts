@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Observable, map, startWith, switchMap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
-import { SearchBarComponent } from 'src/app/alkatresz/search/search.component';
+import { CategoryPageService } from '../category-page.service';
+import { SearchBarComponent } from 'src/app/search/search.component';
 
 @Component({
   selector: 'app-visitor-page',
@@ -15,8 +16,9 @@ export class VisitorPageComponent implements OnInit{
   kategoriaList$!:Observable<any[]>;
   alkatreszList$!:Observable<any[]>;
   filteredAlkatreszek$!:Observable<any[]>;
+  showCategoryPage: boolean = false;
 
-  constructor(private service: BontoApiService) {}
+  constructor(private service: BontoApiService, private categoryPageService: CategoryPageService) {}
 
   ngOnInit(): void {
     this.kategoriaList$ = this.service.getKategoriaList();
@@ -33,12 +35,18 @@ export class VisitorPageComponent implements OnInit{
           return this.alkatreszList$.pipe(
             map(alkatreszek =>
               alkatreszek.filter(alkatresz =>
-                alkatresz.nev.toLowerCase().includes(term.toLowerCase())
+                alkatresz.nev.toLowerCase().includes(term.toLowerCase()) ||
+                alkatresz.kategoriak.toLowerCase().includes(term.toLowerCase())
               )
             )
           );
         }
       })
     );
+  }
+
+  setCategoryPage(category: string) {
+    this.categoryPageService.setCategory(category);
+    this.showCategoryPage = true;
   }
 }

@@ -43,8 +43,7 @@ export class SearchBarComponent {
       this.alkatreszList$.subscribe((list) => {
         this.options = list
           .filter((option) =>
-            option.nev.toLowerCase().includes(this.searchTermValue.toLowerCase())
-          )
+            option.nev.toLowerCase().includes(this.searchTermValue.toLowerCase()))
           .map((option) => option.nev);
       });
     }

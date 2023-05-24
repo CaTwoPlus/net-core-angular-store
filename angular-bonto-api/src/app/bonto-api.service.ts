@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, combineLatest, concatAll, concatMap, forkJoin, from, map, reduce, switchMap, take, tap, toArray } from 'rxjs';
+import { Observable, combineLatest, map, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -68,36 +68,5 @@ export class BontoApiService {
   deleteAutoTipus(id:number|string){
     return this.http.delete(this.bontoAPIUrl + `/AutoTipus/${id}`);
   }
-
-  getImageUrlList(kategoriak: string, nev: string): Observable<string[]> {
-    const kategoriakArr = kategoriak.toLowerCase().split(';');
-    const nevToMatch = nev.toLowerCase();
   
-    const kategoriaList$ = this.getKategoriaList().pipe(
-      map(kategoriaList => kategoriaList.map(k => k.nev.toLowerCase()))
-    );
-  
-    const autoTipusList$ = this.getAutoTipusList().pipe(
-      map(autoTipusList => autoTipusList.map(a => a.nev.toLowerCase()))
-    );
-  
-    return combineLatest([kategoriaList$, autoTipusList$]).pipe(
-      map(([kategoriaList, autoTipusList]) => {
-        const kategoria = kategoriaList.find(k => kategoriakArr.includes(k));
-        const autoTipus = autoTipusList.find(a => kategoriakArr.includes(a));
-        const params = new HttpParams()
-          .set('fájlNév', nev)
-          .set('kategoria', kategoria || '')
-          .set('autoTipus', autoTipus || '');
-        return `${this.bontoAPIUrl}/Media?${params.toString()}`;
-      }),
-      switchMap(url => this.http.get<{ path: string }>(url)),
-      map(response => [response.path]),
-      map(urls => urls.filter(url => {
-      const filename = url.split('/').pop()?.toLowerCase().replace(/\s\s+/g, ' ');
-      const regex = new RegExp(`^${filename?.split('.').at(0)}\\w*`, 'i');
-      return nevToMatch.match(regex) !== null;
-    }))
-    );
-  }
 }

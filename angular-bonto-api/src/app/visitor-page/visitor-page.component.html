@@ -20,17 +20,8 @@
       </div>
       <div>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item>Autóhifi</button>
-          <button mat-menu-item>Biztonsági alkatrészek</button>
-          <button mat-menu-item>Elektromos alkatrészek</button>
-          <button mat-menu-item>Fényszórók, lámpák</button>
-          <button mat-menu-item>Fék és futómű alkatrészek</button>
-          <button mat-menu-item>Karosszéria elemek</button>
-          <button mat-menu-item>Klíma, fűtés</button>
-          <button mat-menu-item>Kuplung, sebességváltó</button>
-          <button mat-menu-item>Motoralkatrészek</button>
-          <button mat-menu-item>Utastér, csomagtér, egyéb</button>
-          <button mat-menu-item>Üzemanyag ellátó rendszer</button>
+          <button mat-menu-item *ngFor="let item of kategoriaList$ | async"
+           (click)="setCategoryPage(item.nev)">{{item.nev}}</button>
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
           <app-search-bar #searchBar [alkatreszList$]="alkatreszList$"></app-search-bar>
@@ -42,7 +33,8 @@
   
 <!-- Body -->
 <body>
-  <img src="assets\20170822_180636.jpg">
+  <img *ngIf="showCategoryPage === false" src="assets\20170822_180636.jpg">
+  <app-category-page *ngIf="showCategoryPage"></app-category-page>
 </body>
 
 <!--Footer-->

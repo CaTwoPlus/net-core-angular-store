@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
-import { SearchBarComponent } from 'src/app/alkatresz/search/search.component';
+import { SearchBarComponent } from 'src/app/search/search.component';
 
 @Component({
   selector: 'app-show-alkatresz',
@@ -22,7 +22,7 @@ export class ShowAlkatreszComponent implements OnInit{
   autoTipusList$!:Observable<any[]>;
   filteredAlkatreszek$!:Observable<any[]>;
 
-  searchText: string = '';
+  categoryFilter: string[] = [];
   modalTitle: string = '';
   kategoriak: string = '';
   autoTipusok: string = '';
@@ -53,7 +53,10 @@ export class ShowAlkatreszComponent implements OnInit{
           return this.alkatreszList$.pipe(
             map(alkatreszek =>
               alkatreszek.filter(alkatresz =>
-                alkatresz.nev.toLowerCase().includes(term.toLowerCase())
+                alkatresz.nev.toLowerCase().includes(term.toLowerCase()) ||
+                this.categoryFilter.some(category =>
+                  alkatresz.kategoriak.toLowerCase().includes(category.toLowerCase())
+                )
               )
             )
           );
@@ -129,16 +132,14 @@ export class ShowAlkatreszComponent implements OnInit{
     this.alkatreszList$ = this.service.getAlkatreszList();
   }
 
-  onSearchTextEntered(searchValue: string){
-    this.searchText = searchValue;
-  }
-
-  filterByCategory(){
+  filterByCategory() {
     if (this.kategoriak.length > 0) {
-      this.searchText = this.kategoriak;
+      this.categoryFilter.push(...this.kategoriak);
+      this.kategoriak = '';
     }
-    else if (this.autoTipusok.length > 0) {
-      this.searchText = this.autoTipusok;
+    if (this.autoTipusok.length > 0) {
+      this.categoryFilter.push(...this.autoTipusok);
+      this.kategoriak = '';
     }
     var closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
       if(closeModalBtn) {
