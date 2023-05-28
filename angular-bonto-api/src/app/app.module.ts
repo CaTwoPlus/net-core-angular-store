@@ -62,6 +62,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { CategoryPageComponent } from './category-page/category-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
+import { SearchService } from './search.service';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -137,7 +138,7 @@ export function tokenGetter() {
     SearchBarComponent,
     AppRoutingModule
   ], 
-  providers: [BontoApiService],
+  providers: [BontoApiService, SearchService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

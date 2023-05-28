@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { SearchService } from 'src/app/search.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -36,6 +37,8 @@ export class SearchBarComponent {
   placeholder = 'Keresés';
   activateFilteredAlkatreszekList:boolean = false;
 
+  constructor(private searchService: SearchService) {}
+
   onSearchInput(searchTerm: string) {
     this.searchTermValue = searchTerm.toLowerCase();
     if (this.searchTermValue) {
@@ -51,6 +54,6 @@ export class SearchBarComponent {
       this.showOptions = false;
       this.options = [];
     }
-    this.searchTerm.emit(this.searchTermValue);
+    this.searchService.setSearchTerm(this.searchTermValue);
   }
 }

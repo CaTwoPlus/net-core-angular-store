@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
+import { SearchService } from 'src/app/search.service';
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
 
@@ -15,18 +16,18 @@ export class ShowAlkatreszComponent implements OnInit{
   @ViewChild('viewAlkatreszModal') viewAlkatreszModal!: ElementRef;
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
-  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
+  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
+    private searchService: SearchService) {}
 
   alkatreszList$!:Observable<any[]>;
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
   filteredAlkatreszek$!:Observable<any[]>;
-  combinedFilters$: any;
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  categoryFilterObsv$ = this.categoryFilter.asObservable();
   modalTitle: string = '';
   kategoriak: string[] = [];
+  kategoriakLabel: string = '';
   autoTipusok: string[] = [];
 
   alkatreszService: any;
@@ -46,56 +47,9 @@ export class ShowAlkatreszComponent implements OnInit{
     this.autoTipusList$ = this.service.getAutoTipusList();
   }
 
-  // From ngAfterViewInit, old filtering method
-  /*this.filteredAlkatreszek$ = this.searchBar.searchTerm.pipe(
-      startWith(''),
-      switchMap(term => {
-        if (!term && (!this.categoryFilter || this.categoryFilter.length === 0)) {
-          return this.alkatreszList$;
-        } else {
-          return this.alkatreszList$.pipe(
-            map(alkatreszek =>
-              alkatreszek.filter(alkatresz =>
-                alkatresz.nev.toLowerCase().includes(term.toLowerCase()) ||
-                (this.categoryFilter && this.categoryFilter.length > 0 &&
-                  this.categoryFilter.some(category =>
-                    alkatresz.kategoriak.toLowerCase().includes(category.toLowerCase())
-                  )
-                )
-              )
-            )
-          );
-        }
-      })
-    );*/
-
   ngAfterViewInit(): void {
-    this.combineFilters();
+    this.filteredAlkatreszek$ = this.searchService.getFilteredAlkatreszek(this.alkatreszList$);
   }
-
-  combineFilters() {
-    this.filteredAlkatreszek$ = combineLatest([
-      this.searchBar.searchTerm.pipe(startWith('')),
-      this.categoryFilter.pipe(startWith([]))
-    ]).pipe(
-      switchMap(([searchTerm, categoryFilter]) => {
-        if (!searchTerm && categoryFilter.length === 0) {
-          return this.alkatreszList$;
-        } else {
-          return this.alkatreszList$.pipe(
-            map(alkatreszek =>
-              alkatreszek.filter(alkatresz =>
-                alkatresz.nev && alkatresz.nev.toLowerCase().includes(searchTerm.toLowerCase()) &&
-                (categoryFilter.length === 0 || categoryFilter.every((category: string) =>
-                 alkatresz.kategoriak && alkatresz.kategoriak.toLowerCase().includes(category.toLowerCase())
-                ))
-              )
-            )
-          );
-        }
-      })
-    );
-  }  
   
   modalAdd(){ 
     this.alkatresz = {
@@ -165,19 +119,24 @@ export class ShowAlkatreszComponent implements OnInit{
   }
 
   filterByCategory() {
-    if (this.kategoriak.length > 0) {
+    let isKategoriak = this.kategoriak.length > 0;
+    let isAutoTipusok = this.autoTipusok.length > 0;
+    if (isKategoriak) {
       const kategoriakFormatted = this.kategoriak.map((value: string) => value.trim().replace(/\s+/g, ' '));
       const currentFilter = this.categoryFilter.getValue();
       const newValues = kategoriakFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.categoryFilter.next([...currentFilter, ...newValues]);
+      this.searchService.setCategoryFilter([...currentFilter, ...newValues]);
+      this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"), newValues.join(";"));
       this.kategoriak = [];
       this.isFilterActive = true;
     }
-    if (this.autoTipusok.length > 0) {
+    if (isAutoTipusok) {
       const autoTipusokFormatted = this.autoTipusok.map((value: string) => value.trim().replace(/\s+/g, ' '));
       const currentFilter = this.categoryFilter.getValue();
       const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.categoryFilter.next([...currentFilter, ...newValues]);
+      this.searchService.setCategoryFilter([...currentFilter, ...newValues]);
+      this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"),
+       isKategoriak ? ";" : "", newValues.join(";"));
       this.autoTipusok = [];
       this.isFilterActive = true;
     }
@@ -186,12 +145,11 @@ export class ShowAlkatreszComponent implements OnInit{
     if (closeModalBtn) {
       closeModalBtn.click();
     }
-
-    //this.combineFilters();
   }
 
   deleteFilter() {
-    this.categoryFilter.next([]);
+    this.searchService.setCategoryFilter([]);
+    this.kategoriakLabel = '';
     this.isFilterActive = false;
   }
 }

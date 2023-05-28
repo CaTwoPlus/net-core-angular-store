@@ -1,22 +1,45 @@
 import { Injectable } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, map, startWith, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  alkatreszList$!: Observable<any[]>;
+  private categories: string[] = [];
+  private searchTerm: BehaviorSubject<string> = new BehaviorSubject<string>('');
+  private categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
-  search(searchTerm: string): Observable<string[]> {
-    const searchTermValue = searchTerm.toLowerCase();
-    return this.alkatreszList$.pipe(
-      map((list) =>
-        list
-          .filter((option) =>
-            option.nev.toLowerCase().includes(searchTermValue)
-          )
-          .map((option) => option.nev)
-      )
+  setSearchTerm(term: string) {
+    this.searchTerm.next(term);
+  }
+
+  setCategoryFilter(categoriesIn: string[]) {
+    this.categories = categoriesIn;
+    this.categoryFilter.next(categoriesIn);
+  }
+
+  getCategoryFilter(): string[] {
+    return this.categories;
+  }
+
+  getFilteredAlkatreszek(alkatreszList$: Observable<any[]>): Observable<any[]> {
+    return combineLatest([this.searchTerm, this.categoryFilter]).pipe(
+      switchMap(([searchTerm, categoryFilter]) => {
+        if (!searchTerm && categoryFilter.length === 0) {
+          return alkatreszList$;
+        } else {
+          return alkatreszList$.pipe(
+            map(alkatreszek =>
+              alkatreszek.filter(alkatresz =>
+                alkatresz.nev && alkatresz.nev.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                (categoryFilter.length === 0 || categoryFilter.every((category: string) =>
+                 alkatresz.kategoriak && alkatresz.kategoriak.toLowerCase().split(';').map(
+                  (c: string) => c.trim()).includes(category.toLowerCase())))
+              )
+            )
+          );
+        }
+      })
     );
   }
 }
