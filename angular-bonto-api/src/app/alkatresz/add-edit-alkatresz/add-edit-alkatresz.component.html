@@ -6,7 +6,7 @@
     </div>
     <div class="input group mb-3"> 
         <label for="kategoriak" class="form-label">Kategóriák</label>
-        <input type="text" class="form-control" id="kategoriakOutput" [(ngModel)]="kategoriak" name="kategoriakOutput" readonly>
+        <input type="text" class="form-control" id="kategoriakOutput" [value]="kategoriak" name="kategoriakOutput" readonly>
         <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriakInput" multiple>
             <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
         </select>

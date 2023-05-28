@@ -71,7 +71,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modalClose()" id="filter-alkatresz-modal-close"></button>
       </div>
       <div class="modal-body">
-        <ng-container>
+        <form id="filter-form">
           <div class="input group mb-3"> 
             <label for="kategoriak" class="form-label">Kategóriák</label>
             <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriak" multiple>
@@ -82,8 +82,14 @@
                 <option *ngFor="let type of autoTipusList$|async" [value]="type.nev">{{type.nev}}</option>
             </select>
           </div>
-          <button type="button" class="btn btn-primary" (click)="filterByCategory()">Szűrés</button>
-        </ng-container>
+          <div>
+            <input type="text" class="form-control" id="kategoriakOutput" [value]="categoryFilterObsv$ | async" name="kategoriakOutput" readonly>
+          </div>
+          <div style="padding-top: 15px">
+            <button type="button" class="btn btn-primary" (click)="filterByCategory()">Szűrés</button>
+            <button type="button" class="btn btn-primary" *ngIf="isFilterActive === true" (click)="deleteFilter()">Szűrő törlése</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

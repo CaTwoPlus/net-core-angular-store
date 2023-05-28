@@ -25,26 +25,6 @@ export class VisitorPageComponent implements OnInit{
     this.alkatreszList$ = this.service.getAlkatreszList();
   }
 
-  ngAfterViewInit(): void {
-    this.filteredAlkatreszek$ = this.searchBar.searchTerm.pipe(
-      startWith(''),
-      switchMap(term => {
-        if (!term) {
-          return this.alkatreszList$;
-        } else {
-          return this.alkatreszList$.pipe(
-            map(alkatreszek =>
-              alkatreszek.filter(alkatresz =>
-                alkatresz.nev.toLowerCase().includes(term.toLowerCase()) ||
-                alkatresz.kategoriak.toLowerCase().includes(term.toLowerCase())
-              )
-            )
-          );
-        }
-      })
-    );
-  }
-
   setCategoryPage(category: string) {
     this.categoryPageService.setCategory(category);
     this.showCategoryPage = true;

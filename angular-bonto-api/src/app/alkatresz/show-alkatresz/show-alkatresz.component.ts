@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
@@ -21,11 +21,13 @@ export class ShowAlkatreszComponent implements OnInit{
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
   filteredAlkatreszek$!:Observable<any[]>;
+  combinedFilters$: any;
 
-  categoryFilter: string[] = [];
+  categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  categoryFilterObsv$ = this.categoryFilter.asObservable();
   modalTitle: string = '';
-  kategoriak: string = '';
-  autoTipusok: string = '';
+  kategoriak: string[] = [];
+  autoTipusok: string[] = [];
 
   alkatreszService: any;
   alkatresz:any;
@@ -36,6 +38,7 @@ export class ShowAlkatreszComponent implements OnInit{
 
   activateAddEditAlkatreszComponent:boolean = false;
   activateViewAlkatreszComponent:boolean = false;
+  isFilterActive:boolean = false;
 
   async ngOnInit() {
     this.alkatreszList$ = this.service.getAlkatreszList();
@@ -43,28 +46,57 @@ export class ShowAlkatreszComponent implements OnInit{
     this.autoTipusList$ = this.service.getAutoTipusList();
   }
 
-  ngAfterViewInit(): void {
-    this.filteredAlkatreszek$ = this.searchBar.searchTerm.pipe(
+  // From ngAfterViewInit, old filtering method
+  /*this.filteredAlkatreszek$ = this.searchBar.searchTerm.pipe(
       startWith(''),
       switchMap(term => {
-        if (!term) {
+        if (!term && (!this.categoryFilter || this.categoryFilter.length === 0)) {
           return this.alkatreszList$;
         } else {
           return this.alkatreszList$.pipe(
             map(alkatreszek =>
               alkatreszek.filter(alkatresz =>
                 alkatresz.nev.toLowerCase().includes(term.toLowerCase()) ||
-                this.categoryFilter.some(category =>
-                  alkatresz.kategoriak.toLowerCase().includes(category.toLowerCase())
+                (this.categoryFilter && this.categoryFilter.length > 0 &&
+                  this.categoryFilter.some(category =>
+                    alkatresz.kategoriak.toLowerCase().includes(category.toLowerCase())
+                  )
                 )
               )
             )
           );
         }
       })
-    );
+    );*/
+
+  ngAfterViewInit(): void {
+    this.combineFilters();
   }
 
+  combineFilters() {
+    this.filteredAlkatreszek$ = combineLatest([
+      this.searchBar.searchTerm.pipe(startWith('')),
+      this.categoryFilter.pipe(startWith([]))
+    ]).pipe(
+      switchMap(([searchTerm, categoryFilter]) => {
+        if (!searchTerm && categoryFilter.length === 0) {
+          return this.alkatreszList$;
+        } else {
+          return this.alkatreszList$.pipe(
+            map(alkatreszek =>
+              alkatreszek.filter(alkatresz =>
+                alkatresz.nev && alkatresz.nev.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                (categoryFilter.length === 0 || categoryFilter.every((category: string) =>
+                 alkatresz.kategoriak && alkatresz.kategoriak.toLowerCase().includes(category.toLowerCase())
+                ))
+              )
+            )
+          );
+        }
+      })
+    );
+  }  
+  
   modalAdd(){ 
     this.alkatresz = {
       id:0,
@@ -134,17 +166,33 @@ export class ShowAlkatreszComponent implements OnInit{
 
   filterByCategory() {
     if (this.kategoriak.length > 0) {
-      this.categoryFilter.push(...this.kategoriak);
-      this.kategoriak = '';
+      const kategoriakFormatted = this.kategoriak.map((value: string) => value.trim().replace(/\s+/g, ' '));
+      const currentFilter = this.categoryFilter.getValue();
+      const newValues = kategoriakFormatted.filter((value: string) => !currentFilter.includes(value));
+      this.categoryFilter.next([...currentFilter, ...newValues]);
+      this.kategoriak = [];
+      this.isFilterActive = true;
     }
     if (this.autoTipusok.length > 0) {
-      this.categoryFilter.push(...this.autoTipusok);
-      this.kategoriak = '';
+      const autoTipusokFormatted = this.autoTipusok.map((value: string) => value.trim().replace(/\s+/g, ' '));
+      const currentFilter = this.categoryFilter.getValue();
+      const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
+      this.categoryFilter.next([...currentFilter, ...newValues]);
+      this.autoTipusok = [];
+      this.isFilterActive = true;
     }
+  
     var closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
-      if(closeModalBtn) {
-        closeModalBtn.click();
-      }
+    if (closeModalBtn) {
+      closeModalBtn.click();
+    }
+
+    //this.combineFilters();
+  }
+
+  deleteFilter() {
+    this.categoryFilter.next([]);
+    this.isFilterActive = false;
   }
 }
 
