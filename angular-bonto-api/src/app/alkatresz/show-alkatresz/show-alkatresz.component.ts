@@ -121,20 +121,19 @@ export class ShowAlkatreszComponent implements OnInit{
   filterByCategory() {
     let isKategoriak = this.kategoriak.length > 0;
     let isAutoTipusok = this.autoTipusok.length > 0;
+    const currentFilter = this.categoryFilter.getValue();
     if (isKategoriak) {
       const kategoriakFormatted = this.kategoriak.map((value: string) => value.trim().replace(/\s+/g, ' '));
-      const currentFilter = this.categoryFilter.getValue();
       const newValues = kategoriakFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.searchService.setCategoryFilter([...currentFilter, ...newValues]);
+      this.searchService.setCategoriesFilter([...currentFilter, ...newValues]);
       this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"), newValues.join(";"));
       this.kategoriak = [];
       this.isFilterActive = true;
     }
     if (isAutoTipusok) {
       const autoTipusokFormatted = this.autoTipusok.map((value: string) => value.trim().replace(/\s+/g, ' '));
-      const currentFilter = this.categoryFilter.getValue();
       const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.searchService.setCategoryFilter([...currentFilter, ...newValues]);
+      this.searchService.setCategoriesFilter([...currentFilter, ...newValues]);
       this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"),
        isKategoriak ? ";" : "", newValues.join(";"));
       this.autoTipusok = [];
@@ -148,7 +147,7 @@ export class ShowAlkatreszComponent implements OnInit{
   }
 
   deleteFilter() {
-    this.searchService.setCategoryFilter([]);
+    this.searchService.setCategoriesFilter([]);
     this.kategoriakLabel = '';
     this.isFilterActive = false;
   }

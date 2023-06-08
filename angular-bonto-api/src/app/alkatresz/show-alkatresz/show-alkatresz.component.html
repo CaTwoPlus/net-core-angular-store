@@ -86,7 +86,7 @@
             <input type="text" class="form-control" id="kategoriakOutput" [ngModel]="kategoriakLabel" name="kategoriakOutput" readonly>
           </div>
           <div style="padding-top: 15px">
-            <button type="button" class="btn btn-primary" (click)="filterByCategory()">Szűrés</button>
+            <button type="button" class="btn btn-primary" *ngIf="isFilterActive === false" (click)="filterByCategory()">Szűrő hozzáadása</button>
             <button type="button" class="btn btn-primary" *ngIf="isFilterActive === true" (click)="deleteFilter()">Szűrő törlése</button>
           </div>
         </form>

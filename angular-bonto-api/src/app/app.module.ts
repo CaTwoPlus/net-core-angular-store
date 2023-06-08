@@ -16,6 +16,7 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { VisitorPageComponent } from './visitor-page/visitor-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -125,6 +126,7 @@ export function tokenGetter() {
     MatTableModule,
     FlexLayoutModule,
     TypeaheadModule,
+    ImgFallbackModule,
 
     JwtModule.forRoot({
       config: {

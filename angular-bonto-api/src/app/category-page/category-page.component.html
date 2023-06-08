@@ -1,1 +1,39 @@
-<p>category-page works!</p>
+<ng-container *ngIf="showCategoryPage$ | async">
+  <div>
+    <p>IT WORKS</p>
+  </div>
+  <div class="container text-center" *ngIf="(filteredAlkatreszek$ | async) as filteredAlkatreszek">
+      <div class="row mb-3" *ngFor="let row of calculateRows(filteredAlkatreszek); let i = index;">
+          <ng-container>
+              <div class="col" *ngFor="let item of getRowItems(filteredAlkatreszek, i)">
+                  <div id="imageCarouselCategoryPage" class="carousel slide" data-bs-ride="false">
+                      <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
+                        <button type="button" [attr.data-bs-target]="'#imageCarouselCategoryPage'" [attr.data-bs-slide-to]="i" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';');
+                        let i = index" [attr.aria-label]="'Slide ' + (i + 1)"></button>
+                      </div>
+                      <div class="carousel-inner">
+                          <div class="carousel-item active" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
+                            <ng-container *ngIf="img.trim() !== ''">
+                              <img class="d-block w-100" [src]="'https://localhost:7094/images/' + img" style="max-height: 100vh; max-width: 100%;"
+                              src-fallback="https://localhost:7094/images/placeholder.png">
+                              <div class="carousel-caption d-none d-md-block">
+                                  <h5>{{item.nev}}</h5>
+                                  <p>{{item.ar}}</p>
+                              </div>
+                            </ng-container>
+                          </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#imageCarouselCategoryPage" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#imageCarouselCategoryPage" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+          </ng-container>
+      </div>
+  </div>
+</ng-container>

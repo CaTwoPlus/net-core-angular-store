@@ -16,17 +16,20 @@ export class VisitorPageComponent implements OnInit{
   kategoriaList$!:Observable<any[]>;
   alkatreszList$!:Observable<any[]>;
   filteredAlkatreszek$!:Observable<any[]>;
-  showCategoryPage: boolean = false;
+  showCategoryPage$!:Observable<any>;
 
-  constructor(private service: BontoApiService, private categoryPageService: CategoryPageService) {}
+  constructor(private service: BontoApiService, public categoryPageService: CategoryPageService) {}
 
   ngOnInit(): void {
     this.kategoriaList$ = this.service.getKategoriaList();
     this.alkatreszList$ = this.service.getAlkatreszList();
+    this.showCategoryPage$ = this.categoryPageService.showCategoryPage$;
   }
 
   setCategoryPage(category: string) {
-    this.categoryPageService.setCategory(category);
-    this.showCategoryPage = true;
+    if (category !== this.categoryPageService.getCategory()) {
+      this.categoryPageService.setCategory(category);
+      this.categoryPageService.setShowCategoryPage(true);
+    }
   }
 }

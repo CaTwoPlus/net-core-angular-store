@@ -33,8 +33,8 @@
   
 <!-- Body -->
 <body>
-  <img *ngIf="showCategoryPage === false" src="assets\20170822_180636.jpg">
-  <app-category-page *ngIf="showCategoryPage"></app-category-page>
+  <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
+    <app-category-page *ngIf="showCategoryPage$ | async"></app-category-page>
 </body>
 
 <!--Footer-->
