@@ -1,0 +1,11 @@
+  .carousel-item {
+    height: 400px !important;
+    width: 100% !important;
+    margin-bottom: var(--bs-gutter) !important;
+  }
+  
+  .carousel-item img {
+    object-fit: cover !important;
+    height: 100% !important;
+    width: 100% !important;
+  }

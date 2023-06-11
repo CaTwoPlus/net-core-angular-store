@@ -17,6 +17,7 @@ import { VisitorPageComponent } from './visitor-page/visitor-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { LazyLoadImageModule } from 'ng-lazyload-image';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -64,6 +65,7 @@ import { MatTableModule } from '@angular/material/table';
 import { CategoryPageComponent } from './category-page/category-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { SearchService } from './search.service';
+import { CarouselComponent } from './category-page/carousel/carousel.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -81,6 +83,7 @@ export function tokenGetter() {
     VisitorPageComponent,
     CategoryPageComponent,
     ProductPageComponent,
+    CarouselComponent,
   ],
   imports: [
     BrowserModule,
@@ -127,6 +130,7 @@ export function tokenGetter() {
     FlexLayoutModule,
     TypeaheadModule,
     ImgFallbackModule,
+    LazyLoadImageModule,
 
     JwtModule.forRoot({
       config: {

@@ -95,22 +95,8 @@ export class CategoryPageComponent implements OnInit{
     this.isFilterActive = false;
   }
 
-  calculateRows(items: any[]): any[][] {
-    const maxColumns = 6;
-    const numRows = Math.ceil(items.length / maxColumns);
-    const rows: any[][] = [];
-  
-    for (let i = 0; i < numRows; i++) {
-      rows.push(items.slice(i * maxColumns, (i + 1) * maxColumns));
-    }
-  
-    return rows;
-  }
-  
-  getRowItems(items: any[], rowIndex: number): any[] {
-    const maxColumns = 6;
-    const rowItems = items.slice(rowIndex * maxColumns, (rowIndex + 1) * maxColumns);
-    return rowItems;
+  trackByItemId(index: number, item: any): string {
+    return item.id; // Replace 'id' with the unique identifier property of your item
   }
 
   handleImageError(event: Event) {
