@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, map, of, startWith, takeUntil, tap } from 'rxjs';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { BontoApiService } from "src/app/bonto-api.service";
-import { SearchService } from 'src/app/search.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
 import { CategoryPageService } from '../category-page.service';
 
@@ -11,15 +10,13 @@ import { CategoryPageService } from '../category-page.service';
   styleUrls: ['./category-page.component.css']
 })
 export class CategoryPageComponent implements OnInit {
+  @Input() alkatreszList$!: Observable<any[]>;
   @ViewChild('searchBar', { static: false }) searchBar!: SearchBarComponent;
 
-  constructor(private service: BontoApiService, private searchService: SearchService,
-    private categoryService: CategoryPageService) { }
+  constructor(private service: BontoApiService, private categoryService: CategoryPageService) { }
 
-  alkatreszList$!: Observable<any[]>;
   kategoriaList$!: Observable<any[]>;
   autoTipusList$!: Observable<any[]>;
-  filteredAlkatreszek$!: Observable<any[]>;
   showCategoryPage$!: Observable<any>;
 
   isFilterActive: boolean = false;
@@ -29,35 +26,11 @@ export class CategoryPageComponent implements OnInit {
   autoTipusok: string[] = [];
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  private unsubscribe$ = new Subject<void>();
 
   async ngOnInit() {
-    this.alkatreszList$ = this.service.getAlkatreszList();
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
-    this.filteredAlkatreszek$ = this.alkatreszList$;
     this.showCategoryPage$ = this.categoryService.showCategoryPage$;
-  }
-
-  ngAfterViewInit(): void {
-    combineLatest([
-      this.filteredAlkatreszek$,
-      this.categoryService.currentCategory$,
-      this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
-    ]).pipe(
-      tap(([filteredAlkatreszek$, category, searchTermValue]) => {
-        const kategoria = category.trim().replace(/\s+/g, ' ');
-        const filter = searchTermValue ? searchTermValue.trim() : '';
-        this.filteredAlkatreszek$ = this.service.searchAlkatreszByFilterAndCategories(filter, kategoria).pipe(
-          takeUntil(this.unsubscribe$)
-        );
-      })
-    ).subscribe();
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 
   filterByYear() {
@@ -78,19 +51,7 @@ export class CategoryPageComponent implements OnInit {
     }
   }
 
-  deleteFilter() {
-    this.searchService.setCategoriesFilter([]);
-    this.kategoriakLabel = '';
-    this.isFilterActive = false;
-  }
-
   trackByItemId(index: number, item: any): string {
     return item.id; // Replace 'id' with the unique identifier property of your item
-  }
-
-  handleImageError(event: Event) {
-    const imgElement = event.target as HTMLImageElement;
-    imgElement.src = 'https://localhost:7094/images/placeholder.png';
-    imgElement.removeEventListener('error', this.handleImageError);
   }
 }

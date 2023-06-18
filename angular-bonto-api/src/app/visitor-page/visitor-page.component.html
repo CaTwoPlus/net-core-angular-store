@@ -34,7 +34,7 @@
 <!-- Body -->
 <body>
   <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
-    <app-category-page *ngIf="showCategoryPage$ | async"></app-category-page>
+    <app-category-page *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" [alkatreszList$]="filteredAlkatreszek$"></app-category-page>
 </body>
 
 <!--Footer-->

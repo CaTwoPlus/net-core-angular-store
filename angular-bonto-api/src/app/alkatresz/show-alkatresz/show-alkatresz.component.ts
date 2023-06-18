@@ -50,7 +50,7 @@ export class ShowAlkatreszComponent implements OnInit{
       this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
       this.kategoriak
     ]).pipe(
-      tap(([filteredAlkatreszek$, searchTermValue, kategoriakValue]) => {
+      tap(([_, searchTermValue, kategoriakValue]) => {
         const filter = searchTermValue ? searchTermValue.trim() : '';
         const kategoriakString = kategoriakValue.join(';');
         this.filteredAlkatreszek$ = this.service.searchAlkatreszByFilterAndCategories(filter, kategoriakString).pipe(
