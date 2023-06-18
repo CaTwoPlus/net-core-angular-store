@@ -74,11 +74,11 @@
         <form id="filter-form">
           <div class="input group mb-3"> 
             <label for="kategoriak" class="form-label">Kategóriák</label>
-            <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriak" multiple>
+            <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriakInput" multiple>
                 <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
             </select>
             <label for="autoTipusok" class="form-label">Típusok</label>
-            <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusok" multiple>
+            <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusokInput" multiple>
                 <option *ngFor="let type of autoTipusList$|async" [value]="type.nev">{{type.nev}}</option>
             </select>
           </div>

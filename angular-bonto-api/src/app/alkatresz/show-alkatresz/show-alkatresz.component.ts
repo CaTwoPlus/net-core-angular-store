@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
-import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
+import { map, startWith, takeUntil, tap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
-import { SearchService } from 'src/app/search.service';
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
 
@@ -12,12 +11,11 @@ import { SearchBarComponent } from 'src/app/search/search.component';
   styleUrls: ['./show-alkatresz.component.css']
 })
 export class ShowAlkatreszComponent implements OnInit{
-  @ViewChild('searchBar') searchBar!: SearchBarComponent;
+  @ViewChild('searchBar', { static: false }) searchBar!: SearchBarComponent;
   @ViewChild('viewAlkatreszModal') viewAlkatreszModal!: ElementRef;
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
-  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
-    private searchService: SearchService) {}
+  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
 
   alkatreszList$!:Observable<any[]>;
   kategoriaList$!:Observable<any[]>;
@@ -25,17 +23,15 @@ export class ShowAlkatreszComponent implements OnInit{
   filteredAlkatreszek$!:Observable<any[]>;
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  kategoriak: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  private unsubscribe$ = new Subject<void>();
+  
   modalTitle: string = '';
-  kategoriak: string[] = [];
+  kategoriakInput: string[] = [];
   kategoriakLabel: string = '';
-  autoTipusok: string[] = [];
+  autoTipusokInput: string[] = [];
 
-  alkatreszService: any;
   alkatresz:any;
-  kategoria:any;
-  autoTipus:any;
-  imageFiles:any;
-  appPath:any;
 
   activateAddEditAlkatreszComponent:boolean = false;
   activateViewAlkatreszComponent:boolean = false;
@@ -45,10 +41,28 @@ export class ShowAlkatreszComponent implements OnInit{
     this.alkatreszList$ = this.service.getAlkatreszList();
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
+    this.filteredAlkatreszek$ = this.alkatreszList$;
   }
 
   ngAfterViewInit(): void {
-    this.filteredAlkatreszek$ = this.searchService.getFilteredAlkatreszek(this.alkatreszList$);
+    combineLatest([
+      this.filteredAlkatreszek$,
+      this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
+      this.kategoriak
+    ]).pipe(
+      tap(([filteredAlkatreszek$, searchTermValue, kategoriakValue]) => {
+        const filter = searchTermValue ? searchTermValue.trim() : '';
+        const kategoriakString = kategoriakValue.join(';');
+        this.filteredAlkatreszek$ = this.service.searchAlkatreszByFilterAndCategories(filter, kategoriakString).pipe(
+          takeUntil(this.unsubscribe$)
+        );
+      })
+    ).subscribe();
+  }
+  
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
   
   modalAdd(){ 
@@ -113,35 +127,42 @@ export class ShowAlkatreszComponent implements OnInit{
   }
 
   filterByCategory() {
-    let isKategoriak = this.kategoriak.length > 0;
-    let isAutoTipusok = this.autoTipusok.length > 0;
+    const isKategoriak = this.kategoriakInput.length > 0;
+    const isAutoTipusok = this.autoTipusokInput.length > 0;
     const currentFilter = this.categoryFilter.getValue();
+    const updatedKategoriak: string[] = [];
+  
     if (isKategoriak) {
-      const kategoriakFormatted = this.kategoriak.map((value: string) => value.trim().replace(/\s+/g, ' '));
+      const kategoriakFormatted = this.kategoriakInput.map((value: string) => value.trim().replace(/\s+/g, ' '));
       const newValues = kategoriakFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.searchService.setCategoriesFilter([...currentFilter, ...newValues]);
-      this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"), newValues.join(";"));
-      this.kategoriak = [];
-      this.isFilterActive = true;
-    }
-    if (isAutoTipusok) {
-      const autoTipusokFormatted = this.autoTipusok.map((value: string) => value.trim().replace(/\s+/g, ' '));
-      const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.searchService.setCategoriesFilter([...currentFilter, ...newValues]);
-      this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"),
-       isKategoriak ? ";" : "", newValues.join(";"));
-      this.autoTipusok = [];
+      updatedKategoriak.push(...newValues);
+      this.kategoriakInput = [];
       this.isFilterActive = true;
     }
   
-    var closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
+    if (isAutoTipusok) {
+      const autoTipusokFormatted = this.autoTipusokInput.map((value: string) => value.trim().replace(/\s+/g, ' '));
+      const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
+      updatedKategoriak.push(...newValues);
+      this.autoTipusokInput = [];
+      this.isFilterActive = true;
+    }
+  
+    const kategoriakValue = this.kategoriak.getValue();
+    const concatenatedKategoriak = [...kategoriakValue, ...updatedKategoriak];
+    const uniqueKategoriak = Array.from(new Set(concatenatedKategoriak));
+  
+    this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"), updatedKategoriak.join(";"));
+    this.kategoriak.next(uniqueKategoriak);
+  
+    const closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
     if (closeModalBtn) {
       closeModalBtn.click();
     }
-  }
+  }  
 
   deleteFilter() {
-    this.searchService.setCategoriesFilter([]);
+    this.kategoriak.next([]);
     this.kategoriakLabel = '';
     this.isFilterActive = false;
   }

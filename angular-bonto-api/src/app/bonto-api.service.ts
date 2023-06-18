@@ -68,5 +68,33 @@ export class BontoApiService {
   deleteAutoTipus(id:number|string){
     return this.http.delete(this.bontoAPIUrl + `/AutoTipus/${id}`);
   }
+
+  // Search logic
   
+  searchAlkatreszByFilter(filter: string): Observable<any[]> {
+    const params = new HttpParams().set('searchTerm', filter);
+    return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params });
+  }
+
+  searchAlkatreszByCategories(categories: string): Observable<any[]> {
+    const params = new HttpParams().set('categoryFilter', categories);
+    return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', { params });
+  }
+
+  searchAlkatreszByFilterAndCategories(filter: string, categories: string): Observable<any[]> {
+    const filterParams = new HttpParams().set('searchTerm', filter);
+    const categoriesParams = new HttpParams().set('categoryFilter', categories);
+
+    const filteredAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params: filterParams });
+    const categorizedAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', { params: categoriesParams });
+
+    return combineLatest([filteredAlkatresz$, categorizedAlkatresz$]).pipe(
+      map(([filtered, categorized]) => this.filterByCategories(filtered, categorized))
+    );
+  }
+
+  private filterByCategories(filtered: any[], categorized: any[]): any[] {
+    // Perform filtering to keep only alkatreszek present in both lists
+    return filtered.filter((item) => categorized.some((categorizedItem) => categorizedItem.id === item.id));
+  }
 }

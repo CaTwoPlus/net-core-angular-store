@@ -1,40 +1,36 @@
-<div id="imageCarouselCategoryPage" class="carousel slide" data-bs-ride="false">
-    <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
-      <button
-        type="button"
-        [attr.data-bs-target]="'#imageCarouselCategoryPage'"
-        [attr.data-bs-slide-to]="i"
-        [class.active]="i === 0"
-        *ngFor="let img of item.kepek.split(';'); let i = index"
-        [attr.aria-label]="'Slide ' + (i + 1)">
-      </button>
-    </div>
-    <div class="carousel-inner">
-      <div class="carousel-item active" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
-        <ng-container>
-            <img *ngIf="img.trim() !== ''"
-            [defaultImage]="'https://localhost:7094/images/placeholder.png'"
-            [lazyLoad]="'https://localhost:7094/images/' + img"
-            style="height: 250px"/>
-            <img *ngIf="img.trim() === '' || !img"
-            src="https://localhost:7094/images/placeholder.png"
-            style="height: 250px"/>
-          <div class="carousel-caption d-none d-md-block">
-            <h5>{{ item.nev }}</h5>
-            <p>{{ item.ar }} Ft</p>
-          </div>
-        </ng-container>
-      </div>
-      <ng-container *ngIf="item.kepek.split(';').length > 1">
-        <button class="carousel-control-prev" type="button" data-bs-target="#imageCarouselCategoryPage" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#imageCarouselCategoryPage" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
+<div id="imageCarouselCategoryPage" class="carousel slide">
+  <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
+    <button
+      type="button"
+      [attr.data-bs-target]="'#imageCarouselCategoryPage'"
+      [attr.data-bs-slide-to]="i"
+      [class.active]="i === 0"
+      *ngFor="let img of item.kepek.split(';'); let i = index"
+      [attr.aria-label]="'Slide ' + (i + 1)">
+    </button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
+      <ng-container *ngIf="img.trim() !== ''">
+          <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
+          [lazyLoad]="'https://localhost:7094/images/' + img" style="height: 250px"/>
       </ng-container>
+      <ng-container *ngIf="img.trim() === '' || !img">
+        <img src="https://localhost:7094/images/placeholder.png" style="height: 250px"/>
+      </ng-container>
+      <div class="carousel-caption d-none d-md-block">
+        <h5>{{ item.nev }}</h5>
+        <p>{{ item.ar }} Ft</p>
+      </div>
     </div>
   </div>
+  <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-prev" type="button" data-bs-target="#imageCarouselCategoryPage" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Előző</span>
+  </button>
+  <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-next" type="button" data-bs-target="#imageCarouselCategoryPage" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Következő</span>
+  </button>
+</div>
   

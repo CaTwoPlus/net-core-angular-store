@@ -4,7 +4,7 @@
   </div>
   <div class="container-fluid">
     <div class="row mb-3">
-      <ng-container *ngFor="let item of filteredAlkatreszek; trackBy: trackByItemId">
+      <ng-container *ngFor="let item of filteredAlkatreszek$ | async; trackBy: trackByItemId">
         <div class="column">
           <app-carousel [item]="item"></app-carousel>
         </div>

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, map, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, map, of, startWith, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { SearchService } from 'src/app/search.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
@@ -10,27 +10,23 @@ import { CategoryPageService } from '../category-page.service';
   templateUrl: './category-page.component.html',
   styleUrls: ['./category-page.component.css']
 })
-export class CategoryPageComponent implements OnInit{
-  @ViewChild('searchBar') searchBar!: SearchBarComponent;
-  //showCategoryPage$ = this.categoryService.showCategoryPage$;
+export class CategoryPageComponent implements OnInit {
+  @ViewChild('searchBar', { static: false }) searchBar!: SearchBarComponent;
 
-  constructor(private service:BontoApiService, private searchService: SearchService, 
-    private categoryService: CategoryPageService) {}
+  constructor(private service: BontoApiService, private searchService: SearchService,
+    private categoryService: CategoryPageService) { }
 
-  alkatreszList$!:Observable<any[]>;
-  kategoriaList$!:Observable<any[]>;
-  autoTipusList$!:Observable<any[]>;
-  filteredAlkatreszek$!:Observable<any[]>;
-  showCategoryPage$!:Observable<any>;
-  isMenuClicked$!:Observable<any>;
+  alkatreszList$!: Observable<any[]>;
+  kategoriaList$!: Observable<any[]>;
+  autoTipusList$!: Observable<any[]>;
+  filteredAlkatreszek$!: Observable<any[]>;
+  showCategoryPage$!: Observable<any>;
 
-  isFilterActive:boolean = false;
+  isFilterActive: boolean = false;
 
   modalTitle: string = '';
   kategoriakLabel: string = '';
-  kategoria: string = '';
   autoTipusok: string[] = [];
-  rowItems: any[][] = [];
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   private unsubscribe$ = new Subject<void>();
@@ -39,31 +35,24 @@ export class CategoryPageComponent implements OnInit{
     this.alkatreszList$ = this.service.getAlkatreszList();
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
-
-    combineLatest([
-    this.categoryService.currentCategory$,
-    this.alkatreszList$
-    ]).pipe(
-      map(([category]) => {
-        const kategoria = category.trim().replace(/\s+/g, ' ');
-        this.searchService.setCategoryFilter(kategoria);
-        return this.searchService.getCategorizedAlkatreszek(this.alkatreszList$);
-      }),
-      tap((filteredAlkatreszek) => {
-        this.filteredAlkatreszek$ = filteredAlkatreszek;
-        console.log("data:", filteredAlkatreszek);
-      }),
-      takeUntil(this.unsubscribe$)
-    )
-    .subscribe((filteredAlkatreszek) => {
-      this.filteredAlkatreszek$ = filteredAlkatreszek;
-    });
-    
-    //this.kategoria.push(this.categoryService.getCategory());
-    //this.kategoria = this.kategoria.map((value: string) => value.trim().replace(/\s+/g, ' '));
-    //this.searchService.setCategoryFilter(this.kategoria);
-    //this.filteredAlkatreszek$ = this.searchService.getFilteredAlkatreszek(this.alkatreszList$);
+    this.filteredAlkatreszek$ = this.alkatreszList$;
     this.showCategoryPage$ = this.categoryService.showCategoryPage$;
+  }
+
+  ngAfterViewInit(): void {
+    combineLatest([
+      this.filteredAlkatreszek$,
+      this.categoryService.currentCategory$,
+      this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
+    ]).pipe(
+      tap(([filteredAlkatreszek$, category, searchTermValue]) => {
+        const kategoria = category.trim().replace(/\s+/g, ' ');
+        const filter = searchTermValue ? searchTermValue.trim() : '';
+        this.filteredAlkatreszek$ = this.service.searchAlkatreszByFilterAndCategories(filter, kategoria).pipe(
+          takeUntil(this.unsubscribe$)
+        );
+      })
+    ).subscribe();
   }
 
   ngOnDestroy() {
@@ -82,7 +71,7 @@ export class CategoryPageComponent implements OnInit{
       this.autoTipusok = [];
       this.isFilterActive = true;
     }*/
-  
+
     var closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
     if (closeModalBtn) {
       closeModalBtn.click();

@@ -22,7 +22,8 @@
     <div class="image-container" *ngIf="activateImageGallery === false">
         <ng-container *ngFor="let img of item.kepek.split(';')">
           <div *ngIf="img.trim() !== ''">
-            <img class="img-thumbnail" [src]="'https://localhost:7094/images/' + img" style="max-height: 100px;"
+            <img class="img-thumbnail" [lazyLoad]="'https://localhost:7094/images/' + img" style="max-height: 100px;"
+            [defaultImage]="'https://localhost:7094/images/placeholder.png'"
             (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="openCarousel()"
             >
           </div>
@@ -40,7 +41,7 @@
         <div class="carousel-inner">
             <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
                 <ng-container *ngIf="img.trim() !== ''">
-                    <img class="d-block w-100" [src]="'https://localhost:7094/images/' + img"
+                    <img class="d-block w-100" [lazyLoad]="'https://localhost:7094/images/' + img"
                     style="max-height: 100vh; max-width: 100%;">
                 </ng-container>
                 <ng-container *ngIf="img.trim() === '' || !img">

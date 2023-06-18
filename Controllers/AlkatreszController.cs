@@ -116,6 +116,36 @@ namespace BontoAPI.Controllers
             return NoContent();
         }
 
+        [HttpGet("filtered-alkatreszek")]
+        public ActionResult<IEnumerable<Alkatresz>> GetFilteredAlkatreszek(string searchTerm)
+        {
+            // Perform the filtering logic based on the provided search term if it is not null or empty
+            var filteredAlkatreszek = string.IsNullOrEmpty(searchTerm)
+                ? _context.Alkatreszek.ToList()  // Return all alkatreszek if searchTerm is null or empty
+                : _context.Alkatreszek
+                    .Where(alkatresz => alkatresz.Nev.ToLower().Contains(searchTerm.ToLower()))
+                    .ToList();
+
+            return Ok(filteredAlkatreszek);
+        }
+
+        [HttpGet("categorized-alkatreszek")]
+        public ActionResult<IEnumerable<Alkatresz>> GetCategorizedAlkatreszek(string categoryFilter)
+        {
+            // Retrieve all alkatreszek from the database
+            var alkatreszek = _context.Alkatreszek.ToList();
+
+            // Perform the filtering logic based on the provided category filter
+            var filters = categoryFilter?.ToLower().Split(';').Select(c => c.Trim()).ToList();
+
+            var categorizedAlkatreszek = alkatreszek
+                .Where(alkatresz => filters == null || filters.All(filter =>
+                    alkatresz.Kategoriak?.ToLower().Split(';').Select(c => c.Trim()).Contains(filter) == true))
+                .ToList();
+
+            return Ok(categorizedAlkatreszek);
+        }
+
         private bool AlkatreszExists(int id)
         {
             return (_context.Alkatreszek?.Any(e => e.Id == id)).GetValueOrDefault();
