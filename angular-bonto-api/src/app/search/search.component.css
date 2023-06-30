@@ -3,4 +3,16 @@
     align-items: center;
     justify-content: center;
   }
+
+  @media (min-width: 960px) {
+    .form-control {
+      width: 30vw;
+    }
+  }
+
+  @media (max-width: 959px) {
+    .form-control {
+      width: 50vw;
+    }
+  }
   

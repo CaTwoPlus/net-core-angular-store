@@ -9,10 +9,9 @@ import { Observable } from 'rxjs';
     <div class="input-group">
       <input
        class="form-control" 
-       style="width: 460px;" 
        [(ngModel)]="searchTermValue" 
        (input)="onSearchInput(searchTermValue)"
-       [typeahead]="options" 
+       [typeahead]="options"
        [isAnimated]="true"
        [typeaheadMinLength]="1"
        [typeaheadScrollable]="true"
