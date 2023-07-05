@@ -76,14 +76,14 @@ export class BontoApiService {
     return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params });
   }
 
-  searchAlkatreszByCategories(categories: string): Observable<any[]> {
-    const params = new HttpParams().set('categoryFilter', categories);
+  searchAlkatreszByCategories(categories: string, order: string): Observable<any[]> {
+    const params = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
     return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', { params });
   }
 
-  searchAlkatreszByFilterAndCategories(filter: string, categories: string): Observable<any[]> {
-    const filterParams = new HttpParams().set('searchTerm', filter);
-    const categoriesParams = new HttpParams().set('categoryFilter', categories);
+  searchAlkatreszByFilterAndCategories(filter: string, categories: string, order: string): Observable<any[]> {
+    const filterParams = new HttpParams().set('searchTerm', filter).set('orderOption', order);
+    const categoriesParams = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
 
     const filteredAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params: filterParams });
     const categorizedAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', { params: categoriesParams });

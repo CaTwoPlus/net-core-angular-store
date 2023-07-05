@@ -21,7 +21,7 @@ footer {
   display: flex; 
   align-items: center;
   justify-content: center;
-  height: 25px;
+  height: 31px;
 }
 
 .navbar {
@@ -38,4 +38,22 @@ footer {
 h6 {
   font-size: smaller;
   margin: 0;
+}
+
+.row {
+  --bs-gutter-y: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+  margin-top: 10px;
+}
+
+.dropdown-menu {
+  --bs-dropdown-padding-x: 0.5rem;
+}
+
+@media screen and (max-width: 600px) {
+  .row {
+      justify-content: center;
+  }
 }

@@ -34,7 +34,68 @@
 <!-- Body -->
 <body>
   <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
-    <app-category-page *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" [alkatreszList$]="filteredAlkatreszek$"></app-category-page>
+  <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row mb-3">
+    <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
+      <button type="button" class="btn btn-secondary" style="margin-left: -20px;" [disabled]="orderButtonDisabled"
+      (click)="orderBy()">Rendezés</button>
+      <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
+      style="margin-left: -10px; z-index: 1;">
+        <span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isDescPriceChecked" id="dropdownFilterOrderOptionDescPrice"
+          (change)="onCheckboxChange('descPrice', $event)">
+          <label class="form-check-label" for="dropdownFilterOrderOptionDescPrice">
+            Ár (csökkenő)
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isAscPriceChecked" id="dropdownFilterOrderOptionAscPrice"
+          (change)="onCheckboxChange('ascPrice', $event)">
+          <label class="form-check-label" for="dropdownFilterOrderOptionAscPrice">
+            Ár (növekvő)
+          </label>
+        </div>  
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isDescNameChecked" id="dropdownFilterOrderOptionDescName"
+          (change)="onCheckboxChange('descName', $event)">
+          <label class="form-check-label" for="dropdownFilterOrderOptionDescName">
+            Név (csökkenő)
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="isAscNameChecked" id="dropdownFilterOrderOptionAscName"
+          (change)="onCheckboxChange('ascName', $event)">
+          <label class="form-check-label" for="dropdownFilterOrderOptionAscName">
+            Név (növekvő)
+          </label>
+        </div>
+        <hr class="dropdown-divider">
+        <button type="button" class="btn btn-primary" id="dropdownOrderDelete" [disabled]="orderDeleteBtnDisabled"
+        (click)="deleteOrder()">Rendezés visszaállítása</button>  
+      </div>
+      <button type="button" class="btn btn-secondary" style="margin-left: 10px;"
+      (click)="filterByYear()" id="filterButton" [disabled]="filterButtonDisabled">Szűrés</button>
+      <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
+      style="margin-left: -10px; z-index: 1;">
+        <span class="visually-hidden">Toggle Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <div class="form-check" *ngFor="let item of autoTipusList$ | async; let i = index">
+          <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
+          (change)="onCheckboxChange('', $event)">
+          <label class="form-check-label" [attr.for]="'dropdownFilterOrderOption' + i">
+            {{item.nev}}
+          </label>
+        </div>
+        <hr class="dropdown-divider">
+        <button type="button" class="btn btn-primary" style="margin-left: 20%;" id="dropdownFilterDelete" [disabled]="filterDeleteBtnDisabled"
+        (click)="deleteFilter()">Szűrő törlése</button>
+      </div>
+    </div>
+  </div>
+  <app-category-page *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" [alkatreszList$]="filteredAlkatreszek$"></app-category-page>
 </body>
 
 <!--Footer-->

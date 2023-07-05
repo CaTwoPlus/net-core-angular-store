@@ -27,6 +27,7 @@ export class ShowAlkatreszComponent implements OnInit{
   private unsubscribe$ = new Subject<void>();
   
   modalTitle: string = '';
+  filterOrder: string = '';
   kategoriakInput: string[] = [];
   kategoriakLabel: string = '';
   autoTipusokInput: string[] = [];
@@ -53,7 +54,7 @@ export class ShowAlkatreszComponent implements OnInit{
       tap(([_, searchTermValue, kategoriakValue]) => {
         const filter = searchTermValue ? searchTermValue.trim() : '';
         const kategoriakString = kategoriakValue.join(';');
-        this.filteredAlkatreszek$ = this.service.searchAlkatreszByFilterAndCategories(filter, kategoriakString).pipe(
+        this.filteredAlkatreszek$ = this.service.searchAlkatreszByFilterAndCategories(filter, kategoriakString, this.filterOrder).pipe(
           takeUntil(this.unsubscribe$)
         );
       })

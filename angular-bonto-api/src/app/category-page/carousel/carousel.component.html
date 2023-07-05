@@ -26,6 +26,7 @@
               <div class="carousel-caption d-none d-md-block">
                 <h5>{{ item.nev }}</h5>
                 <p>{{ item.ar }} Ft</p>
+                <p>{{ item.megjegyzes }}</p>
               </div>
             </div>
           </div>
@@ -70,9 +71,13 @@
           (click)="openCarousel('viewCarousel')"/>
       </ng-container>
       <ng-container *ngIf="img.trim() === '' || !img">
-        <img src="https://localhost:7094/images/placeholder.png" style="height: 250px"/>
+        <img src="https://localhost:7094/images/placeholder.png" style="height: 250px; opacity: 25%;"/>
+        <div class="carousel-caption d-none d-md-block" style="color: black;">
+          <h5>{{ item.nev }}</h5>
+          <p>{{ item.ar }} Ft</p>
+        </div>
       </ng-container>
-      <div class="carousel-caption d-none d-md-block">
+      <div class="carousel-caption d-none d-md-block" *ngIf="img.trim() !== '' || img">
         <h5>{{ item.nev }}</h5>
         <p>{{ item.ar }} Ft</p>
       </div>

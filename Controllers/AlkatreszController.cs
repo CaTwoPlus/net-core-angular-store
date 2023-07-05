@@ -117,7 +117,7 @@ namespace BontoAPI.Controllers
         }
 
         [HttpGet("filtered-alkatreszek")]
-        public ActionResult<IEnumerable<Alkatresz>> GetFilteredAlkatreszek(string searchTerm)
+        public ActionResult<IEnumerable<Alkatresz>> GetFilteredAlkatreszek(string searchTerm, string orderOption)
         {
             // Perform the filtering logic based on the provided search term if it is not null or empty
             var filteredAlkatreszek = string.IsNullOrEmpty(searchTerm)
@@ -126,11 +126,27 @@ namespace BontoAPI.Controllers
                     .Where(alkatresz => alkatresz.Nev.ToLower().Contains(searchTerm.ToLower()))
                     .ToList();
 
+            switch (orderOption)
+            {
+                case "ascPrice":
+                    filteredAlkatreszek = filteredAlkatreszek.OrderBy(alkatresz => alkatresz.Ar).ToList();
+                    break;
+                case "descPrice":
+                    filteredAlkatreszek = filteredAlkatreszek.OrderByDescending(alkatresz => alkatresz.Ar).ToList();
+                    break;
+                case "ascName":
+                    filteredAlkatreszek = filteredAlkatreszek.OrderBy(alkatresz => alkatresz.Nev).ToList();
+                    break;
+                case "descName":
+                    filteredAlkatreszek = filteredAlkatreszek.OrderByDescending(alkatresz => alkatresz.Nev).ToList();
+                    break;
+            }
+
             return Ok(filteredAlkatreszek);
         }
 
         [HttpGet("categorized-alkatreszek")]
-        public ActionResult<IEnumerable<Alkatresz>> GetCategorizedAlkatreszek(string categoryFilter)
+        public ActionResult<IEnumerable<Alkatresz>> GetCategorizedAlkatreszek(string categoryFilter, string orderOption)
         {
             // Retrieve all alkatreszek from the database
             var alkatreszek = _context.Alkatreszek.ToList();
@@ -142,6 +158,22 @@ namespace BontoAPI.Controllers
                 .Where(alkatresz => filters == null || filters.All(filter =>
                     alkatresz.Kategoriak?.ToLower().Split(';').Select(c => c.Trim()).Contains(filter) == true))
                 .ToList();
+
+            switch (orderOption)
+            {
+                case "ascPrice":
+                    categorizedAlkatreszek = categorizedAlkatreszek.OrderBy(alkatresz => alkatresz.Ar).ToList();
+                    break;
+                case "descPrice":
+                    categorizedAlkatreszek = categorizedAlkatreszek.OrderByDescending(alkatresz => alkatresz.Ar).ToList();
+                    break;
+                case "ascName":
+                    categorizedAlkatreszek = categorizedAlkatreszek.OrderBy(alkatresz => alkatresz.Nev).ToList();
+                    break;
+                case "descName":
+                    categorizedAlkatreszek = categorizedAlkatreszek.OrderByDescending(alkatresz => alkatresz.Nev).ToList();
+                    break;
+            }
 
             return Ok(categorizedAlkatreszek);
         }

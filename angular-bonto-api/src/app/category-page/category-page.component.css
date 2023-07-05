@@ -1,9 +1,9 @@
 .row {
-    --bs-gutter-x: -14.5rem;
-    --bs-gutter-y: 1.25rem;
+    --bs-gutter-y: 0.5rem;
     display: flex;
     flex-wrap: wrap;
     padding: 0 4px;
+    margin-top: 10px;
 }
 
 .column {
@@ -38,7 +38,10 @@
 @media screen and (max-width: 600px) {
     .column {
         flex: 100%;
-        max-width: 100%;
+        min-width: 300px;
+    }
+    .row {
+        justify-content: center;
     }
 }
       

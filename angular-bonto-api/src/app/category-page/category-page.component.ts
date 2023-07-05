@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
 import { CategoryPageService } from '../category-page.service';
@@ -23,7 +23,7 @@ export class CategoryPageComponent implements OnInit {
 
   modalTitle: string = '';
   kategoriakLabel: string = '';
-  autoTipusok: string[] = [];
+  autoTipusokInput: string[] = [];
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
 
@@ -33,25 +33,7 @@ export class CategoryPageComponent implements OnInit {
     this.showCategoryPage$ = this.categoryService.showCategoryPage$;
   }
 
-  filterByYear() {
-    let isAutoTipusok = this.autoTipusok.length > 0;
-    /*if (isAutoTipusok) {
-      const autoTipusokFormatted = this.autoTipusok.map((value: string) => value.trim().replace(/\s+/g, ' '));
-      const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
-      this.searchService.setCategoryFilter([...currentFilter, ...newValues]);
-      this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"),
-       isKategoriak ? ";" : "", newValues.join(";"));
-      this.autoTipusok = [];
-      this.isFilterActive = true;
-    }*/
-
-    var closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
-    if (closeModalBtn) {
-      closeModalBtn.click();
-    }
-  }
-
   trackByItemId(index: number, item: any): string {
-    return item.id; // Replace 'id' with the unique identifier property of your item
+    return item.id;
   }
 }
