@@ -71,8 +71,8 @@ export class BontoApiService {
 
   // Search logic
   
-  searchAlkatreszByFilter(filter: string): Observable<any[]> {
-    const params = new HttpParams().set('searchTerm', filter);
+  searchAlkatreszByFilter(filter: string, order: string): Observable<any[]> {
+    const params = new HttpParams().set('searchTerm', filter).set('orderOption', order);;
     return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params });
   }
 

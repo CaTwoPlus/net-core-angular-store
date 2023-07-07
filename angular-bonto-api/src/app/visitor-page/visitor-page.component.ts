@@ -33,6 +33,8 @@ export class VisitorPageComponent implements OnInit{
   isAscPriceChecked: boolean = false;
   isDescNameChecked: boolean = false;
   isAscNameChecked: boolean = false;
+  showInvalidSearchAlert: boolean = false;
+  isSearchResultEmpty: boolean = false;
   dropdownFilterOptionNum: number = 0;
   filterOrder: string = '';
   [key: string]: any;
@@ -55,13 +57,27 @@ export class VisitorPageComponent implements OnInit{
       this.filteredAlkatreszek$,
       this.categoryPageService.currentCategory$,
       this.categoryPageService.orderBy$,
-      this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
+      this.searchBar ? (this.searchBar.searchTerm.pipe(startWith(''))) : of(''),
     ]).pipe(
-      switchMap(([_, category, orderBy, searchTermValue]) => {
+      switchMap(([_, category, orderBy, searchTermValue ]) => {
         const kategoria = category.trim().replace(/\s+/g, ' ');
         const filter = searchTermValue ? searchTermValue.trim() : '';
         if (filter.length > 0) {
-          return this.service.searchAlkatreszByFilterAndCategories(filter, kategoria, orderBy).pipe(
+          return this.service.searchAlkatreszByFilter(filter, orderBy).pipe(
+            tap(results => {
+              this.isSearchResultEmpty = results.length === 0;
+              if (this.isSearchResultEmpty) {
+                this.searchBar.isSearchFilterApplied = false;
+                this.categoryPageService.setShowCategoryPage(false);
+                setTimeout(() => {
+                  const showSearchAlert = document.getElementById("search-failure-alert");
+                  if (showSearchAlert) {
+                    showSearchAlert.style.display = "none";
+                    this.isSearchResultEmpty = !this.isSearchResultEmpty;
+                  }
+                }, 4000);
+              }
+            }),
             takeUntil(this.unsubscribe$)
           );
         } else {
@@ -84,6 +100,7 @@ export class VisitorPageComponent implements OnInit{
     if (category !== this.categoryPageService.getCategory()) {
       this.categoryPageService.setCategory(category.trim());
       this.categoryPageService.setShowCategoryPage(true);
+      this.searchBar.resetSearch();
     }
   }
 
@@ -194,5 +211,18 @@ export class VisitorPageComponent implements OnInit{
         this[key] = false;
       }
     });
+  }
+
+  onSearchTermValid(value: boolean): void {
+    this.showInvalidSearchAlert = value;
+  
+    if (value) {
+      setTimeout(() => {
+        const showSearchAlert = document.getElementById("search-failure-alert-type-err");
+        if (showSearchAlert) {
+          showSearchAlert.style.display = "none";
+        }
+      }, 4000);
+    }
   }
 }

@@ -50,5 +50,9 @@ export class CategoryPageService {
     this.showCategoryPageSubject.next(showCategoryPage);
   }
 
+  getShowCategoryPage() {
+    return this.showCategoryPageSubject.value;
+  }
+
   constructor() { }
 }
