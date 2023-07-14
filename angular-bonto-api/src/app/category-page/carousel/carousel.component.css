@@ -15,6 +15,7 @@
     transition: all 0.3s ease-in-out;
     transform: scale(1.1);
     z-index: 1;
+    cursor: pointer;
   }
 
   .carousel-item.reactive:hover img {
@@ -57,6 +58,25 @@
   .modal-dialog .carousel-item img {
     width: 1024px !important;
     height: 768px !important;
+  }
+
+  .progress-container {
+    position: relative;
+  }
+  
+  .spinner-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+  }
+  
+  .spinner-container {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -600%);
   }
 
   @media (max-width: 767px) {

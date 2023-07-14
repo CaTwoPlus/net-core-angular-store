@@ -113,7 +113,7 @@ export class ShowAlkatreszComponent implements OnInit{
         }
         setTimeout(function() {
           if(showDeleteSuccess) {
-            showDeleteSuccess.style.display = "none"
+            showDeleteSuccess.style.display = "none";
           }
         }, 4000);
       })  

@@ -20,8 +20,17 @@
       </div>
       <div>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item *ngFor="let item of kategoriaList$ | async"
-           (click)="setCategoryPage(item.nev)">{{item.nev}}</button>
+          <button mat-menu-item (click)="setCategoryPage('Autóhifi')">Autóhifi</button>
+          <button mat-menu-item (click)="setCategoryPage('Biztonsági alkatrészek')">Biztonsági alkatrészek</button>
+          <button mat-menu-item (click)="setCategoryPage('Elektromos alkatrészek')">Elektromos alkatrészek</button>
+          <button mat-menu-item (click)="setCategoryPage('Fényszórók, lámpák ')">Fényszórók, lámpák</button>
+          <button mat-menu-item (click)="setCategoryPage('Futómű, kormánymű és fék alkatrészek')">Futómű, kormánymű és fék alkatrészek</button>
+          <button mat-menu-item (click)="setCategoryPage('Karosszéria elemek és alkatrészek')">Karosszéria elemek és alkatrészek</button>
+          <button mat-menu-item (click)="setCategoryPage('Klíma, fűtés')">Klíma, fűtés</button>
+          <button mat-menu-item (click)="setCategoryPage('Kuplung, sebességváltó és alkatrészei')">Kuplung, sebességváltó és alkatrészei</button>
+          <button mat-menu-item (click)="setCategoryPage('Motoralkatrészek')">Motoralkatrészek</button>
+          <button mat-menu-item (click)="setCategoryPage('Utastér, csomagtér, egyéb')">Utastér, csomagtér, egyéb</button>
+          <button mat-menu-item (click)="setCategoryPage('Üzemanyag ellátó rendszer')">Üzemanyag ellátó rendszer</button>
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
           <app-search-bar (isSearchTermInvalid)="onSearchTermValid($event)" [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
@@ -105,7 +114,7 @@
       </div>
     </div>
   </div>
-  <app-category-page *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" [alkatreszList$]="filteredAlkatreszek$"></app-category-page>
+  <app-category-page *ngIf="filteredAlkatreszek$" [alkatreszList$]="filteredAlkatreszek$"></app-category-page>
 </body>
 
 <!--Footer-->

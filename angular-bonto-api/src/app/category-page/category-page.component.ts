@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
@@ -13,7 +13,8 @@ export class CategoryPageComponent implements OnInit {
   @Input() alkatreszList$!: Observable<any[]>;
   @ViewChild('searchBar', { static: false }) searchBar!: SearchBarComponent;
 
-  constructor(private service: BontoApiService, private categoryService: CategoryPageService) { }
+  constructor(private service: BontoApiService, private categoryService: CategoryPageService, 
+    private cdr: ChangeDetectorRef ) { }
 
   kategoriaList$!: Observable<any[]>;
   autoTipusList$!: Observable<any[]>;
@@ -35,5 +36,9 @@ export class CategoryPageComponent implements OnInit {
 
   trackByItemId(index: number, item: any): string {
     return item.id;
+  }
+
+  triggerChangeDetection() {
+    this.cdr.detectChanges();
   }
 }

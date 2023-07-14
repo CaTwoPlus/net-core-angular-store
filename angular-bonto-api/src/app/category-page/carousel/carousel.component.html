@@ -1,21 +1,21 @@
-<div class="modal fade bg-transparent" id="viewCarousel" *ngIf="activateCarousel === true" tabindex="-1" aria-labelledby="viewCarouselLabel"
- data-bs-backdrop="static" #viewCarousel>  
+<div *ngIf="selectedItem" class="modal fade bg-transparent" [id]="'viewCarousel'" tabindex="-1" [attr.aria-labelledby]="'viewCarouselLabel'"
+data-bs-backdrop="static">  
   <div class="modal-dialog modal-dialog-scrollable modal-xl">
     <div class="modal-content">
       <div class="modal-body">
         <div id="imageCarouselModal" class="carousel slide">
-          <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
+          <div *ngIf="selectedItem.kepek.split(';').length > 1" class="carousel-indicators">
             <button
               type="button"
               [attr.data-bs-target]="'#imageCarouselModal'"
-              [attr.data-bs-slide-to]="i"
-              [class.active]="i === 0"
-              *ngFor="let img of item.kepek.split(';'); let i = index"
-              [attr.aria-label]="'Slide ' + (i + 1)">
+              [attr.data-bs-slide-to]="j"
+              [class.active]="j === 0"
+              *ngFor="let img of selectedItem.kepek.split(';'); let j = index"
+              [attr.aria-label]="'Slide ' + (j + 1)">
             </button>
           </div>
           <div class="carousel-inner">
-            <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
+            <div class="carousel-item" [class.active]="j === 0" *ngFor="let img of selectedItem.kepek.split(';'); let j = index">
               <ng-container *ngIf="img.trim() !== ''">
                   <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
                   [lazyLoad]="'https://localhost:7094/images/' + img"/>
@@ -24,23 +24,27 @@
                 <img src="https://localhost:7094/images/placeholder.png"/>
               </ng-container>
               <div class="carousel-caption d-none d-md-block">
-                <h5>{{ item.nev }}</h5>
-                <p>{{ item.ar }} Ft</p>
-                <p>{{ item.megjegyzes }}</p>
+                <h5>{{ selectedItem.nev }}</h5>
+                <p>{{ selectedItem.ar }} Ft</p>
+                <p>{{ selectedItem.megjegyzes }}</p>
               </div>
             </div>
           </div>
-          <button type="button" class="btn btn-secondary close-overlay position-absolute top-0 end-0" aria-label="Close" data-bs-dismiss="modal"
+          <button type="button" class="btn btn-secondary close-overlay position-absolute top-0 end-0" aria-label="Close"
           (click)="modalClose()">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
               <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
           </svg>
-        </button>
-          <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-prev" type="button" data-bs-target="#imageCarouselModal" data-bs-slide="prev">
+          </button>
+          <button *ngIf="selectedItem.kepek.split(';').length > 1" class="carousel-control-prev" type="button"
+            [attr.data-bs-target]="'#imageCarouselModal'" data-bs-slide="prev"
+            (click)="changeActiveIndex(activeIndexModal - 1, 'modal')">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Előző</span>
           </button>
-          <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-next" type="button" data-bs-target="#imageCarouselModal" data-bs-slide="next">
+          <button *ngIf="selectedItem.kepek.split(';').length > 1" class="carousel-control-next" type="button"
+            [attr.data-bs-target]="'#imageCarouselModal'" data-bs-slide="next"
+            (click)="changeActiveIndex(activeIndexModal + 1, 'modal')">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Következő</span>
           </button>
@@ -54,21 +58,31 @@
   <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
     <button
       type="button"
-      [attr.data-bs-target]="'#viewCarousel'"
+      [attr.data-bs-target]="'#imageCarouselCategoryPage'"
       [attr.data-bs-slide-to]="i"
-      [class.active]="i === 0"
+      [class.active]="i === activeIndexCarousel"
       *ngFor="let img of item.kepek.split(';'); let i = index"
       [attr.aria-label]="'Slide ' + (i + 1)"
-      (click)="openCarousel('viewCarousel')">
+      (click)="changeActiveIndex(i, 'carousel')">
     </button>
   </div>
   <div class="carousel-inner">
-    <div class="carousel-item reactive" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
+    <div class="carousel-item reactive" [class.active]="i === activeIndexCarousel" *ngFor="let img of item.kepek.split(';'); let i = index">
       <ng-container *ngIf="img.trim() !== ''">
-          <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
+        <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
           [lazyLoad]="'https://localhost:7094/images/' + img" style="height: 250px"
+          [debug]="true"
+          (onStateChange)="lazyLoadSpinner(i, $event)"
           (mouseenter)="onHover($event)" (mouseleave)="onHover($event)"
-          (click)="openCarousel('viewCarousel')"/>
+          (click)="selectItem(item)"/>
+          <div class="progress-container" [ngClass]="{ 'd-none': isItemLoaded(i) }">
+            <div class="spinner-overlay"></div>
+            <div class="spinner-container">
+              <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
       </ng-container>
       <ng-container *ngIf="img.trim() === '' || !img">
         <img src="https://localhost:7094/images/placeholder.png" style="height: 250px; opacity: 25%;"/>
@@ -84,4 +98,3 @@
     </div>
   </div>
 </div>
-  
