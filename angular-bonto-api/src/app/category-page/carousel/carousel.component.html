@@ -15,9 +15,10 @@ data-bs-backdrop="static">
             </button>
           </div>
           <div class="carousel-inner">
-            <div class="carousel-item" [class.active]="j === 0" *ngFor="let img of selectedItem.kepek.split(';'); let j = index">
+            <div class="carousel-item" [class.active]="j === 0" *ngFor="let img of selectedItem.kepek.split(';'); let j = index"
+            style="background-color: black;">
               <ng-container *ngIf="img.trim() !== ''">
-                  <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
+                  <img class="carousel-img" [defaultImage]="'https://localhost:7094/images/placeholder.png'"
                   [lazyLoad]="'https://localhost:7094/images/' + img"/>
               </ng-container>
               <ng-container *ngIf="img.trim() === '' || !img">
@@ -71,7 +72,6 @@ data-bs-backdrop="static">
       <ng-container *ngIf="img.trim() !== ''">
         <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
           [lazyLoad]="'https://localhost:7094/images/' + img" style="height: 250px"
-          [debug]="true"
           (onStateChange)="lazyLoadSpinner(i, $event)"
           (mouseenter)="onHover($event)" (mouseleave)="onHover($event)"
           (click)="selectItem(item)"/>

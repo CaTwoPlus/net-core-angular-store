@@ -18,6 +18,10 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
+import { CategoryPageComponent } from './category-page/category-page.component';
+import { ProductPageComponent } from './product-page/product-page.component';
+import { SearchService } from './search.service';
+import { CarouselComponent } from './category-page/carousel/carousel.component';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -62,10 +66,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { CategoryPageComponent } from './category-page/category-page.component';
-import { ProductPageComponent } from './product-page/product-page.component';
-import { SearchService } from './search.service';
-import { CarouselComponent } from './category-page/carousel/carousel.component';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");

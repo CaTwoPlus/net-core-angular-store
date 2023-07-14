@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild, } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
 import { Modal } from 'bootstrap'
 import { StateChange } from 'ng-lazyload-image';
+import Panzoom from '@panzoom/panzoom';
 
 @Component({
   selector: 'app-carousel',
@@ -11,14 +13,17 @@ import { StateChange } from 'ng-lazyload-image';
 export class CarouselComponent { 
   @Input() item: any;
   @Output() loadingSucceeded: EventEmitter<StateChange> = new EventEmitter<StateChange>();
-  
+  @ViewChild('viewCarousel') viewCarouselModal: any; 
+
+  constructor(private breakpointObserver: BreakpointObserver) { }
+
   bootstrapModal?: Modal;
   selectedItem: any;
+  viewer: any;
   activeIndexModal = 0;
   activeIndexCarousel = 0;  
   loadedCounts: number[] = [];
   targetModalId = 'viewCarousel';
-  @ViewChild('viewCarousel') viewCarouselModal: any; 
 
   openCarousel() {
     setTimeout(() => {
@@ -26,7 +31,27 @@ export class CarouselComponent {
       if (targetModal && !this.bootstrapModal) {
         this.bootstrapModal = new Modal(targetModal);
         this.bootstrapModal.show();
-      }
+        
+        const carouselImages = document.getElementsByClassName('carousel-img');
+        // Initialize panzoom for each image element
+        for (let i = 0; i < carouselImages.length; i++) {
+          const elem = carouselImages[i] as HTMLImageElement;
+          const panzoom = Panzoom(elem, {
+            maxScale: 5,
+            disableZoom: this.breakpointObserver.isMatched('(min-width: 1024px)'),
+            disablePan: this.breakpointObserver.isMatched('(min-width: 1024px)'),
+            cursor: this.breakpointObserver.isMatched('(min-width: 1024px)') ? 'default' : 'move'
+          });
+          panzoom.pan(10, 10);
+          panzoom.zoom(2, { animate: true });
+  
+          // Panning and pinch zooming are bound automatically (unless disablePan is true).
+          // There are several available methods for zooming
+          // that can be bound on button clicks or mousewheel.
+          if (elem.parentElement) {
+            elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
+          }
+        }}
     }, 100);
   }
 
