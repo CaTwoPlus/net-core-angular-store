@@ -117,6 +117,7 @@ namespace BontoAPI.Controllers
         }
 
         [HttpGet("filtered-alkatreszek")]
+        [ResponseCache(Duration = 28800)]
         public ActionResult<IEnumerable<Alkatresz>> GetFilteredAlkatreszek(string searchTerm, string orderOption)
         {
             // Perform the filtering logic based on the provided search term if it is not null or empty
@@ -146,6 +147,7 @@ namespace BontoAPI.Controllers
         }
 
         [HttpGet("categorized-alkatreszek")]
+        [ResponseCache(Duration = 28800)]
         public ActionResult<IEnumerable<Alkatresz>> GetCategorizedAlkatreszek(string categoryFilter, string orderOption)
         {
             // Retrieve all alkatreszek from the database

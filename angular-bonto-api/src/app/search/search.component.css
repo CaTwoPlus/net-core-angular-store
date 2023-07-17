@@ -4,7 +4,7 @@
     justify-content: center;
   }
 
-  @media (min-width: 960px) {
+  @media (min-width: 968px) {
     .form-control {
       width: 30vw;
     }

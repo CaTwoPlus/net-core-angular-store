@@ -115,15 +115,9 @@ export class CarouselComponent {
         this.loadingSucceeded.emit(event);
         break;
     }
-  /*
-  console.log('itemId: ', this.item.id);
-  console.log('loadedCounts:', this.loadedCounts);
-  console.log('totalImages:', this.item.kepek.split(';').length);
-  console.log('isItemLoaded:', this.isItemLoaded(index));*/
   }
   
   isItemLoaded(index: number): boolean {
-    console.log("isItemLoaded() called");
     return this.loadedCounts[index] === 0;
   } 
 }

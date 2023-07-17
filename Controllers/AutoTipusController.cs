@@ -23,6 +23,7 @@ namespace BontoAPI.Controllers
 
         // GET: api/AutoTipus
         [HttpGet]
+        [ResponseCache(Duration = 86400)]
         public async Task<ActionResult<IEnumerable<AutoTipus>>> GetAutoTipusok()
         {
           if (_context.AutoTipusok == null)

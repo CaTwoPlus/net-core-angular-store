@@ -79,6 +79,14 @@
     transform: translate(-50%, -600%);
   }
 
+  .carousel-caption h5{
+    text-shadow: 0px 0px 2px black;
+  }
+
+  .carousel-caption p{
+    text-shadow: 0px 0px 2px black;
+  }
+
   @media (max-width: 767px) {
     .carousel-caption {
       width: auto !important;

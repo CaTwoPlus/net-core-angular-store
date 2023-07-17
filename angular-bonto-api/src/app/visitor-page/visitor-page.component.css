@@ -18,10 +18,7 @@ img {
 footer {
   color: white;
   background-color: #3F51B5;
-  display: flex; 
-  align-items: center;
-  justify-content: center;
-  height: 31px;
+  padding: 0.5rem;
 }
 
 .navbar {
@@ -35,9 +32,20 @@ footer {
   align-items: center;
 }
 
-h6 {
-  font-size: smaller;
-  margin: 0;
+#rights-notice h6 {
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+}
+
+#kapcsolat {
+  display: flex;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+#kapcsolat h6 {
+  font-size: 0.9rem;
 }
 
 .row {
@@ -71,5 +79,14 @@ h6 {
 @media screen and (max-width: 600px) {
   .row {
       justify-content: center;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #rights-notice h6 {
+    font-size: 0.75rem;
+  }
+  #kapcsolat h6 {
+    font-size: 0.75rem;
   }
 }

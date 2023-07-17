@@ -1,16 +1,16 @@
 <form id="add-edit-alkatresz-form">
     <div class="mb-3">
-        <label for="nev" class="form-label">Név</label>
+        <label for="nevInput" class="form-label">Név</label>
         <input type="text" class="form-control" [class.is-invalid]="!nev" id="nevInput" [(ngModel)]="nev" name="nevInput">
         <label for="nevInput" *ngIf="!nev">Név megadása kötelező!</label>
     </div>
     <div class="input group mb-3"> 
-        <label for="kategoriak" class="form-label">Kategóriák</label>
+        <label for="kategoriakOutput" class="form-label">Kategóriák</label>
         <input type="text" class="form-control" id="kategoriakOutput" [value]="kategoriak" name="kategoriakOutput" readonly>
         <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriakInput" multiple>
             <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
         </select>
-        <label for="autoTipusok" class="form-label">Típusok</label>
+        <label for="autoTipusokInput" class="form-label">Típusok</label>
         <!--input type="text" readonly class="form-control" id="autoTipusokOutput" name="autoTipusokOutput" 
          *ngIf="alkatresz$ | async as item" value={{item.autoTipusok}}-->
         <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusokInput" multiple>
@@ -18,15 +18,15 @@
         </select>
     </div>
     <div class="mb-3">
-        <label for="ar" class="form-label">Ár</label>
+        <label for="arInput" class="form-label">Ár</label>
         <input type="number" class="form-control" id="arInput" [(ngModel)]="ar" name="arInput">
     </div>
     <div class="mb-3">
-        <label for="megjegyzes" class="form-label">Megjegyzés</label>
+        <label for="megjegyzesInput" class="form-label">Megjegyzés</label>
         <input class="form-control" id="megjegyzesInput" [(ngModel)]="megjegyzes" name="megjegyzesInput">
     </div>
     <div class="mb-3">
-        <label for="generacio" class="form-label">Generáció</label>
+        <label for="generacioInput" class="form-label">Generáció</label>
         <input class="form-control" id="generacioInput" [(ngModel)]="generacio" name="generacioInput">
     </div>
     <div class="input-group mb-3">

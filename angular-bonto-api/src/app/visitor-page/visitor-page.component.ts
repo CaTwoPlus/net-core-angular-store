@@ -1,8 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, filter, map, of, startWith, switchMap, take, takeUntil, tap } from 'rxjs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { BehaviorSubject, Observable, Subject, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { CategoryPageService } from '../category-page.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-visitor-page',
@@ -12,6 +13,7 @@ import { SearchBarComponent } from 'src/app/search/search.component';
 
 export class VisitorPageComponent implements OnInit{
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
+  @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;
 
   title = 'ford';
   kategoriaList$!:Observable<any[]>;
@@ -35,6 +37,7 @@ export class VisitorPageComponent implements OnInit{
   isAscNameChecked: boolean = false;
   showInvalidSearchAlert: boolean = false;
   isSearchResultEmpty: boolean = false;
+  showContactPage: boolean = false;
   dropdownFilterOptionNum: number = 0;
   filterOrder: string = '';
   [key: string]: any;
@@ -42,7 +45,8 @@ export class VisitorPageComponent implements OnInit{
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  constructor(private service: BontoApiService, public categoryPageService: CategoryPageService) {}
+  constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
+    private router: Router) {}
 
   ngOnInit(): void {
     this.kategoriaList$ = this.service.getKategoriaList();
@@ -81,6 +85,20 @@ export class VisitorPageComponent implements OnInit{
             takeUntil(this.unsubscribe$)
           );
         } else {
+          this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd && this.showContactPage) {
+              const urlTree = this.router.parseUrl(event.urlAfterRedirects);
+              const fragment = urlTree.fragment;
+              if (fragment === 'kapcsolat') {
+                setTimeout(() => {
+                  if (this.scrollTarget) {
+                    this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
+                    this.showContactPage = false;
+                  }
+                }, 100);
+              }
+            }
+          });
           return this.service.searchAlkatreszByCategories(kategoria, orderBy).pipe(
             takeUntil(this.unsubscribe$)
           )
@@ -97,10 +115,15 @@ export class VisitorPageComponent implements OnInit{
   }
 
   setCategoryPage(category: string) {
-    if (category !== this.categoryPageService.getCategory()) {
+    if (category !== this.categoryPageService.getCategory() && category !== '') {
       this.categoryPageService.setCategory(category.trim());
       this.categoryPageService.setShowCategoryPage(true);
       this.searchBar.resetSearch();
+    } else if (category === '') {
+      this.categoryPageService.setShowCategoryPage(false);
+      this.categoryPageService.setCategory('');
+      this.searchBar.resetSearch();
+      this.showContactPage = true;
     }
   }
 
@@ -223,6 +246,12 @@ export class VisitorPageComponent implements OnInit{
           showSearchAlert.style.display = "none";
         }
       }, 4000);
+    }
+  }
+
+  scrollToElement(): void {
+    if (this.scrollTarget) {
+      this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
 }

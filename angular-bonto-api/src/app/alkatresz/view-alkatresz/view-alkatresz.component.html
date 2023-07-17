@@ -1,22 +1,22 @@
 <form id="view-alkatresz-form" *ngIf="alkatresz$ | async as item">
     <div class="mb-3">
-        <label for="nev" class="form-label">Név</label>
+        <label for="nevInput" class="form-label">Név</label>
         <span class="input-group-text" id="nevInput" name="nevInput">{{item.nev}}</span>
     </div>
     <div class="input group mb-3"> 
-        <label for="kategoriak" class="form-label">Kategóriák</label>
+        <label for="kategoriakInput" class="form-label">Kategóriák</label>
         <span class="input-group-text" id="kategoriakInput" name="kategoriakInput">{{item.kategoriak}}</span>
     </div>
     <div class="mb-3">
-        <label for="ar" class="form-label">Ár</label>
+        <label for="arInput" class="form-label">Ár</label>
         <span class="input-group-text" id="arInput"  name="arInput">{{item.ar}}</span>
     </div>
     <div class="mb-3">
-        <label for="megjegyzes" class="form-label">Megjegyzés</label>
+        <label for="megjegyzesInput" class="form-label">Megjegyzés</label>
         <span class="input-group-text" id="megjegyzesInput" name="megjegyzesInput">{{item.megjegyzes}}</span>
     </div>
     <div class="mb-3">
-        <label for="generacio" class="form-label">Generáció</label>
+        <label for="generacioInput" class="form-label">Generáció</label>
         <span class="input-group-text" id="generacioInput" name="generacioInput">{{item.generacio}}</span>
     </div>
     <div class="image-container" *ngIf="activateImageGallery === false">

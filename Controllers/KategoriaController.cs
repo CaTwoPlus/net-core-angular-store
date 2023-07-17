@@ -23,6 +23,7 @@ namespace BontoAPI.Controllers
 
         // GET: api/Kategoria
         [HttpGet]
+        [ResponseCache(Duration = 86400)]
         public async Task<ActionResult<IEnumerable<Kategoria>>> GetKategoriak()
         {
           if (_context.Kategoriak == null)

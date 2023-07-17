@@ -11,26 +11,38 @@
             <mat-icon>menu</mat-icon>
           </button>
         </span>
-        <span fxHide.lt-md>
+        <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
           <button type="button" class="btn btn-primary" [matMenuTriggerFor]="menu"><b>Alkatrészek</b></button>
-          <button type="button" class="btn btn-primary"><b>Szolgáltatások</b></button>
-          <button type="button" class="btn btn-primary"><b>Vásárlási információk</b></button>
-          <button type="button" class="btn btn-primary"><b>Elérhetőség</b></button>
+          <a href="#szolgaltatasok"><button type="button" class="btn btn-primary"><b>Szolgáltatások</b></button></a>
+          <a href="#vasarlasi_infok"><button type="button" class="btn btn-primary"><b>Vásárlási információk</b></button></a>
+          <a href="#kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
+            (click)="setCategoryPage('')" #contactButton><b>Kapcsolat</b></button></a>
         </span>
       </div>
       <div>
         <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="setCategoryPage('Autóhifi')">Autóhifi</button>
-          <button mat-menu-item (click)="setCategoryPage('Biztonsági alkatrészek')">Biztonsági alkatrészek</button>
-          <button mat-menu-item (click)="setCategoryPage('Elektromos alkatrészek')">Elektromos alkatrészek</button>
-          <button mat-menu-item (click)="setCategoryPage('Fényszórók, lámpák ')">Fényszórók, lámpák</button>
-          <button mat-menu-item (click)="setCategoryPage('Futómű, kormánymű és fék alkatrészek')">Futómű, kormánymű és fék alkatrészek</button>
-          <button mat-menu-item (click)="setCategoryPage('Karosszéria elemek és alkatrészek')">Karosszéria elemek és alkatrészek</button>
-          <button mat-menu-item (click)="setCategoryPage('Klíma, fűtés')">Klíma, fűtés</button>
-          <button mat-menu-item (click)="setCategoryPage('Kuplung, sebességváltó és alkatrészei')">Kuplung, sebességváltó és alkatrészei</button>
-          <button mat-menu-item (click)="setCategoryPage('Motoralkatrészek')">Motoralkatrészek</button>
-          <button mat-menu-item (click)="setCategoryPage('Utastér, csomagtér, egyéb')">Utastér, csomagtér, egyéb</button>
-          <button mat-menu-item (click)="setCategoryPage('Üzemanyag ellátó rendszer')">Üzemanyag ellátó rendszer</button>
+          <a href="#alkatreszek/autohifi" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Autóhifi')">Autóhifi</button></a>
+          <a href="#alkatreszek/biztonsagi_alkatreszek" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Biztonsági alkatrészek')">Biztonsági alkatrészek</button></a>
+          <a href="#alkatreszek/elektromos_alkatreszek" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Elektromos alkatrészek')">Elektromos alkatrészek</button></a>
+          <a href="#alkatreszek/fenyszorok_lampak" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Fényszórók, lámpák ')">Fényszórók, lámpák</button></a>
+          <a href="#alkatreszek/futomu_kormanymu_fek_alkatreszek" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Futómű, kormánymű és fék alkatrészek')">Futómű, kormánymű és fék alkatrészek</button></a>
+          <a href="#alkatreszek/karosszeria_elemek" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Karosszéria elemek és alkatrészek')">Karosszéria elemek és alkatrészek</button></a>
+          <a href="#alkatreszek/klima_futes" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Klíma, fűtés')">Klíma, fűtés</button></a>
+          <a href="#alkatreszek/kuplung_sebessegvalto" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Kuplung, sebességváltó és alkatrészei')">Kuplung, sebességváltó és alkatrészei</button></a>
+          <a href="#alkatreszek/motoralkatreszek" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Motoralkatrészek')">Motoralkatrészek</button></a>
+          <a href="#alkatreszek/utaster_csomagter_egyeb" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Utastér, csomagtér, egyéb')">Utastér, csomagtér, egyéb</button></a>
+          <a href="#alkatreszek/uzemanyag_ellato_rendszer" style="text-decoration: none;">
+            <button mat-menu-item (click)="setCategoryPage('Üzemanyag ellátó rendszer')">Üzemanyag ellátó rendszer</button></a>
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
           <app-search-bar (isSearchTermInvalid)="onSearchTermValid($event)" [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
@@ -41,7 +53,7 @@
 </header>
   
 <!-- Body -->
-<body>
+<body data-bs-spy="scroll" data-bs-target="#page-sections" data-bs-offset="0" data-bs-smooth-scroll="true">
   <div *ngIf="showInvalidSearchAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert-type-err">
     A kereséshez írjon be minimum 3 karaktert!
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
@@ -120,6 +132,22 @@
 <!--Footer-->
 <footer>
   <nav class="footer">
-    <h6>Minden jog fenntartva - Ford Focus C-Max Bontó</h6>
+    <div id="rights-notice">
+      <h6>Minden jog fenntartva - Ford Focus C-Max Bontó</h6>
+    </div>
+    <div #scrollTarget id="kapcsolat">
+      <div style="display: flex; margin-right: 10px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
+          <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
+        </svg>
+      </div>
+      <h6>info@fordfocus-cmaxbonto.hu</h6>
+      <div style="display: flex; margin-left: 10px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
+        </svg>
+      </div>
+      <h6>+36702173200</h6>
+    </div>
   </nav>
 </footer>  

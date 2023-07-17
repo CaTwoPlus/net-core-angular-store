@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, combineLatest, map, switchMap } from 'rxjs';
 
@@ -9,16 +9,17 @@ import { Observable, combineLatest, map, switchMap } from 'rxjs';
 export class BontoApiService {
 
   readonly bontoAPIUrl = "https://localhost:7094/api";
+  readonly headers = new HttpHeaders().set('Cache-Control', 'must-revalidate');
 
   constructor(private http:HttpClient) { 
   }
 
   getAlkatresz(id:number|string):Observable<any>{
-    return this.http.get<any>(this.bontoAPIUrl + `/Alkatresz/${id}`)
+    return this.http.get<any>(this.bontoAPIUrl + `/Alkatresz/${id}`, {headers: this.headers})
   }
 
   getAlkatreszList():Observable<any[]>{
-    return this.http.get<any>(this.bontoAPIUrl + '/Alkatresz');
+    return this.http.get<any>(this.bontoAPIUrl + '/Alkatresz', {headers: this.headers});
   }
 
   addAlkatresz(data:any){
@@ -36,7 +37,7 @@ export class BontoApiService {
   // Kategoriak
 
   getKategoriaList():Observable<any[]>{
-    return this.http.get<any>(this.bontoAPIUrl + '/Kategoria');
+    return this.http.get<any>(this.bontoAPIUrl + '/Kategoria', {headers: this.headers});
   }
 
   addKategoria(data:any){
@@ -54,7 +55,7 @@ export class BontoApiService {
   // AutoTipus
 
   getAutoTipusList():Observable<any[]>{
-    return this.http.get<any>(this.bontoAPIUrl + '/AutoTipus');
+    return this.http.get<any>(this.bontoAPIUrl + '/AutoTipus', {headers: this.headers});
   }
 
   addAutoTipus(data:any){
@@ -72,21 +73,37 @@ export class BontoApiService {
   // Search logic
   
   searchAlkatreszByFilter(filter: string, order: string): Observable<any[]> {
-    const params = new HttpParams().set('searchTerm', filter).set('orderOption', order);;
-    return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params });
+    const filterParams = new HttpParams().set('searchTerm', filter).set('orderOption', order);
+    const filterRequest = {
+      headers: this.headers,
+      params: filterParams
+    };
+    return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', filterRequest);
   }
 
   searchAlkatreszByCategories(categories: string, order: string): Observable<any[]> {
-    const params = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
-    return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', { params });
+    const categoryParams = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
+    const categoriesRequest = {
+      headers: this.headers,
+      params: categoryParams
+    }
+    return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', categoriesRequest);
   }
 
   searchAlkatreszByFilterAndCategories(filter: string, categories: string, order: string): Observable<any[]> {
     const filterParams = new HttpParams().set('searchTerm', filter).set('orderOption', order);
+    const filterRequest = {
+      headers: this.headers,
+      params: filterParams
+    };
     const categoriesParams = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
+    const categoriesRequest = {
+      headers: this.headers,
+      params: categoriesParams
+    }
 
-    const filteredAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', { params: filterParams });
-    const categorizedAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', { params: categoriesParams });
+    const filteredAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/filtered-alkatreszek', filterRequest);
+    const categorizedAlkatresz$ = this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', categoriesRequest);
 
     return combineLatest([filteredAlkatresz$, categorizedAlkatresz$]).pipe(
       map(([filtered, categorized]) => this.filterByCategories(filtered, categorized))
