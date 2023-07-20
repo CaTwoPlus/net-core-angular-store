@@ -45,7 +45,8 @@
             <button mat-menu-item (click)="setCategoryPage('Üzemanyag ellátó rendszer')">Üzemanyag ellátó rendszer</button></a>
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
-          <app-search-bar (isSearchTermInvalid)="onSearchTermValid($event)" [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
+          <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
+          [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
         </ng-container>
       </div>
     </nav>
@@ -59,10 +60,10 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
     (click)="showInvalidSearchAlert = !showInvalidSearchAlert"></button>
   </div>
-  <div *ngIf="isSearchResultEmpty" class="alert alert-warning alert-dismissible fade show" role="alert" id="search-failure-alert">
+  <div *ngIf="isSearchResultEmptyAlert" class="alert alert-warning alert-dismissible fade show" role="alert" id="search-failure-alert">
     Nincs ilyen találat!
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-    (click)="isSearchResultEmpty = !isSearchResultEmpty"></button>
+    (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
   </div>
   <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row mb-3">

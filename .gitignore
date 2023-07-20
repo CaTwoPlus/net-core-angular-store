@@ -68,6 +68,7 @@ angular-bonto-api/dist/                 # Directory where the build output is ge
 angular-bonto-api/.tmp/                 # Directory used for temporary files during development
 angular-bonto-api/src/assets/uploads/   # Directory for uploaded files or user-generated content
 angular-bonto-api/.angular/cache/       # Directory for Angular CLI cache files
+angular-bonto-api/.angular/cache/15.2.9 
 angular-bonto-api/.env/                 # Directory for environment-specific configuration files
 angular-bonto-api/coverage/             # Directory for code coverage reports
 angular-bonto-api/logs/                 # Directory for application logs

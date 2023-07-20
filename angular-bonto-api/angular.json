@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/angular-bonto-api",
+            "outputPath": "dist/angular-bonto-api/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -101,6 +101,59 @@
               "src/assets/bootstrap.bundle.min.js"
             ]
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/angular-bonto-api/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "angular-bonto-api:build:development",
+              "serverTarget": "angular-bonto-api:server:development"
+            },
+            "production": {
+              "browserTarget": "angular-bonto-api:build:production",
+              "serverTarget": "angular-bonto-api:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-bonto-api:build:production",
+              "serverTarget": "angular-bonto-api:server:production"
+            },
+            "development": {
+              "browserTarget": "angular-bonto-api:build:development",
+              "serverTarget": "angular-bonto-api:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }

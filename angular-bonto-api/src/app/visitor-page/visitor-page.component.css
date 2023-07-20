@@ -64,7 +64,7 @@ footer {
   display:flex;
   position: absolute;
   left: 50%;
-  transform: translate(-50%, 0%);
+  transform: translate(-50%, -15%);
   z-index: 2;
 }
 
@@ -88,5 +88,8 @@ footer {
   }
   #kapcsolat h6 {
     font-size: 0.75rem;
+  }
+  #search-failure-alert {
+    width: 50vw;
   }
 }

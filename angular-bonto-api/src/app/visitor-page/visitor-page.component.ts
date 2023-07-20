@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { CategoryPageService } from '../category-page.service';
@@ -36,7 +36,7 @@ export class VisitorPageComponent implements OnInit{
   isDescNameChecked: boolean = false;
   isAscNameChecked: boolean = false;
   showInvalidSearchAlert: boolean = false;
-  isSearchResultEmpty: boolean = false;
+  isSearchResultEmptyAlert: boolean = false;
   showContactPage: boolean = false;
   dropdownFilterOptionNum: number = 0;
   filterOrder: string = '';
@@ -46,7 +46,7 @@ export class VisitorPageComponent implements OnInit{
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
-    private router: Router) {}
+    private router: Router, private changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.kategoriaList$ = this.service.getKategoriaList();
@@ -68,11 +68,11 @@ export class VisitorPageComponent implements OnInit{
         const filter = searchTermValue ? searchTermValue.trim() : '';
         if (filter.length > 0) {
           return this.service.searchAlkatreszByFilter(filter, orderBy).pipe(
-            tap(results => {
+            /*tap(results => {
               this.isSearchResultEmpty = results.length === 0;
               if (this.isSearchResultEmpty) {
                 this.searchBar.isSearchFilterApplied = false;
-                this.categoryPageService.setShowCategoryPage(false);
+                //this.categoryPageService.setShowCategoryPage(false);
                 setTimeout(() => {
                   const showSearchAlert = document.getElementById("search-failure-alert");
                   if (showSearchAlert) {
@@ -81,7 +81,7 @@ export class VisitorPageComponent implements OnInit{
                   }
                 }, 4000);
               }
-            }),
+            }),*/
             takeUntil(this.unsubscribe$)
           );
         } else {
@@ -236,16 +236,31 @@ export class VisitorPageComponent implements OnInit{
     });
   }
 
-  onSearchTermValid(value: boolean): void {
+  onSearchTermInvalid(value: boolean): void {
+    this.changeDetectorRef.detectChanges();
+    this.isSearchResultEmptyAlert = value;
+    if (value) {
+      setTimeout(() => {
+        const showSearchAlert = document.getElementById("search-failure-alert");
+        if (showSearchAlert) {
+          //showSearchAlert.style.display = "none";
+          //this.isSearchResultEmptyAlert = !value;
+        }
+      }, 2000);
+    }
+  }
+
+  onSearchTermShort(value: boolean): void {
+    this.changeDetectorRef.detectChanges();
     this.showInvalidSearchAlert = value;
-  
     if (value) {
       setTimeout(() => {
         const showSearchAlert = document.getElementById("search-failure-alert-type-err");
         if (showSearchAlert) {
           showSearchAlert.style.display = "none";
         }
-      }, 4000);
+      }, 2000);
+      this.showInvalidSearchAlert = !value;
     }
   }
 
