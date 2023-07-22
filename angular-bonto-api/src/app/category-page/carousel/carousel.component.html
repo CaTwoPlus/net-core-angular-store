@@ -89,11 +89,13 @@ data-bs-backdrop="static">
         <div class="carousel-caption d-none d-md-block" style="color: black;">
           <h5>{{ item.nev }}</h5>
           <p>{{ item.ar }} Ft</p>
+          <p>{{ item.megjegyzes }}</p>
         </div>
       </ng-container>
       <div class="carousel-caption d-none d-md-block" *ngIf="img.trim() !== '' || img">
         <h5>{{ item.nev }}</h5>
         <p>{{ item.ar }} Ft</p>
+        <p>{{ item.megjegyzes }}</p>
       </div>
     </div>
   </div>

@@ -1,8 +1,11 @@
 body { 
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
   width: 100%; 
-  height: auto;
   font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
 
@@ -68,6 +71,24 @@ footer {
   z-index: 2;
 }
 
+#filter-failure-alert {
+  display:flex;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 7vh);
+  z-index: 2;
+}
+
+#filter-failure-alert .btn-close{
+  top: -10px;
+  right: -10px;
+  z-index: 1;
+}
+
+#filter-failure-alert h1 {
+  margin-left: 25px;
+}
+
 #search-failure-alert-type-err {
   display:flex;
   position: absolute;
@@ -90,6 +111,9 @@ footer {
     font-size: 0.75rem;
   }
   #search-failure-alert {
-    width: 50vw;
+    width: 82vw;
+  }
+  #filter-failure-alert {
+    width: 82vw;
   }
 }

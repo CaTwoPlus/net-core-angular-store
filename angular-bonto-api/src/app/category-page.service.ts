@@ -12,6 +12,8 @@ export class CategoryPageService {
   private orderBySubject = new BehaviorSubject<string>('');
   orderBy$ = this.orderBySubject.asObservable();
   category: string = '';
+  previousCategoryFilter: string = '';
+  isCategoryFilterApplied: boolean = false;
 
   getCategory(): string {
     return this.category;
@@ -22,20 +24,28 @@ export class CategoryPageService {
     this.currentCategorySubject.next(categoryIn);
   }
 
-  setCategories(categoryIn: BehaviorSubject<string[]>) {
-    categoryIn.subscribe((categories: string[]) => {
-        const currentValue = this.currentCategorySubject.getValue().trim();
-        categories.map(category => {
-          if(!currentValue.includes(category)) {
-            const updatedValue = [currentValue, ...categories];
-            this.currentCategorySubject.next(updatedValue.join(";"));
-          }
-        })
-    });
+  setCategoryFilter(categoryIn: string) {
+    if (this.isCategoryFilterApplied) {
+      const currentValue = this.currentCategorySubject.getValue().trim();
+      if(!currentValue.includes(categoryIn)) {
+        const updatedValue = [currentValue.replace(this.previousCategoryFilter, categoryIn)];
+        this.currentCategorySubject.next(updatedValue.join(";"));
+        this.previousCategoryFilter = categoryIn;
+      }
+    } else {
+      const currentValue = this.currentCategorySubject.getValue().trim();
+      if(!currentValue.includes(categoryIn)) {
+        const updatedValue = [currentValue, categoryIn];
+        this.currentCategorySubject.next(updatedValue.join(";"));
+        this.previousCategoryFilter = categoryIn;
+        this.isCategoryFilterApplied = true;
+      }
+    }
   }
 
   resetCategories() {
     this.currentCategorySubject.next(this.category);
+    this.isCategoryFilterApplied = false;
   }
 
   resetOrderFilter() {

@@ -37,6 +37,7 @@ export class VisitorPageComponent implements OnInit{
   isAscNameChecked: boolean = false;
   showInvalidSearchAlert: boolean = false;
   isSearchResultEmptyAlert: boolean = false;
+  isFilterResultEmptyAlert: boolean = false;
   showContactPage: boolean = false;
   dropdownFilterOptionNum: number = 0;
   filterOrder: string = '';
@@ -67,21 +68,8 @@ export class VisitorPageComponent implements OnInit{
         const kategoria = category.trim().replace(/\s+/g, ' ');
         const filter = searchTermValue ? searchTermValue.trim() : '';
         if (filter.length > 0) {
+          this.isFilterResultEmptyAlert = false;
           return this.service.searchAlkatreszByFilter(filter, orderBy).pipe(
-            /*tap(results => {
-              this.isSearchResultEmpty = results.length === 0;
-              if (this.isSearchResultEmpty) {
-                this.searchBar.isSearchFilterApplied = false;
-                //this.categoryPageService.setShowCategoryPage(false);
-                setTimeout(() => {
-                  const showSearchAlert = document.getElementById("search-failure-alert");
-                  if (showSearchAlert) {
-                    showSearchAlert.style.display = "none";
-                    this.isSearchResultEmpty = !this.isSearchResultEmpty;
-                  }
-                }, 4000);
-              }
-            }),*/
             takeUntil(this.unsubscribe$)
           );
         } else {
@@ -94,13 +82,22 @@ export class VisitorPageComponent implements OnInit{
                   if (this.scrollTarget) {
                     this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
                     this.showContactPage = false;
+                    this.isFilterResultEmptyAlert = false;
+                    this.deleteFilter();
+                    this.deleteOrder();
                   }
                 }, 100);
               }
-            }
-          });
+            }});
           return this.service.searchAlkatreszByCategories(kategoria, orderBy).pipe(
-            takeUntil(this.unsubscribe$)
+            takeUntil(this.unsubscribe$), 
+            tap(results => {
+              if (results.length === 0 && this.isFilterActive) {
+                this.onAppliedFilterInvalid(true);
+              } else {
+                this.isFilterResultEmptyAlert = false;
+              }
+            })
           )
         }
       })
@@ -128,23 +125,27 @@ export class VisitorPageComponent implements OnInit{
   }
 
   filterByYear() {
-    const autoTipusokInputKeys = Object.keys(this.autoTipusokInput);
-    const autoTipusokFormatted = autoTipusokInputKeys.map((key: string) => {
-      return key.trim().replace(/\s+/g, ' ');
-    });
-
-    let isAutoTipusok = autoTipusokFormatted.length > 0;
-    const currentFilter = this.categoryFilter.getValue();
-    const updateFilter: string[] = [];
-    if (isAutoTipusok) {
-      const newValues = autoTipusokFormatted.filter((value: string) => !currentFilter.includes(value));
-      updateFilter.push(...newValues);
-      this.isFilterActive = true;
-      this.categoryFilter.next(updateFilter);
-      this.categoryPageService.setCategories(this.categoryFilter);
-    } else {
-      updateFilter[0] = this.categoryPageService.getCategory();
-      this.categoryFilter.next(updateFilter);
+    // Find the selected key
+    const selectedKey = Object.keys(this.autoTipusokInput).find(key => this.autoTipusokInput[key]);
+    // Clear all keys in autoTipusokInput
+    Object.keys(this.autoTipusokInput).forEach(key => this.autoTipusokInput[key] = false);
+    if (selectedKey) {
+      // Set the selected checkbox to true
+      this.autoTipusokInput[selectedKey] = true;
+      const autoTipusokFormatted = selectedKey.trim().replace(/\s+/g, ' ');
+      const currentFilter = this.categoryFilter.getValue();
+      const updateFilter: string[] = [];
+      if (autoTipusokFormatted.length > 0 && autoTipusokFormatted !== currentFilter[0]) {
+        const newValues = [autoTipusokFormatted].filter(value => !currentFilter.includes(value));
+        updateFilter.push(...newValues);
+        this.isFilterActive = true;
+        this.categoryFilter.next(updateFilter);
+        this.categoryPageService.setCategoryFilter(newValues[0]);
+      }
+      else {
+        updateFilter[0] = this.categoryPageService.getCategory();
+        this.categoryFilter.next(updateFilter);
+      }
     }
     this.filterDeleteBtnDisabled = false;
   }
@@ -197,11 +198,24 @@ export class VisitorPageComponent implements OnInit{
     }
   }
 
-  onCheckboxChange(filterOption: string, event: Event) {
+  onCheckboxChange(filterOption = '', event: Event, nev = '') {
     const checkbox = event.target as HTMLInputElement;
+    // Get the selected autoTipusokInput key
+    const selectedKey = nev;
     if (checkbox.id.includes("dropdownFilterOption")) {
       this.filterButtonDisabled = !checkbox.checked;
-    } else if (checkbox.id.includes("dropdownFilterOrderOption")) {
+      if (checkbox.checked) {
+        // Uncheck all checkboxes except the selected one
+        Object.keys(this.autoTipusokInput).forEach((key) => {
+          if (key !== selectedKey) {
+            this.autoTipusokInput[key] = false;
+          }
+        });
+      } else {
+        // Clear the value of the unchecked checkbox
+        this.autoTipusokInput[selectedKey] = false;
+      }
+    } if (checkbox.id.includes("dropdownFilterOrderOption")) {
       this.orderButtonDisabled = !checkbox.checked;
       switch (filterOption) {
         case 'descPrice':
@@ -227,7 +241,7 @@ export class VisitorPageComponent implements OnInit{
       }
     }
   }
-  
+
   disableOtherCheckboxes(checkboxesToDisable: string[]) {
     Object.keys(this).forEach(key => {
       if (checkboxesToDisable.includes(key)) {
@@ -243,11 +257,16 @@ export class VisitorPageComponent implements OnInit{
       setTimeout(() => {
         const showSearchAlert = document.getElementById("search-failure-alert");
         if (showSearchAlert) {
-          //showSearchAlert.style.display = "none";
-          //this.isSearchResultEmptyAlert = !value;
+          showSearchAlert.style.display = "none";
+          this.isSearchResultEmptyAlert = !value;
         }
       }, 2000);
     }
+  }
+
+  onAppliedFilterInvalid(value: boolean): void {
+    this.changeDetectorRef.detectChanges();
+    this.isFilterResultEmptyAlert = value;
   }
 
   onSearchTermShort(value: boolean): void {

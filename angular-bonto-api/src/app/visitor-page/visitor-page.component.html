@@ -65,6 +65,11 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
     (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
   </div>
+  <div *ngIf="isFilterResultEmptyAlert" class="alert alert-warning alert-dismissible fade show" role="alert" id="filter-failure-alert">
+    <h1>Nincs ilyen találat!</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+    (click)="deleteFilter()"></button>
+  </div>
   <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row mb-3">
     <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
@@ -116,7 +121,7 @@
       <div class="dropdown-menu">
         <div class="form-check" *ngFor="let item of autoTipusList$ | async; let i = index">
           <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
-          (change)="onCheckboxChange('', $event)">
+          (change)="onCheckboxChange('', $event, item.nev)">
           <label class="form-check-label" [attr.for]="'dropdownFilterOrderOption' + i">
             {{item.nev}}
           </label>
