@@ -12,6 +12,7 @@ export class CategoryPageService {
   private orderBySubject = new BehaviorSubject<string>('');
   orderBy$ = this.orderBySubject.asObservable();
   category: string = '';
+  previousCategory: string = '';
   previousCategoryFilter: string = '';
   isCategoryFilterApplied: boolean = false;
 
@@ -20,6 +21,7 @@ export class CategoryPageService {
   }
 
   setCategory(categoryIn: string) {
+    this.previousCategory = this.category;
     this.category = categoryIn;
     this.currentCategorySubject.next(categoryIn);
   }

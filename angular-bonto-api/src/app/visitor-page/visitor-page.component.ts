@@ -67,6 +67,12 @@ export class VisitorPageComponent implements OnInit{
       switchMap(([_, category, orderBy, searchTermValue ]) => {
         const kategoria = category.trim().replace(/\s+/g, ' ');
         const filter = searchTermValue ? searchTermValue.trim() : '';
+        if (this.categoryPageService.previousCategory !== this.categoryPageService.category
+          && this.categoryPageService.previousCategory !== '') {
+          this.categoryPageService.previousCategory = '';
+          this.deleteFilter();
+          this.deleteOrder();
+        }
         if (filter.length > 0) {
           this.isFilterResultEmptyAlert = false;
           return this.service.searchAlkatreszByFilter(filter, orderBy).pipe(

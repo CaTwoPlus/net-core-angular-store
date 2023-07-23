@@ -64,29 +64,40 @@ footer {
 }
 
 #search-failure-alert {
-  display:flex;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -15%);
+  display: flex;
   z-index: 2;
+  align-items: center;
+  justify-content: center;
+  width: 30vw;
+  transform: translate(12px, 0px);
+  position: fixed;
 }
 
 #filter-failure-alert {
-  display:flex;
+  display: flex;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 7vh);
   z-index: 2;
+  font-size: 2rem;
+  font-weight: 600;
+  align-content: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  width: 71vw;
 }
 
 #filter-failure-alert .btn-close{
-  top: -10px;
-  right: -10px;
+  top: 5px;
+  position: fixed;
+  right: -15.5px;
   z-index: 1;
+  scale: 0.5;
 }
 
-#filter-failure-alert h1 {
-  margin-left: 25px;
+#search-failure-alert .btn-close {
+  right: -6.5px;
 }
 
 #search-failure-alert-type-err {
@@ -97,9 +108,25 @@ footer {
   z-index: 3;
 }
 
+.alert-danger {
+  --bs-alert-color: #dc3545;
+  --bs-alert-border-color: #dc3545;
+}
+
 @media screen and (max-width: 600px) {
   .row {
-      justify-content: center;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 670px) {
+  #filter-failure-alert {
+    font-size: 1rem;
+  }
+  #filter-failure-alert .btn-close{
+    top: -0.5px;
+    right: -8px;
+    scale: 1;
   }
 }
 
@@ -110,10 +137,22 @@ footer {
   #kapcsolat h6 {
     font-size: 0.75rem;
   }
+}
+
+@media screen and (min-width: 410px) {
   #search-failure-alert {
-    width: 82vw;
+    font-size: 0.87rem;
   }
-  #filter-failure-alert {
-    width: 82vw;
+}
+
+@media (min-width: 968px) {
+  #search-failure-alert {
+    width: 30vw;
+  }
+}
+
+@media (max-width: 959px) {
+  #search-failure-alert  {
+    width: 50vw;
   }
 }

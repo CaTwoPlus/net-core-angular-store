@@ -47,6 +47,11 @@
         <ng-container *ngIf="alkatreszList$">
           <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
           [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
+          <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
+            <b>Nincs ilyen találat!</b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+            (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
+          </div>
         </ng-container>
       </div>
     </nav>
@@ -60,13 +65,8 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
     (click)="showInvalidSearchAlert = !showInvalidSearchAlert"></button>
   </div>
-  <div *ngIf="isSearchResultEmptyAlert" class="alert alert-warning alert-dismissible fade show" role="alert" id="search-failure-alert">
+  <div *ngIf="isFilterResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="filter-failure-alert">
     Nincs ilyen találat!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-    (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
-  </div>
-  <div *ngIf="isFilterResultEmptyAlert" class="alert alert-warning alert-dismissible fade show" role="alert" id="filter-failure-alert">
-    <h1>Nincs ilyen találat!</h1>
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
     (click)="deleteFilter()"></button>
   </div>
