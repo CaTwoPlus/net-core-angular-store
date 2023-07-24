@@ -273,6 +273,16 @@ export class VisitorPageComponent implements OnInit{
   onAppliedFilterInvalid(value: boolean): void {
     this.changeDetectorRef.detectChanges();
     this.isFilterResultEmptyAlert = value;
+    if (value) {
+      setTimeout(() => {
+        const showSearchAlert = document.getElementById("filter-failure-alert");
+        if (showSearchAlert) {
+          showSearchAlert.style.display = "none";
+          this.isSearchResultEmptyAlert = !value;
+          this.deleteFilter();
+        }
+      }, 2000);
+    }
   }
 
   onSearchTermShort(value: boolean): void {

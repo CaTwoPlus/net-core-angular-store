@@ -123,6 +123,9 @@ footer {
   #filter-failure-alert {
     font-size: 1rem;
   }
+  #search-failure-alert {
+    font-size: 0.8rem;
+  }
   #filter-failure-alert .btn-close{
     top: -0.5px;
     right: -8px;

@@ -71,7 +71,7 @@
     (click)="deleteFilter()"></button>
   </div>
   <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
-  <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row mb-3">
+  <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">
     <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
       <button type="button" class="btn btn-secondary" style="margin-left: -20px;" [disabled]="orderButtonDisabled"
       (click)="orderBy()">Rendezés</button>
