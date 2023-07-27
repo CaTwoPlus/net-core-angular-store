@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { CategoryPageService } from '../category-page.service';
@@ -12,8 +12,23 @@ import { NavigationEnd, Router } from '@angular/router';
 })
 
 export class VisitorPageComponent implements OnInit{
+  constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
+    private router: Router, private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef) {}
+
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
   @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;
+  @HostListener('window:scroll', ['$event'])
+  onScroll() {
+    const mainBgImg = this.elementRef.nativeElement.querySelector('.main-container') as HTMLElement;
+    const srvBgImg = this.elementRef.nativeElement.querySelector('.services-container') as HTMLElement;
+    const scrollOffset = window.scrollY;
+    if (mainBgImg) {
+      mainBgImg.style.transform = `translateY(-${scrollOffset * 0.2}px)`;
+    }
+    if (srvBgImg) {
+      srvBgImg.style.transform = `translateY(-${scrollOffset * 0.2}px)`;
+    }
+  }
 
   title = 'ford';
   kategoriaList$!:Observable<any[]>;
@@ -45,9 +60,6 @@ export class VisitorPageComponent implements OnInit{
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
-
-  constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
-    private router: Router, private changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.kategoriaList$ = this.service.getKategoriaList();
@@ -84,6 +96,17 @@ export class VisitorPageComponent implements OnInit{
               const urlTree = this.router.parseUrl(event.urlAfterRedirects);
               const fragment = urlTree.fragment;
               if (fragment === 'kapcsolat') {
+                setTimeout(() => {
+                  if (this.scrollTarget) {
+                    this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
+                    this.showContactPage = false;
+                    this.isFilterResultEmptyAlert = false;
+                    this.deleteFilter();
+                    this.deleteOrder();
+                  }
+                }, 100);
+              }
+              if (fragment === 'szolgaltatasok') {
                 setTimeout(() => {
                   if (this.scrollTarget) {
                     this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
@@ -259,7 +282,7 @@ export class VisitorPageComponent implements OnInit{
   onSearchTermInvalid(value: boolean): void {
     this.changeDetectorRef.detectChanges();
     this.isSearchResultEmptyAlert = value;
-    if (value) {
+    /*if (value) {
       setTimeout(() => {
         const showSearchAlert = document.getElementById("search-failure-alert");
         if (showSearchAlert) {
@@ -267,13 +290,13 @@ export class VisitorPageComponent implements OnInit{
           this.isSearchResultEmptyAlert = !value;
         }
       }, 2000);
-    }
+    }*/
   }
 
   onAppliedFilterInvalid(value: boolean): void {
     this.changeDetectorRef.detectChanges();
     this.isFilterResultEmptyAlert = value;
-    if (value) {
+    /*if (value) {
       setTimeout(() => {
         const showSearchAlert = document.getElementById("filter-failure-alert");
         if (showSearchAlert) {
@@ -282,7 +305,7 @@ export class VisitorPageComponent implements OnInit{
           this.deleteFilter();
         }
       }, 2000);
-    }
+    }*/
   }
 
   onSearchTermShort(value: boolean): void {

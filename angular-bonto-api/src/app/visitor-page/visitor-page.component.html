@@ -7,12 +7,21 @@
           <mat-icon>home</mat-icon>
         </a>
         <span fxHide.gt-sm>
-          <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menu"> 
+          <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menuSm"> 
             <mat-icon>menu</mat-icon>
           </button>
+          <mat-menu #menuSm="matMenu">
+            <a href="#alkatreszek/autohifi" style="text-decoration: none;">
+              <button mat-menu-item [matMenuTriggerFor]="alkatreszekMenu">Alkatrészek</button>
+            </a>
+            <a href="#szolgaltatasok" style="text-decoration: none;"><button mat-menu-item>Szolgáltatások</button></a>
+            <a href="#vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item>Vásárlási információk</button></a>
+            <a href="#kapcsolat" style="text-decoration: none;"><button mat-menu-item 
+              (click)="setCategoryPage('')" #contactButton>Kapcsolat</button></a>
+          </mat-menu>
         </span>
         <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
-          <button type="button" class="btn btn-primary" [matMenuTriggerFor]="menu"><b>Alkatrészek</b></button>
+          <button type="button" class="btn btn-primary" [matMenuTriggerFor]="alkatreszekMenu"><b>Alkatrészek</b></button>
           <a href="#szolgaltatasok"><button type="button" class="btn btn-primary"><b>Szolgáltatások</b></button></a>
           <a href="#vasarlasi_infok"><button type="button" class="btn btn-primary"><b>Vásárlási információk</b></button></a>
           <a href="#kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
@@ -20,7 +29,7 @@
         </span>
       </div>
       <div>
-        <mat-menu #menu="matMenu">
+        <mat-menu #alkatreszekMenu="matMenu">
           <a href="#alkatreszek/autohifi" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Autóhifi')">Autóhifi</button></a>
           <a href="#alkatreszek/biztonsagi_alkatreszek" style="text-decoration: none;">
@@ -70,11 +79,27 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
     (click)="deleteFilter()"></button>
   </div>
-  <img *ngIf="!(showCategoryPage$ | async)" src="assets\20170822_180636.jpg">
+  <div class="main-container" *ngIf="!(showCategoryPage$ | async)">
+    <div class="card">
+      <div class="card-body">
+        <h1 class="card-title">Ford Focus II-III,</h1>
+        <h1 class="card-title">C-Max I-II</h1>
+        <p class="card-text">Ford Focus Mk2 2005-2010-ig,</p>
+        <p class="card-text">Ford Focus Mk3 2011-2017-ig,</p>
+        <p class="card-text">Ford C-Max I-II</p>
+        <p class="card-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
+      </div>
+    </div>
+  </div>
+  <div class="services-container" *ngIf="!(showCategoryPage$ | async)" id="szolgaltatasok">
+    <div class="overlay"></div>
+    <h1>Automata váltóját átalakítjuk manuálisra!</h1>
+    <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
+  </div>
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">
     <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
-      <button type="button" class="btn btn-secondary" style="margin-left: -20px;" [disabled]="orderButtonDisabled"
-      (click)="orderBy()">Rendezés</button>
+      <button type="button" class="btn btn-secondary" [disabled]="orderButtonDisabled"
+      (click)="orderBy()" id="orderButton">Rendezés</button>
       <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
       style="margin-left: -10px; z-index: 1;">
         <span class="visually-hidden">Toggle Dropdown</span>
