@@ -282,7 +282,7 @@ export class VisitorPageComponent implements OnInit{
   onSearchTermInvalid(value: boolean): void {
     this.changeDetectorRef.detectChanges();
     this.isSearchResultEmptyAlert = value;
-    /*if (value) {
+    if (value) {
       setTimeout(() => {
         const showSearchAlert = document.getElementById("search-failure-alert");
         if (showSearchAlert) {
@@ -290,13 +290,13 @@ export class VisitorPageComponent implements OnInit{
           this.isSearchResultEmptyAlert = !value;
         }
       }, 2000);
-    }*/
+    }
   }
 
   onAppliedFilterInvalid(value: boolean): void {
     this.changeDetectorRef.detectChanges();
     this.isFilterResultEmptyAlert = value;
-    /*if (value) {
+    if (value) {
       setTimeout(() => {
         const showSearchAlert = document.getElementById("filter-failure-alert");
         if (showSearchAlert) {
@@ -305,7 +305,7 @@ export class VisitorPageComponent implements OnInit{
           this.deleteFilter();
         }
       }, 2000);
-    }*/
+    }
   }
 
   onSearchTermShort(value: boolean): void {
