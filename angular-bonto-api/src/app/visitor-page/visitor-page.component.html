@@ -80,21 +80,37 @@
     (click)="deleteFilter()"></button>
   </div>
   <div class="main-container" *ngIf="!(showCategoryPage$ | async)">
-    <div class="card">
-      <div class="card-body">
-        <h1 class="card-title">Ford Focus II-III,</h1>
-        <h1 class="card-title">C-Max I-II</h1>
-        <p class="card-text">Ford Focus Mk2 2005-2010-ig,</p>
-        <p class="card-text">Ford Focus Mk3 2011-2017-ig,</p>
-        <p class="card-text">Ford C-Max I-II</p>
-        <p class="card-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
+    <div class="welcome">
+      <div class="welcome-body">
+        <img src="/assets/logo.png" id="logo">
+        <h1 class="welcome-title">Ford Focus II-III,</h1>
+        <h1 class="welcome-title">C-Max I-II</h1>
+        <p class="welcome-text">Ford Focus Mk2 2005-2010-ig,</p>
+        <p class="welcome-text">Ford Focus Mk3 2011-2017-ig,</p>
+        <p class="welcome-text">Ford C-Max I-II</p>
+        <p class="welcome-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
       </div>
     </div>
   </div>
-  <div class="services-container" *ngIf="!(showCategoryPage$ | async)" id="szolgaltatasok">
-    <div class="overlay"></div>
-    <h1>Automata váltóját átalakítjuk manuálisra!</h1>
-    <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
+  <div class="sections-wrapper" *ngIf="!(showCategoryPage$ | async)">
+    <div class="info-container" id="vasarlasi_infok">
+      <div class="overlay"></div>
+      <h1>Budapesten és Pest megyén belül akár ingyenes kiszállítás!</h1>
+      <h2>Az ország teljes területén belül postai úton, vagy futárszolgálattal való 24 órán belüli csomagküldés!</h2>
+    </div>
+    <div class="services-container" id="szolgaltatasok">
+      <div class="overlay"></div>
+      <h1>Automata váltóját átalakítjuk manuálisra!</h1>
+      <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
+    </div>
+  </div>
+  <div class="container" *ngIf="!(showCategoryPage$ | async)" style="max-width: 720px !important;"id="elerhetoseg">
+    <label for="nev" class="form-label">Név</label>
+    <input type="text" class="form-control" id="nev">
+    <label for="email" class="form-label">Email-cím *</label>
+    <input type="email" class="form-control" id="email" placeholder="name@example.com">
+    <label for="uzenet" class="form-label">Üzenet *</label>
+    <textarea class="form-control" id="uzenet" rows="3"></textarea>
   </div>
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">
     <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">

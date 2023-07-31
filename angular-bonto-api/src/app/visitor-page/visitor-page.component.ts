@@ -19,14 +19,15 @@ export class VisitorPageComponent implements OnInit{
   @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;
   @HostListener('window:scroll', ['$event'])
   onScroll() {
-    const mainBgImg = this.elementRef.nativeElement.querySelector('.main-container') as HTMLElement;
-    const srvBgImg = this.elementRef.nativeElement.querySelector('.services-container') as HTMLElement;
+    const mainBg = this.elementRef.nativeElement.querySelector('.main-container') as HTMLElement;
     const scrollOffset = window.scrollY;
-    if (mainBgImg) {
-      mainBgImg.style.transform = `translateY(-${scrollOffset * 0.2}px)`;
-    }
-    if (srvBgImg) {
-      srvBgImg.style.transform = `translateY(-${scrollOffset * 0.2}px)`;
+    const initialY = 55;
+    const scrollDirection = scrollOffset > this.lastScrollPosition ? 'down' : 'up';
+    const updatedY = scrollDirection === 'down' ? initialY - scrollOffset * 0.2 : this.lastScrollPosition - scrollOffset * 0.01 ;
+    if (mainBg) {
+      mainBg.style.backgroundPositionY = `${updatedY}%`;
+      mainBg.style.backgroundPositionX = 'right 70%';
+      this.lastScrollPosition = updatedY;
     }
   }
 
@@ -55,6 +56,7 @@ export class VisitorPageComponent implements OnInit{
   isFilterResultEmptyAlert: boolean = false;
   showContactPage: boolean = false;
   dropdownFilterOptionNum: number = 0;
+  lastScrollPosition = 0;
   filterOrder: string = '';
   [key: string]: any;
 
