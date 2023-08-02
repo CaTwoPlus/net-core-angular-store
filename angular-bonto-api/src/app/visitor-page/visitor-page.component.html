@@ -11,21 +11,23 @@
             <mat-icon>menu</mat-icon>
           </button>
           <mat-menu #menuSm="matMenu">
-            <a href="#alkatreszek/autohifi" style="text-decoration: none;">
               <button mat-menu-item [matMenuTriggerFor]="alkatreszekMenu">Alkatrészek</button>
-            </a>
-            <a href="#szolgaltatasok" style="text-decoration: none;"><button mat-menu-item>Szolgáltatások</button></a>
-            <a href="#vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item>Vásárlási információk</button></a>
+            <a href="#szolgaltatasok" style="text-decoration: none;"><button mat-menu-item
+              (click)="setCategoryPage('')">Szolgáltatások</button></a>
+            <a href="#vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item
+              (click)="setCategoryPage('')">Vásárlási információk</button></a>
             <a href="#kapcsolat" style="text-decoration: none;"><button mat-menu-item 
-              (click)="setCategoryPage('')" #contactButton>Kapcsolat</button></a>
+              (click)="setCategoryPage('')">Kapcsolat</button></a>
           </mat-menu>
         </span>
         <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
           <button type="button" class="btn btn-primary" [matMenuTriggerFor]="alkatreszekMenu"><b>Alkatrészek</b></button>
-          <a href="#szolgaltatasok"><button type="button" class="btn btn-primary"><b>Szolgáltatások</b></button></a>
-          <a href="#vasarlasi_infok"><button type="button" class="btn btn-primary"><b>Vásárlási információk</b></button></a>
+          <a href="#szolgaltatasok"><button type="button" class="btn btn-primary"
+            (click)="setCategoryPage('')"><b>Szolgáltatások</b></button></a>
+          <a href="#vasarlasi_infok"><button type="button" class="btn btn-primary"
+            (click)="setCategoryPage('')"><b>Vásárlási információk</b></button></a>
           <a href="#kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
-            (click)="setCategoryPage('')" #contactButton><b>Kapcsolat</b></button></a>
+            (click)="setCategoryPage('')"><b>Kapcsolat</b></button></a>
         </span>
       </div>
       <div>
@@ -120,7 +122,7 @@
       style="margin-left: -10px; z-index: 1;">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
-      <div class="dropdown-menu">
+      <div class="dropdown-menu dropdown-menu-start dropdown-menu-end" id="dropdown-menu-order">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" [(ngModel)]="isDescPriceChecked" id="dropdownFilterOrderOptionDescPrice"
           (change)="onCheckboxChange('descPrice', $event)">
@@ -159,7 +161,7 @@
       style="margin-left: -10px; z-index: 1;">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
-      <div class="dropdown-menu">
+      <div class="dropdown-menu dropdown-menu-start dropdown-menu-end" id="dropdown-menu-filter">
         <div class="form-check" *ngFor="let item of autoTipusList$ | async; let i = index">
           <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
           (change)="onCheckboxChange('', $event, item.nev)">

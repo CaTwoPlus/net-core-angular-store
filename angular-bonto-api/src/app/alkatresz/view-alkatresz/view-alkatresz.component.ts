@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from "rxjs";
+import { Observable, Subscription } from "rxjs";
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 

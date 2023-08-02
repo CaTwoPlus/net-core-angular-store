@@ -710,6 +710,12 @@ footer {
 
 /*Other rules*/
 
+@media (max-width: 680px) {
+  #dropdown-menu-filter {
+    /*transform: translate(-12vw, 40px) !important;*/
+  }
+}
+
 @media (width: 700px) and (min-height: 360px) {
   #filter-failure-alert {
     top: 30vh;

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { CategoryPageService } from '../category-page.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
@@ -30,6 +30,13 @@ export class VisitorPageComponent implements OnInit{
       this.lastScrollPosition = updatedY;
     }
   }
+  @HostListener('window:load', ['$event'])
+  onWindowLoad() {
+    if (window.location.hash) {
+      // Clear the fragment by navigating to the same URL without the fragment
+      this.router.navigateByUrl(window.location.pathname);
+    }
+  }
 
   title = 'ford';
   kategoriaList$!:Observable<any[]>;
@@ -39,6 +46,8 @@ export class VisitorPageComponent implements OnInit{
   showCategoryPage$!:Observable<any>;
 
   private unsubscribe$ = new Subject<void>();
+  private routerEventsSubscription: Subscription | undefined;
+  private afterViewInitSubscription: Subscription | undefined;
 
   autoTipusokInput: { [key: string]: boolean } = {};
   isFilterActive: boolean = false;
@@ -72,6 +81,7 @@ export class VisitorPageComponent implements OnInit{
   }
 
   ngAfterViewInit(): void {
+    this.afterViewInitSubscription =
     combineLatest([
       this.filteredAlkatreszek$,
       this.categoryPageService.currentCategory$,
@@ -93,7 +103,7 @@ export class VisitorPageComponent implements OnInit{
             takeUntil(this.unsubscribe$)
           );
         } else {
-          this.router.events.subscribe((event) => {
+          this.routerEventsSubscription = this.router.events.subscribe((event) => {
             if (event instanceof NavigationEnd && this.showContactPage) {
               const urlTree = this.router.parseUrl(event.urlAfterRedirects);
               const fragment = urlTree.fragment;
@@ -109,6 +119,17 @@ export class VisitorPageComponent implements OnInit{
                 }, 100);
               }
               if (fragment === 'szolgaltatasok') {
+                setTimeout(() => {
+                  if (this.scrollTarget) {
+                    this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
+                    this.showContactPage = false;
+                    this.isFilterResultEmptyAlert = false;
+                    this.deleteFilter();
+                    this.deleteOrder();
+                  }
+                }, 100);
+              }
+              if (fragment === 'vasarlasi_infok') {
                 setTimeout(() => {
                   if (this.scrollTarget) {
                     this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
@@ -140,6 +161,12 @@ export class VisitorPageComponent implements OnInit{
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
+    if (this.routerEventsSubscription) {
+      this.routerEventsSubscription.unsubscribe();
+    }
+    if (this.afterViewInitSubscription) {
+      this.afterViewInitSubscription.unsubscribe();
+    }
   }
 
   setCategoryPage(category: string) {
