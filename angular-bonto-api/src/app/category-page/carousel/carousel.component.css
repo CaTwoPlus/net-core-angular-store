@@ -1,25 +1,37 @@
-  .carousel-item {
+  #imageCarouselCategoryPage .carousel-item {
     height: 400px !important;
     width: 100% !important;
     margin-bottom: var(--bs-gutter) !important;
   }
   
-  .carousel-item.reactive img {
+  #imageCarouselCategoryPage .carousel-item.reactive img {
     object-fit: cover !important;
     height: 100% !important;
     width: 100% !important;
     transition: transform 0.2s;
   }
 
-  .carousel-item.reactive img.hovered {
+  #imageCarouselCategoryPage .carousel-item.reactive img.hovered {
     transition: all 0.3s ease-in-out;
     transform: scale(1.1);
     z-index: 1;
     cursor: pointer;
   }
 
-  .carousel-item.reactive:hover img {
+  #imageCarouselCategoryPage .carousel-item.reactive:hover img {
     transform: scale(1.1);
+  }
+
+  #viewCarousel .carousel-inner {
+    height: 99vh;
+  }
+
+  #viewCarousel img {
+    display: block;
+    margin: 0 auto; 
+    max-width: 100%; 
+    max-height: 100%; 
+    object-fit: contain; 
   }
 
   .align-center {
@@ -47,17 +59,16 @@
     --bs-modal-border-color: darken(&primary, 10%) !important;
   }
 
+  .modal-fullscreen .modal-body {
+    overflow-y: hidden;
+  }
+
   .modal-xl {
     --bs-modal-width: 1024px;
   }
 
   .modal-dialog .carousel-item{
     height: 100% !important;
-  }
-
-  .modal-dialog .carousel-item img {
-    width: 1024px !important;
-    height: 768px !important;
   }
 
   .progress-container {

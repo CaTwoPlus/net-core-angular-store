@@ -1,9 +1,9 @@
 <div *ngIf="selectedItem" class="modal fade bg-transparent" [id]="'viewCarousel'" tabindex="-1" [attr.aria-labelledby]="'viewCarouselLabel'"
 data-bs-backdrop="static">  
-  <div class="modal-dialog modal-dialog-scrollable modal-xl">
+  <div class="modal-dialog modal-fullscreen">
     <div class="modal-content">
       <div class="modal-body">
-        <div id="imageCarouselModal" class="carousel slide">
+        <div id="imageCarouselModal" class="carousel slide" data-bs-touch="false">
           <div *ngIf="selectedItem.kepek.split(';').length > 1" class="carousel-indicators">
             <button
               type="button"
@@ -11,15 +11,15 @@ data-bs-backdrop="static">
               [attr.data-bs-slide-to]="j"
               [class.active]="j === 0"
               *ngFor="let img of selectedItem.kepek.split(';'); let j = index"
-              [attr.aria-label]="'Slide ' + (j + 1)">
+              [attr.aria-label]="'Slide ' + (j + 1)"
+              (click)="resetPanZoom()">
             </button>
           </div>
           <div class="carousel-inner">
             <div class="carousel-item" [class.active]="j === 0" *ngFor="let img of selectedItem.kepek.split(';'); let j = index"
             style="background-color: black;">
               <ng-container *ngIf="img.trim() !== ''">
-                  <img class="carousel-img" [defaultImage]="'https://localhost:7094/images/placeholder.png'"
-                  [lazyLoad]="'https://localhost:7094/images/' + img"/>
+                  <img class="carousel-img" [lazyLoad]="'https://localhost:7094/images/' + img"/>
               </ng-container>
               <ng-container *ngIf="img.trim() === '' || !img">
                 <img src="https://localhost:7094/images/placeholder.png"/>

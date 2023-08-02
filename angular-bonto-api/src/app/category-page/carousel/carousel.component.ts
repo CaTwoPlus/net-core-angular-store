@@ -24,6 +24,10 @@ export class CarouselComponent {
   activeIndexCarousel = 0;  
   loadedCounts: number[] = [];
   targetModalId = 'viewCarousel';
+  carouselImages = document.getElementsByClassName('carousel-img');
+  elem : any;
+  panzoom: any[] = [];
+  startScale: any;
 
   openCarousel() {
     setTimeout(() => {
@@ -31,25 +35,21 @@ export class CarouselComponent {
       if (targetModal && !this.bootstrapModal) {
         this.bootstrapModal = new Modal(targetModal);
         this.bootstrapModal.show();
-        
-        const carouselImages = document.getElementsByClassName('carousel-img');
-        // Initialize panzoom for each image element
-        for (let i = 0; i < carouselImages.length; i++) {
-          const elem = carouselImages[i] as HTMLImageElement;
-          const panzoom = Panzoom(elem, {
-            maxScale: 5,
-            disableZoom: this.breakpointObserver.isMatched('(min-width: 1024px)'),
+        for (let i = 0; i < this.carouselImages.length; i++) {
+          this.elem = this.carouselImages[i] as HTMLImageElement;
+          const viewportHeight = window.innerHeight;
+          const viewportWidth = window.innerWidth;
+          this.startScale = this.breakpointObserver.isMatched('(min-width: 1024px)') ? 0.5 * (viewportWidth / viewportHeight) : 1;
+          this.panzoom[i] = Panzoom(this.elem, {
+            startScale: this.startScale,
+            maxScale: 2,
+            minScale: 0.8,
             disablePan: this.breakpointObserver.isMatched('(min-width: 1024px)'),
-            cursor: this.breakpointObserver.isMatched('(min-width: 1024px)') ? 'default' : 'move'
+            disableZoom: this.breakpointObserver.isMatched('(min-width: 1024px)'),
+            cursor: this.breakpointObserver.isMatched('(min-width: 1024px)') ? 'default' : 'move',
           });
-          panzoom.pan(10, 10);
-          panzoom.zoom(2, { animate: true });
-  
-          // Panning and pinch zooming are bound automatically (unless disablePan is true).
-          // There are several available methods for zooming
-          // that can be bound on button clicks or mousewheel.
-          if (elem.parentElement) {
-            elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
+          if (this.elem.parentElement) {
+            this.elem.parentElement.addEventListener('wheel', this.panzoom[i].zoomWithWheel);
           }
         }}
     }, 100);
@@ -80,9 +80,20 @@ export class CarouselComponent {
     }
   }
 
+  resetPanZoom() {
+    for (let i = 0; i < this.carouselImages.length; i++) {
+      this.panzoom[i].reset();
+    }
+  }
+
   changeActiveIndex(index: number, carousel: string) {
     if (carousel === 'modal') {
       this.activeIndexModal = index;
+      const clickedButton = document.activeElement as HTMLButtonElement;
+      clickedButton.blur();
+      if (!this.breakpointObserver.isMatched('(min-width: 1024px)')) {
+        this.resetPanZoom();
+      }
     } else if (carousel === 'carousel') {
       this.activeIndexCarousel = index;
     }
