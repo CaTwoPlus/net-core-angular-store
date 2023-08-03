@@ -1,17 +1,17 @@
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { CategoryPageService } from '../category-page.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
 import { NavigationEnd, Router } from '@angular/router';
 
-@Component({
+@Component({ 
   selector: 'app-visitor-page',
   templateUrl: './visitor-page.component.html',
   styleUrls: ['./visitor-page.component.css']
 })
 
-export class VisitorPageComponent implements OnInit{
+export class VisitorPageComponent implements OnInit, OnDestroy {
   constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
     private router: Router, private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef) {}
 
@@ -30,6 +30,7 @@ export class VisitorPageComponent implements OnInit{
       this.lastScrollPosition = updatedY;
     }
   }
+
   @HostListener('window:load', ['$event'])
   onWindowLoad() {
     if (window.location.hash) {

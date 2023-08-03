@@ -122,7 +122,7 @@
       style="margin-left: -10px; z-index: 1;">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
-      <div class="dropdown-menu dropdown-menu-start dropdown-menu-end" id="dropdown-menu-order">
+      <div class="dropdown-menu" id="dropdown-menu-order" data-bs-display="static">
         <div class="form-check">
           <input class="form-check-input" type="checkbox" [(ngModel)]="isDescPriceChecked" id="dropdownFilterOrderOptionDescPrice"
           (change)="onCheckboxChange('descPrice', $event)">
@@ -161,7 +161,7 @@
       style="margin-left: -10px; z-index: 1;">
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
-      <div class="dropdown-menu dropdown-menu-start dropdown-menu-end" id="dropdown-menu-filter">
+      <div class="dropdown-menu" id="dropdown-menu-filter" data-bs-display="static">
         <div class="form-check" *ngFor="let item of autoTipusList$ | async; let i = index">
           <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
           (change)="onCheckboxChange('', $event, item.nev)">
