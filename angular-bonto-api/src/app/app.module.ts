@@ -20,7 +20,7 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { CategoryPageComponent } from './category-page/category-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
-import { SearchService } from './search.service';
+import { SearchService } from './search/search.service';
 import { CarouselComponent } from './category-page/carousel/carousel.component';
 
 // Angular Materials

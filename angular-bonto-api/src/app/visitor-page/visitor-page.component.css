@@ -72,6 +72,11 @@ body {
   mix-blend-mode: multiply;
 }
 
+#kapcsolat .container{
+  max-width: 720px !important;
+  margin: 5vh auto 5vh;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -157,13 +162,13 @@ footer {
   justify-content: center;
 }
 
-#kapcsolat {
+#elerhetoseg {
   display: flex;
   justify-content: center;
   font-size: 0.9rem;
 }
 
-#kapcsolat h6 {
+#elerhetoseg h6 {
   font-size: 0.9rem;
 }
 
@@ -300,7 +305,7 @@ footer {
   #rights-notice h6 {
     font-size: 0.75rem;
   }
-  #kapcsolat h6 {
+  #elerhetoseg h6 {
     font-size: 0.75rem;
   }
 }
@@ -668,7 +673,7 @@ footer {
     font-size: 6vw;
   }
   #rights-notice h6,
-  #kapcsolat h6,
+  #elerhetoseg h6,
   #search-failure-alert {
     font-size: 3vw;
   }

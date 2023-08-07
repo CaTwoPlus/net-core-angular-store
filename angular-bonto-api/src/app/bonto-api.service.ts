@@ -72,8 +72,8 @@ export class BontoApiService {
 
   // Search logic
   
-  searchAlkatreszByFilter(filter: string, order: string): Observable<any[]> {
-    const filterParams = new HttpParams().set('searchTerm', filter).set('orderOption', order);
+  searchAlkatreszByKeyword(keyword: string, order: string): Observable<any[]> {
+    const filterParams = new HttpParams().set('searchTerm', keyword).set('orderOption', order);
     const filterRequest = {
       headers: this.headers,
       params: filterParams
@@ -90,8 +90,8 @@ export class BontoApiService {
     return this.http.get<any[]>(this.bontoAPIUrl + '/Alkatresz/categorized-alkatreszek', categoriesRequest);
   }
 
-  searchAlkatreszByFilterAndCategories(filter: string, categories: string, order: string): Observable<any[]> {
-    const filterParams = new HttpParams().set('searchTerm', filter).set('orderOption', order);
+  searchAlkatreszByKeywordAndCategories(keyword: string, categories: string, order: string): Observable<any[]> {
+    const filterParams = new HttpParams().set('searchTerm', keyword).set('orderOption', order);
     const filterRequest = {
       headers: this.headers,
       params: filterParams

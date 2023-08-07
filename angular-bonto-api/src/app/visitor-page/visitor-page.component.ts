@@ -1,9 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, startWith, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
+import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
-import { NavigationEnd, Router } from '@angular/router';
+import { ViewportScroller } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({ 
   selector: 'app-visitor-page',
@@ -13,42 +15,35 @@ import { NavigationEnd, Router } from '@angular/router';
 
 export class VisitorPageComponent implements OnInit, OnDestroy {
   constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
-    private router: Router, private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef) {}
-
+    private searchService: SearchService, private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef,
+    private viewportScroller: ViewportScroller, private router: Router) {}
+  
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
   @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;
   @HostListener('window:scroll', ['$event'])
   onScroll() {
     const mainBg = this.elementRef.nativeElement.querySelector('.main-container') as HTMLElement;
-    const scrollOffset = window.scrollY;
-    const initialY = 55;
-    const scrollDirection = scrollOffset > this.lastScrollPosition ? 'down' : 'up';
-    const updatedY = scrollDirection === 'down' ? initialY - scrollOffset * 0.2 : this.lastScrollPosition - scrollOffset * 0.01 ;
     if (mainBg) {
+      const scrollOffset = window.scrollY;
+      const initialY = 55;
+      const scrollDirection = scrollOffset > this.lastScrollPosition ? 'down' : 'up';
+      const updatedY = scrollDirection === 'down' ? initialY - scrollOffset * 0.2 : this.lastScrollPosition - scrollOffset * 0.01 ;
       mainBg.style.backgroundPositionY = `${updatedY}%`;
       mainBg.style.backgroundPositionX = 'right 70%';
       this.lastScrollPosition = updatedY;
     }
   }
 
-  @HostListener('window:load', ['$event'])
-  onWindowLoad() {
-    if (window.location.hash) {
-      // Clear the fragment by navigating to the same URL without the fragment
-      this.router.navigateByUrl(window.location.pathname);
-    }
-  }
-
   title = 'ford';
-  kategoriaList$!:Observable<any[]>;
-  autoTipusList$!: Observable<any[]>;
-  alkatreszList$!:Observable<any[]>;
-  filteredAlkatreszek$!: Observable<any[]>;
+  kategoriaList$:Observable<any[]> = this.service.getKategoriaList();
+  autoTipusList$:Observable<any[]> = this.service.getAutoTipusList();
+  alkatreszList$:Observable<any[]> = this.service.getAlkatreszList();
+  filteredAlkatreszek$: Observable<any[]> = this.alkatreszList$;
   showCategoryPage$!:Observable<any>;
 
   private unsubscribe$ = new Subject<void>();
-  private routerEventsSubscription: Subscription | undefined;
   private afterViewInitSubscription: Subscription | undefined;
+  private searchTermSubscription: Subscription | undefined;
 
   autoTipusokInput: { [key: string]: boolean } = {};
   isFilterActive: boolean = false;
@@ -64,84 +59,81 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   showInvalidSearchAlert: boolean = false;
   isSearchResultEmptyAlert: boolean = false;
   isFilterResultEmptyAlert: boolean = false;
-  showContactPage: boolean = false;
+  isVisitorQuery: boolean = true;
   dropdownFilterOptionNum: number = 0;
-  lastScrollPosition = 0;
+  lastScrollPosition: number = 0;
+  searchCounter: number = 0;
   filterOrder: string = '';
   [key: string]: any;
-
+  
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-  ngOnInit(): void {
-    this.kategoriaList$ = this.service.getKategoriaList();
-    this.alkatreszList$ = this.service.getAlkatreszList();
-    this.autoTipusList$ = this.service.getAutoTipusList();
-    this.filteredAlkatreszek$ = this.alkatreszList$;
+  ngOnInit() {
     this.showCategoryPage$ = this.categoryPageService.showCategoryPage$;
+    if (this.searchService.isSearchActive) {
+      this.searchTermSubscription = this.searchService.searchTerm$.subscribe((searchTerm) => {
+        this.performSearch(searchTerm);
+      });
+    } else if (!this.searchService.isSearchActive && this.categoryPageService.getShowCategoryPage()) {
+      this.performSearch('');
+    }
   }
 
-  ngAfterViewInit(): void {
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+    if (this.searchTermSubscription) {
+      this.searchTermSubscription.unsubscribe();
+    }
+    if (this.afterViewInitSubscription) {
+      this.afterViewInitSubscription.unsubscribe();
+    }
+  }
+
+  performSearch(keyword: string) {
     this.afterViewInitSubscription =
     combineLatest([
       this.filteredAlkatreszek$,
       this.categoryPageService.currentCategory$,
       this.categoryPageService.orderBy$,
-      this.searchBar ? (this.searchBar.searchTerm.pipe(startWith(''))) : of(''),
     ]).pipe(
-      switchMap(([_, category, orderBy, searchTermValue ]) => {
-        const kategoria = category.trim().replace(/\s+/g, ' ');
-        const filter = searchTermValue ? searchTermValue.trim() : '';
+      switchMap(([_, category, orderBy]) => {
+        const kategoria = category.replace(/^\s*;/, '').replace(/;\s*$/, '').trim();
         if (this.categoryPageService.previousCategory !== this.categoryPageService.category
           && this.categoryPageService.previousCategory !== '') {
           this.categoryPageService.previousCategory = '';
           this.deleteFilter();
           this.deleteOrder();
         }
-        if (filter.length > 0) {
-          this.isFilterResultEmptyAlert = false;
-          return this.service.searchAlkatreszByFilter(filter, orderBy).pipe(
-            takeUntil(this.unsubscribe$)
-          );
+        if (keyword.length > 0) {
+          if (!this.isFilterActive) {
+            this.isFilterResultEmptyAlert = false;
+            return this.service.searchAlkatreszByKeyword(keyword, orderBy).pipe(
+              takeUntil(this.unsubscribe$)
+            ); 
+          } else {
+            if (this.searchCounter > 0) {
+              this.searchCounter = 0;
+              this.deleteFilter();
+              return this.service.searchAlkatreszByKeyword(keyword, orderBy).pipe(
+                takeUntil(this.unsubscribe$)
+              )
+            } else {
+              return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoria, orderBy).pipe(
+                takeUntil(this.unsubscribe$), 
+                tap(results => {
+                  if (results.length === 0 && this.isFilterActive) {
+                    this.onAppliedFilterInvalid(true);
+                  } else if (results.length > 0 && this.isFilterActive) {
+                    this.searchCounter++;
+                    this.isFilterResultEmptyAlert = false;
+                  }
+                })
+              );
+            }
+          } 
         } else {
-          this.routerEventsSubscription = this.router.events.subscribe((event) => {
-            if (event instanceof NavigationEnd && this.showContactPage) {
-              const urlTree = this.router.parseUrl(event.urlAfterRedirects);
-              const fragment = urlTree.fragment;
-              if (fragment === 'kapcsolat') {
-                setTimeout(() => {
-                  if (this.scrollTarget) {
-                    this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
-                    this.showContactPage = false;
-                    this.isFilterResultEmptyAlert = false;
-                    this.deleteFilter();
-                    this.deleteOrder();
-                  }
-                }, 100);
-              }
-              if (fragment === 'szolgaltatasok') {
-                setTimeout(() => {
-                  if (this.scrollTarget) {
-                    this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
-                    this.showContactPage = false;
-                    this.isFilterResultEmptyAlert = false;
-                    this.deleteFilter();
-                    this.deleteOrder();
-                  }
-                }, 100);
-              }
-              if (fragment === 'vasarlasi_infok') {
-                setTimeout(() => {
-                  if (this.scrollTarget) {
-                    this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
-                    this.showContactPage = false;
-                    this.isFilterResultEmptyAlert = false;
-                    this.deleteFilter();
-                    this.deleteOrder();
-                  }
-                }, 100);
-              }
-            }});
           return this.service.searchAlkatreszByCategories(kategoria, orderBy).pipe(
             takeUntil(this.unsubscribe$), 
             tap(results => {
@@ -157,29 +149,24 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     ).subscribe(filteredAlkatreszek => {
       this.filteredAlkatreszek$ = of(filteredAlkatreszek);
     });
-  }  
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-    if (this.routerEventsSubscription) {
-      this.routerEventsSubscription.unsubscribe();
-    }
-    if (this.afterViewInitSubscription) {
-      this.afterViewInitSubscription.unsubscribe();
-    }
   }
 
-  setCategoryPage(category: string) {
+  scrollToAnchor(anchorId: string) {
+    setTimeout(() => {this.viewportScroller.scrollToAnchor(anchorId); }, 100);
+  }
+
+  setCategoryPage(category: string, anchorId = '') {
     if (category !== this.categoryPageService.getCategory() && category !== '') {
       this.categoryPageService.setCategory(category.trim());
       this.categoryPageService.setShowCategoryPage(true);
+      this.searchBar.resetSearch();
+    } else if (category === this.categoryPageService.getCategory() && this.searchService.isSearchActive) {
       this.searchBar.resetSearch();
     } else if (category === '') {
       this.categoryPageService.setShowCategoryPage(false);
       this.categoryPageService.setCategory('');
       this.searchBar.resetSearch();
-      this.showContactPage = true;
+      this.scrollToAnchor(anchorId);
     }
   }
 
@@ -309,7 +296,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSearchTermInvalid(value: boolean): void {
+  onSearchTermInvalid(value: boolean) {
     this.changeDetectorRef.detectChanges();
     this.isSearchResultEmptyAlert = value;
     if (value) {
@@ -323,7 +310,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  onAppliedFilterInvalid(value: boolean): void {
+  onAppliedFilterInvalid(value: boolean) {
     this.changeDetectorRef.detectChanges();
     this.isFilterResultEmptyAlert = value;
     if (value) {
@@ -338,7 +325,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  onSearchTermShort(value: boolean): void {
+  onSearchTermShort(value: boolean) {
     this.changeDetectorRef.detectChanges();
     this.showInvalidSearchAlert = value;
     if (value) {
@@ -349,12 +336,6 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
         }
       }, 2000);
       this.showInvalidSearchAlert = !value;
-    }
-  }
-
-  scrollToElement(): void {
-    if (this.scrollTarget) {
-      this.scrollTarget.nativeElement.scrollIntoView({ behavior: 'smooth' });
     }
   }
 }

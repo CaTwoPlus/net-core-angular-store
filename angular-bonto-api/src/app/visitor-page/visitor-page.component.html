@@ -3,7 +3,7 @@
   <div>
     <nav class="navbar">
       <div class="d-flex justify-content-start align-items-center">
-        <a mat-icon-button href="" class="icon-button">
+        <a mat-icon-button routerLink="" class="icon-button" (click)="setCategoryPage('')">
           <mat-icon>home</mat-icon>
         </a>
         <span fxHide.gt-sm>
@@ -12,52 +12,54 @@
           </button>
           <mat-menu #menuSm="matMenu">
               <button mat-menu-item [matMenuTriggerFor]="alkatreszekMenu">Alkatrészek</button>
-            <a href="#szolgaltatasok" style="text-decoration: none;"><button mat-menu-item
-              (click)="setCategoryPage('')">Szolgáltatások</button></a>
-            <a href="#vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item
-              (click)="setCategoryPage('')">Vásárlási információk</button></a>
-            <a href="#kapcsolat" style="text-decoration: none;"><button mat-menu-item 
-              (click)="setCategoryPage('')">Kapcsolat</button></a>
+            <a routerLink="/szolgaltatasok" style="text-decoration: none;"><button mat-menu-item
+              (click)="setCategoryPage('', 'szolgaltatasok')">Szolgáltatások</button></a>
+            <a routerLink="/vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item
+              (click)="setCategoryPage('', 'vasarlasi_infok')">Vásárlási információk</button></a>
+            <a routerLink="/kapcsolat" style="text-decoration: none;"><button mat-menu-item 
+              (click)="setCategoryPage('', 'kapcsolat')">Kapcsolat</button></a>
           </mat-menu>
         </span>
         <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
           <button type="button" class="btn btn-primary" [matMenuTriggerFor]="alkatreszekMenu"><b>Alkatrészek</b></button>
-          <a href="#szolgaltatasok"><button type="button" class="btn btn-primary"
-            (click)="setCategoryPage('')"><b>Szolgáltatások</b></button></a>
-          <a href="#vasarlasi_infok"><button type="button" class="btn btn-primary"
-            (click)="setCategoryPage('')"><b>Vásárlási információk</b></button></a>
-          <a href="#kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
-            (click)="setCategoryPage('')"><b>Kapcsolat</b></button></a>
+          <a routerLink="/szolgaltatasok"><button type="button" class="btn btn-primary"
+            (click)="setCategoryPage('', 'szolgaltatasok')"><b>Szolgáltatások</b></button></a>
+          <a routerLink="/vasarlasi_infok"><button type="button" class="btn btn-primary"
+            (click)="setCategoryPage('', 'vasarlasi_infok')"><b>Vásárlási információk</b></button></a>
+          <a routerLink="/kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
+            (click)="setCategoryPage('', 'kapcsolat')"><b>Kapcsolat</b></button></a>
         </span>
       </div>
       <div>
         <mat-menu #alkatreszekMenu="matMenu">
-          <a href="#alkatreszek/autohifi" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/autohifi" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Autóhifi')">Autóhifi</button></a>
-          <a href="#alkatreszek/biztonsagi_alkatreszek" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/biztonsagi_alkatreszek" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Biztonsági alkatrészek')">Biztonsági alkatrészek</button></a>
-          <a href="#alkatreszek/elektromos_alkatreszek" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/elektromos_alkatreszek" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Elektromos alkatrészek')">Elektromos alkatrészek</button></a>
-          <a href="#alkatreszek/fenyszorok_lampak" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/fenyszorok_lampak" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Fényszórók, lámpák ')">Fényszórók, lámpák</button></a>
-          <a href="#alkatreszek/futomu_kormanymu_fek_alkatreszek" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/futomu_kormanymu_fek_alkatreszek" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Futómű, kormánymű és fék alkatrészek')">Futómű, kormánymű és fék alkatrészek</button></a>
-          <a href="#alkatreszek/karosszeria_elemek" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/karosszeria_elemek" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Karosszéria elemek és alkatrészek')">Karosszéria elemek és alkatrészek</button></a>
-          <a href="#alkatreszek/klima_futes" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/klima_futes" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Klíma, fűtés')">Klíma, fűtés</button></a>
-          <a href="#alkatreszek/kuplung_sebessegvalto" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/kuplung_sebessegvalto" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Kuplung, sebességváltó és alkatrészei')">Kuplung, sebességváltó és alkatrészei</button></a>
-          <a href="#alkatreszek/motoralkatreszek" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/motoralkatreszek" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Motoralkatrészek')">Motoralkatrészek</button></a>
-          <a href="#alkatreszek/utaster_csomagter_egyeb" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/utaster_csomagter_egyeb" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Utastér, csomagtér, egyéb')">Utastér, csomagtér, egyéb</button></a>
-          <a href="#alkatreszek/uzemanyag_ellato_rendszer" style="text-decoration: none;">
+          <a routerLink="/alkatreszek/uzemanyag_ellato_rendszer" style="text-decoration: none;">
             <button mat-menu-item (click)="setCategoryPage('Üzemanyag ellátó rendszer')">Üzemanyag ellátó rendszer</button></a>
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
+          <!--app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
+          [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar-->
           <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
-          [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar>
+          (searchTerm)="performSearch($event)" [alkatreszList$]="alkatreszList$" [isVisitorQuery]="isVisitorQuery" #searchBar></app-search-bar>
           <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
             <b>Nincs ilyen találat!</b>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
@@ -81,38 +83,42 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
     (click)="deleteFilter()"></button>
   </div>
-  <div class="main-container" *ngIf="!(showCategoryPage$ | async)">
-    <div class="welcome">
-      <div class="welcome-body">
-        <img src="/assets/logo.png" id="logo">
-        <h1 class="welcome-title">Ford Focus II-III,</h1>
-        <h1 class="welcome-title">C-Max I-II</h1>
-        <p class="welcome-text">Ford Focus Mk2 2005-2010-ig,</p>
-        <p class="welcome-text">Ford Focus Mk3 2011-2017-ig,</p>
-        <p class="welcome-text">Ford C-Max I-II</p>
-        <p class="welcome-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
+  <div *ngIf="!(showCategoryPage$ | async)">
+    <div class="main-container">
+      <div class="welcome">
+        <div class="welcome-body">
+          <img src="/assets/logo.png" id="logo">
+          <h1 class="welcome-title">Ford Focus II-III,</h1>
+          <h1 class="welcome-title">C-Max I-II</h1>
+          <p class="welcome-text">Ford Focus Mk2 2005-2010-ig,</p>
+          <p class="welcome-text">Ford Focus Mk3 2011-2017-ig,</p>
+          <p class="welcome-text">Ford C-Max I-II</p>
+          <p class="welcome-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="sections-wrapper" *ngIf="!(showCategoryPage$ | async)">
-    <div class="info-container" id="vasarlasi_infok">
-      <div class="overlay"></div>
-      <h1>Budapesten és Pest megyén belül akár ingyenes kiszállítás!</h1>
-      <h2>Az ország teljes területén belül postai úton, vagy futárszolgálattal való 24 órán belüli csomagküldés!</h2>
+    <div class="sections-wrapper">
+      <a><div class="info-container" id="vasarlasi_infok">
+        <div class="overlay"></div>
+        <h1>Budapesten és Pest megyén belül akár ingyenes kiszállítás!</h1>
+        <h2>Az ország teljes területén belül postai úton, vagy futárszolgálattal való 24 órán belüli csomagküldés!</h2>
+      </div></a>
+      <a><div class="services-container" id="szolgaltatasok">
+        <div class="overlay"></div>
+        <h1>Automata váltóját átalakítjuk manuálisra!</h1>
+        <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
+      </div></a>
     </div>
-    <div class="services-container" id="szolgaltatasok">
-      <div class="overlay"></div>
-      <h1>Automata váltóját átalakítjuk manuálisra!</h1>
-      <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
-    </div>
-  </div>
-  <div class="container" *ngIf="!(showCategoryPage$ | async)" style="max-width: 720px !important;"id="elerhetoseg">
-    <label for="nev" class="form-label">Név</label>
-    <input type="text" class="form-control" id="nev">
-    <label for="email" class="form-label">Email-cím *</label>
-    <input type="email" class="form-control" id="email" placeholder="name@example.com">
-    <label for="uzenet" class="form-label">Üzenet *</label>
-    <textarea class="form-control" id="uzenet" rows="3"></textarea>
+    <a id="kapcsolat"><div class="container" *ngIf="!(showCategoryPage$ | async)">
+      <label for="nev" class="form-label">Név</label>
+      <input type="text" class="form-control" id="nev">
+      <label for="email" class="form-label">Email-cím *</label>
+      <input type="email" class="form-control" id="email">
+      <label for="telszam" class="form-label">Telefonszám</label>
+      <input type="text" class="form-control" id="telszam">
+      <label for="uzenet" class="form-label">Üzenet *</label>
+      <textarea class="form-control" id="uzenet" rows="3"></textarea>
+    </div></a>
   </div>
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">
     <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
@@ -184,7 +190,7 @@
     <div id="rights-notice">
       <h6>Minden jog fenntartva - Ford Focus C-Max Bontó</h6>
     </div>
-    <div #scrollTarget id="kapcsolat">
+    <div id="elerhetoseg">
       <div style="display: flex; margin-right: 10px;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
           <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>

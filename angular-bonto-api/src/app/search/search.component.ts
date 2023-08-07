@@ -1,8 +1,10 @@
 import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { BontoApiService } from '../bonto-api.service';
+import { SearchService } from './search.service';
 import { CategoryPageService } from '../category-page.service';
 import { Observable } from 'rxjs';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-search-bar',
@@ -26,16 +28,14 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
       [typeaheadOptionsInScrollableView]="19"
       [placeholder]="placeholder" 
       [class.is-invalid]="invalidInput"/>
-      <ng-container *ngIf="!invalidInput && searchTermValue.length >= 3; else anchorHidden">
-        <a href="#talalatok" style="text-decoration: none;">
-          <button (click)="emitValues()" class="btn btn-secondary" type="submit" style="margin-left: -2px; z-index: 2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
-            </svg>
-          </button>
-        </a>
+      <ng-container *ngIf="!invalidInput && searchTermValue.length >= 3; else btnDisabled">
+        <button (click)="emitValues()" class="btn btn-secondary" type="submit" style="margin-left: -2px; z-index: 2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+          </svg>
+        </button>
       </ng-container>
-      <ng-template #anchorHidden>
+      <ng-template #btnDisabled>
         <button (click)="emitValues()" class="btn btn-secondary" type="button" style="margin-left: -2px" [disabled]="invalidInput || searchTermValue.length < 3 ? true : null">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -57,6 +57,7 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 })
 export class SearchBarComponent {
   @Input() alkatreszList$!: Observable<any[]>;
+  @Input() isVisitorQuery!: boolean;
   @Output() searchTerm = new EventEmitter<string>();
   @Output() isSearchTermInvalid = new EventEmitter<boolean>(false);
   @Output() isSearchTermShort = new EventEmitter<boolean>(false);
@@ -70,7 +71,8 @@ export class SearchBarComponent {
   currentSearchTermValue: string = '';
   previousSearchTermValue: string = '';
 
-  constructor(private service: BontoApiService, private categoryService: CategoryPageService) {}
+  constructor(private service: BontoApiService, private categoryService: CategoryPageService, 
+    private searchService: SearchService, private router: Router) {}
 
   emitValues() {
     if (this.searchTermValue.length >= 3) {
@@ -78,11 +80,21 @@ export class SearchBarComponent {
         || this.previousSearchTermValue !== this.searchTermValue) {
         this.isSearchFilterApplied = true;
         if (this.currentSearchTermValue !== this.searchTermValue) {
-          this.searchTerm.emit(this.searchTermValue);
+          this.searchService.isSearchActive = true;
+          this.searchService.setSearchTerm(this.searchTermValue.trim());
           this.previousSearchTermValue = this.searchTermValue;
+          if (this.isVisitorQuery) {
+            this.router.navigateByUrl('/alkatreszek/talalatok');
+          }
+          this.searchTerm.emit(this.searchTermValue.trim());
         } else {
-          this.searchTerm.emit(this.currentSearchTermValue);
+          this.searchService.isSearchActive = true;
+          this.searchService.setSearchTerm(this.searchTermValue.trim());
           this.previousSearchTermValue = this.currentSearchTermValue;
+          if (this.isVisitorQuery) {
+            this.router.navigateByUrl('/alkatreszek/talalatok');
+          }
+          this.searchTerm.emit(this.currentSearchTermValue.trim());
         }
         this.isSearchTermInvalid.emit(false);
         if (!this.categoryService.getShowCategoryPage()) {
@@ -96,7 +108,7 @@ export class SearchBarComponent {
     const enteredValue = this.searchTermValue.toLowerCase();
     // Save the current value before it's modified
     const previousValue = this.currentSearchTermValue;
-    this.service.searchAlkatreszByFilter(enteredValue, '').subscribe((list) => {
+    this.service.searchAlkatreszByKeyword(enteredValue, '').subscribe((list) => {
       this.options = list
         .filter((option) =>
           option.nev.toLowerCase().includes(enteredValue))
@@ -115,13 +127,19 @@ export class SearchBarComponent {
     this.currentSearchTermValue = '';
     this.previousSearchTermValue = '';
     this.isSearchFilterApplied = false;
+    this.searchService.isSearchActive = false;
+    this.searchService.setSearchTerm('');
     this.searchTerm.emit('');
   }
 
   deleteSearchTerm() {
-    this.searchTermValue = '';
-    this.currentSearchTermValue = '';
-    this.isSearchFilterApplied = false;
+    if (!this.isVisitorQuery) {
+      this.resetSearch();
+    } else {
+      this.searchTermValue = '';
+      this.currentSearchTermValue = '';
+      this.isSearchFilterApplied = false;
+    }
   }
 
   onTypeaheadSelect(event: TypeaheadMatch) {
