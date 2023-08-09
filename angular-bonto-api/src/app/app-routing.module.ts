@@ -14,7 +14,6 @@ const routes: Routes = [
   { path: 'vasarlasi_infok', component: VisitorPageComponent },
   { path: 'kapcsolat', component: VisitorPageComponent },
   { path: 'alkatreszek', component: VisitorPageComponent, pathMatch: 'full' },
-  { path: 'alkatreszek/talalatok', component: VisitorPageComponent, pathMatch: 'full'  },
   { path: '**', redirectTo: '' }
 ];
 

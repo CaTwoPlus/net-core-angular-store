@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, filter, map, of, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, combineLatest, filter, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
@@ -66,7 +66,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   lastScrollPosition: number = 0;
   searchCounter: number = 0;
   filterOrder: string = '';
-  results: string | null = '';
+  keyword: string | null = '';
   [key: string]: any;
   
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
@@ -76,16 +76,18 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     this.showCategoryPage$ = this.categoryPageService.showCategoryPage$;
     this.route.paramMap.subscribe(params => {
       const category = params.get('category');
-      this.results = params.get('talalatok');
+      this.keyword = params.get('talalatok') ?? '';
       const currentUrlSegments = this.location.path().split('/');
       const anchorId = currentUrlSegments.find(segment => {
         return segment === 'szolgaltatasok' || segment === 'vasarlasi_infok' || segment === 'kapcsolat';
       });
 
-      if (this.results) {
+      if (this.keyword.length >= 3) {
         this.searchService.isSearchActive = true;
       } else if (category) {
         this.setCategoryPage(category);
+        this.categoryPageService.setShowCategoryPage(true);
+        this.searchService.isSearchActive = false;
       } else if (anchorId) {
         this.categoryPageService.setCategory('');
         this.categoryPageService.setShowCategoryPage(false);
@@ -94,11 +96,12 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       } else {
         this.categoryPageService.setCategory('');
         this.categoryPageService.setShowCategoryPage(false);
+        this.router.navigateByUrl('');
       }
 
-      if (this.searchService.isSearchActive && this.results !== '') {
-        const keyword = this.results ?? '';
-        this.performSearch(keyword);
+      if (this.searchService.isSearchActive && this.keyword !== '') {
+        const keyword = this.keyword ?? '';
+        this.performSearch(keyword, true);
         this.categoryPageService.setShowCategoryPage(true);
       } else if (!this.searchService.isSearchActive && this.categoryPageService.getShowCategoryPage()) {
         this.performSearch('');
@@ -117,7 +120,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  performSearch(keyword: string) {
+  performSearch(keyword: string, throughNav = false) {
     this.afterViewInitSubscription =
     combineLatest([
       this.filteredAlkatreszek$,
@@ -136,7 +139,11 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
           if (!this.isFilterActive) {
             this.isFilterResultEmptyAlert = false;
             return this.service.searchAlkatreszByKeyword(keyword, orderBy).pipe(
-              takeUntil(this.unsubscribe$)
+              takeUntil(this.unsubscribe$), tap(results => {
+                if (results.length === 0 && throughNav) {
+                  this.onAppliedFilterInvalid(true, true);
+                }
+              })
             ); 
           } else {
             if (this.searchCounter > 0) {
@@ -342,10 +349,10 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     }
   }
 
-  onAppliedFilterInvalid(value: boolean) {
+  onAppliedFilterInvalid(value: boolean, throughNav = false) {
     this.changeDetectorRef.detectChanges();
     this.isFilterResultEmptyAlert = value;
-    if (value) {
+    if (value && !throughNav) {
       setTimeout(() => {
         const showSearchAlert = document.getElementById("filter-failure-alert");
         if (showSearchAlert) {
@@ -354,6 +361,15 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
           this.deleteFilter();
         }
       }, 2000);
+    } else if (value && throughNav) {
+      setTimeout(() => {
+        const showSearchAlert = document.getElementById("filter-failure-alert");
+        if (showSearchAlert) {
+          showSearchAlert.style.display = "none";
+          this.isSearchResultEmptyAlert = !value;
+          this.router.navigateByUrl('');
+        }
+      }, 1000);
     }
   }
 

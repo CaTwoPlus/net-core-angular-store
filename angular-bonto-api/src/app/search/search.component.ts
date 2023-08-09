@@ -4,6 +4,7 @@ import { SearchService } from './search.service';
 import { CategoryPageService } from '../category-page.service';
 import { Observable } from 'rxjs';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import { Router, NavigationExtras  } from '@angular/router';
 
 @Component({
   selector: 'app-search-bar',
@@ -28,7 +29,12 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
       [placeholder]="placeholder" 
       [class.is-invalid]="invalidInput"/>
       <ng-container *ngIf="!invalidInput && searchTermValue.length >= 3; else btnDisabled">
-        <a *ngIf="isVisitorQuery; else def" [routerLink]="['/alkatreszek', { talalatok: searchTermValue.trim() }]">
+          <button (click)="emitValues()" class="btn btn-secondary" type="submit" style="margin-left: -2px; z-index: 2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+            </svg>
+          </button>
+        <!--a *ngIf="isVisitorQuery; else def" [routerLink]="['/alkatreszek', { talalatok: searchTermValue.trim() }]">
           <button (click)="emitValues()" class="btn btn-secondary" type="submit" style="margin-left: -2px; z-index: 2">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
               <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
@@ -41,7 +47,7 @@ import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
               <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
             </svg>
           </button>
-        </ng-template>
+        </ng-template-->
       </ng-container>
       <ng-template #btnDisabled>
         <button (click)="emitValues()" class="btn btn-secondary" type="button" style="margin-left: -2px" [disabled]="invalidInput || searchTermValue.length < 3 ? true : null">
@@ -80,7 +86,7 @@ export class SearchBarComponent {
   previousSearchTermValue: string = '';
 
   constructor(private service: BontoApiService, private categoryService: CategoryPageService, 
-    private searchService: SearchService) {}
+    private searchService: SearchService, private router: Router) {}
 
   emitValues() {
     if (this.searchTermValue.length >= 3) {
@@ -91,19 +97,27 @@ export class SearchBarComponent {
           this.searchService.isSearchActive = true;
           this.searchService.setSearchTerm(this.searchTermValue.trim());
           this.previousSearchTermValue = this.searchTermValue;
-          this.searchTerm.emit(this.searchTermValue.trim());
+          if (this.isVisitorQuery) {
+            this.router.navigate(['/alkatreszek', { talalatok: this.searchTermValue.trim() }]);
+          } else {
+            this.searchTerm.emit(this.searchTermValue.trim());
+          }
         } else {
           this.searchService.isSearchActive = true;
           this.searchService.setSearchTerm(this.searchTermValue.trim());
           this.previousSearchTermValue = this.currentSearchTermValue;
-          this.searchTerm.emit(this.currentSearchTermValue.trim());
+          if (this.isVisitorQuery) {
+            this.router.navigate(['/alkatreszek', { talalatok: this.currentSearchTermValue.trim() }]);
+          } else {
+            this.searchTerm.emit(this.currentSearchTermValue.trim());
+          }
         }
         this.isSearchTermInvalid.emit(false);
         if (!this.categoryService.getShowCategoryPage()) {
           this.categoryService.setShowCategoryPage(true);
         }
       }
-    } 
+    }
   }
 
   onSearchInput() {
