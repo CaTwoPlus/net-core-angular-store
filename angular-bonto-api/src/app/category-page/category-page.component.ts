@@ -7,7 +7,7 @@ import { CategoryPageService } from '../category-page.service';
 @Component({
   selector: 'app-category-page',
   templateUrl: './category-page.component.html',
-  styleUrls: ['./category-page.component.css']
+  styleUrls: ['./category-page.component.css'],
 })
 export class CategoryPageComponent implements OnInit {
   @Input() alkatreszList$!: Observable<any[]>;

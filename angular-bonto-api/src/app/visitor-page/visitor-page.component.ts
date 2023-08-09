@@ -1,11 +1,12 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, filter, map, of, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
 import { SearchBarComponent } from 'src/app/search/search.component';
 import { ViewportScroller } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({ 
   selector: 'app-visitor-page',
@@ -16,7 +17,8 @@ import { Router } from '@angular/router';
 export class VisitorPageComponent implements OnInit, OnDestroy {
   constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
     private searchService: SearchService, private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef,
-    private viewportScroller: ViewportScroller, private router: Router) {}
+    private viewportScroller: ViewportScroller, private route: ActivatedRoute, private router: Router, 
+    private location: Location) {}
   
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
   @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;
@@ -64,6 +66,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   lastScrollPosition: number = 0;
   searchCounter: number = 0;
   filterOrder: string = '';
+  results: string | null = '';
   [key: string]: any;
   
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
@@ -71,13 +74,36 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.showCategoryPage$ = this.categoryPageService.showCategoryPage$;
-    if (this.searchService.isSearchActive) {
-      this.searchTermSubscription = this.searchService.searchTerm$.subscribe((searchTerm) => {
-        this.performSearch(searchTerm);
+    this.route.paramMap.subscribe(params => {
+      const category = params.get('category');
+      this.results = params.get('talalatok');
+      const currentUrlSegments = this.location.path().split('/');
+      const anchorId = currentUrlSegments.find(segment => {
+        return segment === 'szolgaltatasok' || segment === 'vasarlasi_infok' || segment === 'kapcsolat';
       });
-    } else if (!this.searchService.isSearchActive && this.categoryPageService.getShowCategoryPage()) {
-      this.performSearch('');
-    }
+
+      if (this.results) {
+        this.searchService.isSearchActive = true;
+      } else if (category) {
+        this.setCategoryPage(category);
+      } else if (anchorId) {
+        this.categoryPageService.setCategory('');
+        this.categoryPageService.setShowCategoryPage(false);
+        this.searchService.isSearchActive = false;
+        this.scrollToAnchor(anchorId);
+      } else {
+        this.categoryPageService.setCategory('');
+        this.categoryPageService.setShowCategoryPage(false);
+      }
+
+      if (this.searchService.isSearchActive && this.results !== '') {
+        const keyword = this.results ?? '';
+        this.performSearch(keyword);
+        this.categoryPageService.setShowCategoryPage(true);
+      } else if (!this.searchService.isSearchActive && this.categoryPageService.getShowCategoryPage()) {
+        this.performSearch('');
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -159,13 +185,19 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     if (category !== this.categoryPageService.getCategory() && category !== '') {
       this.categoryPageService.setCategory(category.trim());
       this.categoryPageService.setShowCategoryPage(true);
-      this.searchBar.resetSearch();
-    } else if (category === this.categoryPageService.getCategory() && this.searchService.isSearchActive) {
-      this.searchBar.resetSearch();
+      if (this.searchBar) {
+        this.searchBar.resetSearch();
+      }
+    } else if (anchorId !== 'home' && category === this.categoryPageService.getCategory() && this.searchService.isSearchActive) {
+      if (this.searchBar) {
+        this.searchBar.resetSearch();
+      }
     } else if (category === '') {
       this.categoryPageService.setShowCategoryPage(false);
       this.categoryPageService.setCategory('');
-      this.searchBar.resetSearch();
+      if (this.searchBar) {
+        this.searchBar.resetSearch();
+      }
       this.scrollToAnchor(anchorId);
     }
   }

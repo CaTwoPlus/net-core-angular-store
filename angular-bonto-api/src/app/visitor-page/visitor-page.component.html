@@ -3,7 +3,7 @@
   <div>
     <nav class="navbar">
       <div class="d-flex justify-content-start align-items-center">
-        <a mat-icon-button routerLink="" class="icon-button" (click)="setCategoryPage('')">
+        <a mat-icon-button routerLink="" class="icon-button" (click)="setCategoryPage('', 'home')">
           <mat-icon>home</mat-icon>
         </a>
         <span fxHide.gt-sm>
@@ -32,32 +32,30 @@
       </div>
       <div>
         <mat-menu #alkatreszekMenu="matMenu">
-          <a routerLink="/alkatreszek/autohifi" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Autóhifi')">Autóhifi</button></a>
-          <a routerLink="/alkatreszek/biztonsagi_alkatreszek" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Biztonsági alkatrészek')">Biztonsági alkatrészek</button></a>
-          <a routerLink="/alkatreszek/elektromos_alkatreszek" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Elektromos alkatrészek')">Elektromos alkatrészek</button></a>
-          <a routerLink="/alkatreszek/fenyszorok_lampak" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Fényszórók, lámpák ')">Fényszórók, lámpák</button></a>
-          <a routerLink="/alkatreszek/futomu_kormanymu_fek_alkatreszek" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Futómű, kormánymű és fék alkatrészek')">Futómű, kormánymű és fék alkatrészek</button></a>
-          <a routerLink="/alkatreszek/karosszeria_elemek" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Karosszéria elemek és alkatrészek')">Karosszéria elemek és alkatrészek</button></a>
-          <a routerLink="/alkatreszek/klima_futes" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Klíma, fűtés')">Klíma, fűtés</button></a>
-          <a routerLink="/alkatreszek/kuplung_sebessegvalto" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Kuplung, sebességváltó és alkatrészei')">Kuplung, sebességváltó és alkatrészei</button></a>
-          <a routerLink="/alkatreszek/motoralkatreszek" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Motoralkatrészek')">Motoralkatrészek</button></a>
-          <a routerLink="/alkatreszek/utaster_csomagter_egyeb" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Utastér, csomagtér, egyéb')">Utastér, csomagtér, egyéb</button></a>
-          <a routerLink="/alkatreszek/uzemanyag_ellato_rendszer" style="text-decoration: none;">
-            <button mat-menu-item (click)="setCategoryPage('Üzemanyag ellátó rendszer')">Üzemanyag ellátó rendszer</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Autóhifi' }]" style="text-decoration: none;">
+            <button mat-menu-item>Autóhifi</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Biztonsági alkatrészek' }]" style="text-decoration: none;">
+            <button mat-menu-item>Biztonsági alkatrészek</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Elektromos alkatrészek' }]" style="text-decoration: none;">
+            <button mat-menu-item>Elektromos alkatrészek</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Fényszórók, lámpák' }]" style="text-decoration: none;">
+            <button mat-menu-item>Fényszórók, lámpák</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Futómű, kormánymű és fék alkatrészek' }]" style="text-decoration: none;">
+            <button mat-menu-item>Futómű, kormánymű és fék alkatrészek</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Karosszéria elemek és alkatrészek' }]" style="text-decoration: none;">
+            <button mat-menu-item>Karosszéria elemek és alkatrészek</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Klíma, fűtés' }]" style="text-decoration: none;">
+            <button mat-menu-item>Klíma, fűtés</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Kuplung, sebességváltó és alkatrészei' }]" style="text-decoration: none;">
+            <button mat-menu-item>Kuplung, sebességváltó és alkatrészei</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Motoralkatrészek' }]" style="text-decoration: none;">
+            <button mat-menu-item>Motoralkatrészek</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Utastér, csomagtér, egyéb' }]" style="text-decoration: none;">
+            <button mat-menu-item>Utastér, csomagtér, egyéb</button></a>
+          <a [routerLink]="['/alkatreszek', { category: 'Üzemanyag ellátó rendszer' }]" style="text-decoration: none;">
+            <button mat-menu-item>Üzemanyag ellátó rendszer</button></a>
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
-          <!--app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
-          [alkatreszList$]="alkatreszList$" #searchBar></app-search-bar-->
           <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
           (searchTerm)="performSearch($event)" [alkatreszList$]="alkatreszList$" [isVisitorQuery]="isVisitorQuery" #searchBar></app-search-bar>
           <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">

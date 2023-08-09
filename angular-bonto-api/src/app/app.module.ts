@@ -16,7 +16,6 @@ import { JwtModule } from '@auth0/angular-jwt';
 import { VisitorPageComponent } from './visitor-page/visitor-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
-import { ImgFallbackModule } from 'ngx-img-fallback';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { CategoryPageComponent } from './category-page/category-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
@@ -67,7 +66,6 @@ export function tokenGetter() {
     MatProgressSpinnerModule,
     FlexLayoutModule,
     TypeaheadModule,
-    ImgFallbackModule,
     LazyLoadImageModule,
 
     JwtModule.forRoot({
