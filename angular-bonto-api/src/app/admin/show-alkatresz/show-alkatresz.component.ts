@@ -4,6 +4,7 @@ import { map, startWith, takeUntil, tap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
+import { AuthenticationService } from 'src/app/login/auth.service';
 
 @Component({
   selector: 'app-show-alkatresz',
@@ -15,7 +16,8 @@ export class ShowAlkatreszComponent implements OnInit{
   @ViewChild('viewAlkatreszModal') viewAlkatreszModal!: ElementRef;
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
-  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
+  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
+    private auth: AuthenticationService) {}
 
   alkatreszList$!:Observable<any[]>;
   kategoriaList$!:Observable<any[]>;
@@ -166,6 +168,14 @@ export class ShowAlkatreszComponent implements OnInit{
     this.kategoriak.next([]);
     this.kategoriakLabel = '';
     this.isFilterActive = false;
+  }
+
+  logOut() {
+    const credentials = {
+      username: localStorage.getItem('username'),
+      refreshToken: localStorage.getItem('refreshToken')
+    }
+    this.auth.logout(credentials);
   }
 }
 

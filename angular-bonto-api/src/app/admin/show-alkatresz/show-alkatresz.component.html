@@ -10,7 +10,9 @@
 
 <nav class="navbar">
   <div>
-    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
+      Kijelentkezés
+    </button>
     <button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#addNewAlkatresz" (click)="modalAdd()">
       Alkatrész hozzáadása
     </button>
@@ -24,6 +26,24 @@
     </ng-container>
   </div>
 </nav>
+
+<!-- Logout modal -->
+<div class="modal fade" id="logoutModal" data-bs-backdrop="static" tabindex="-1">
+  <div class="modal-dialog" style="top: 30%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Biztos, hogy kijelentkezel?.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>
+        <button type="button" class="btn btn-primary" (click)="logOut()">Kijelentkezés</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Add or edit alkatresz modal -->
 <div class="modal fade" id="addNewAlkatresz" data-bs-backdrop="static" tabindex="-1" aria-labelledby="addNewAlkatreszLabel" #addEditAlkatreszModal>  

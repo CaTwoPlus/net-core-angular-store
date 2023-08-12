@@ -15,7 +15,7 @@ export class ViewAlkatreszComponent implements OnInit{
   activateImageGallery: boolean = false;
   kepek: string = '';
 
-  constructor(private service: BontoApiService, private ViewAlkatresz: ViewAlkatreszService,) {}
+  constructor(private service: BontoApiService, private ViewAlkatresz: ViewAlkatreszService) {}
 
   ngOnInit(): void {
     this.fetchAlkatresz();

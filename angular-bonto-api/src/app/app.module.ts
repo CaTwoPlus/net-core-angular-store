@@ -5,12 +5,11 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AlkatreszComponent } from './alkatresz/alkatresz.component';
-import { ShowAlkatreszComponent } from './alkatresz/show-alkatresz/show-alkatresz.component';
-import { AddEditAlkatreszComponent } from './alkatresz/add-edit-alkatresz/add-edit-alkatresz.component';
+import { ShowAlkatreszComponent } from './admin/show-alkatresz/show-alkatresz.component';
+import { AddEditAlkatreszComponent } from './admin/add-edit-alkatresz/add-edit-alkatresz.component';
 import { BontoApiService } from './bonto-api.service';
 import { SearchBarComponent } from './search/search.component';
-import { ViewAlkatreszComponent } from './alkatresz/view-alkatresz/view-alkatresz.component';
+import { ViewAlkatreszComponent } from './admin/view-alkatresz/view-alkatresz.component';
 import { LoginComponent } from './login/login.component';
 import { JwtModule } from '@auth0/angular-jwt';
 import { VisitorPageComponent } from './visitor-page/visitor-page.component';
@@ -21,6 +20,8 @@ import { CategoryPageComponent } from './category-page/category-page.component';
 import { ProductPageComponent } from './product-page/product-page.component';
 import { SearchService } from './search/search.service';
 import { CarouselComponent } from './category-page/carousel/carousel.component';
+import { RecaptchaModule, RecaptchaFormsModule } from "ng-recaptcha";
+import { AuthenticationService } from './login/auth.service';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -40,7 +41,6 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent,
-    AlkatreszComponent,
     ShowAlkatreszComponent,
     AddEditAlkatreszComponent,
     SearchBarComponent,
@@ -67,6 +67,8 @@ export function tokenGetter() {
     FlexLayoutModule,
     TypeaheadModule,
     LazyLoadImageModule,
+    RecaptchaModule,
+    RecaptchaFormsModule, 
 
     JwtModule.forRoot({
       config: {
@@ -80,7 +82,7 @@ export function tokenGetter() {
     SearchBarComponent,
     AppRoutingModule
   ], 
-  providers: [BontoApiService, SearchService],
+  providers: [BontoApiService, SearchService, AuthenticationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

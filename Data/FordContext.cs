@@ -13,7 +13,13 @@ namespace BontoAPI.Data
 
         public DbSet<AutoTipus> AutoTipusok { get; set; }
 
-        public DbSet<BontoAPI.Media> Media { get; set; }
+        public DbSet<Credentials> Credentials { get; set; }
+
+        public DbSet<LoginHistory> LoginHistory { get; set; }
+
+        public DbSet<RefreshToken> RefreshToken { get; set; }
+
+        public DbSet<RevokedTokens> RevokedTokens { get; set; }
     }
 
 }

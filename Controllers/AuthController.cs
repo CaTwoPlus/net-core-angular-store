@@ -4,38 +4,247 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using BontoAPI;
 using System.Net.Mail;
+using Microsoft.EntityFrameworkCore;
+using BontoAPI.Data;
+using SQLitePCL;
+using System.Security.Claims;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
+using NuGet.Protocol;
+using Azure.Identity;
 
 [ApiController]
 [Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IConfiguration _configuration;
+    private readonly DataContext _context;
 
-    public AuthController(IConfiguration configuration)
+    public AuthController(IConfiguration configuration, DataContext context)
     {
         _configuration = configuration;
+        _context = context;
+    }
+    public class CustomResponse
+    {
+        public int Status { get; set; }
+        public string Message { get; set; }
+        public DataResponse Data { get; set; }
+    }
+
+    public class DataResponse
+    {
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
+    }
+
+    private CustomResponse CreateCustomResponse(int status, string message, string accessToken = null, string refreshToken = null)
+    {
+        return new CustomResponse
+        {
+            Status = status,
+            Message = message,
+            Data = new DataResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken
+            }
+        };
     }
 
     [HttpPost("login")]
-    public IActionResult Login(LoginModel model)
+    public async Task<IActionResult> Login(LoginInputModel model)
     {
         string username = model.Username;
         string password = model.Password;
+        string refreshToken = model.RefreshToken;
 
-        bool isValidCredentials = ValidateCredentials(username, password);
+        var response = await AuthenticateAndGenerateTokenAsync(username, password, refreshToken);
+
+        await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, response.Message);
+
+        return StatusCode(response.Status, response);
+    }
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(string username, string refreshToken)
+    {
+        var refreshTokenMatch = RetrieveRefreshTokenFromDatabase(refreshToken);
+        var revokedTokenMatch = RetrieveRevokedTokenFromDatabase(refreshToken);
+
+        if (refreshTokenMatch != null && revokedTokenMatch == null)
+        {
+            await SaveRevokedTokenToDatabaseAsync(refreshToken, refreshTokenMatch.RefreshTokenExpirationDate);
+            await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Logout successful!");
+            return StatusCode(200, "Logout successful!");
+        }
+
+        if (refreshTokenMatch != null && revokedTokenMatch != null)
+        {
+            // The provided refresh token is already revoked, no further action needed
+            await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Logout successful!");
+            return StatusCode(200, "Logout successful!");
+        }
+
+        if (refreshTokenMatch == null)
+        {
+            // Invalid refresh token provided
+            await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Invalid refresh token");
+            return BadRequest("Invalid refresh token");
+        }
+
+        return BadRequest("Something went wrong with the logout process...");
+    }
+
+    [HttpPost("refresh-token")]
+    public async Task<IActionResult> RefreshToken(string refreshToken)
+    {
+        var response = await RefreshTokenAsync(refreshToken);
+
+        return StatusCode(response.Status, response);
+    }
+
+    private async Task<CustomResponse> RefreshTokenAsync(string refreshToken)
+    {
+        var refreshTokenDB = RetrieveRefreshTokenFromDatabase(refreshToken);
+        var isRefreshTokenRevoked = RetrieveRevokedTokenFromDatabase(refreshToken);
+        var accessToken = GenerateJwtToken();
+
+        if (refreshTokenDB == null || IsRefreshTokenExpired(refreshTokenDB.RefreshTokenExpirationDate) || refreshToken != refreshTokenDB.Token)
+        {
+            var newRefreshToken = GenerateJwtToken();
+
+            // Save the new refresh token and its expiration date to the database
+            await SaveRefreshTokenToDatabaseAsync(newRefreshToken, CalculateNewRefreshTokenExpirationDate());
+
+            return CreateCustomResponse(400, "refresh_token_expired or NULL", newRefreshToken, accessToken);
+        }
+
+        if (isRefreshTokenRevoked != null)
+        {
+            return CreateCustomResponse(400, "refresh_token_revoked", null, accessToken);
+        }
+
+        return CreateCustomResponse(200, "Access token refreshed successfully", null, accessToken);
+    }
+
+    private async Task<CustomResponse> AuthenticateAndGenerateTokenAsync(string username, string password, string refreshToken)
+    {
+        bool isValidCredentials = await ValidateCredentialsAsync(username, password);
 
         if (!isValidCredentials)
         {
-            // Return unauthorized status if the credentials are invalid
-            return Unauthorized();
+            return CreateCustomResponse(400, "Invalid credentials");
         }
 
-        // Validate credentials and generate JWT token
+        var response = await RefreshTokenAsync(refreshToken);
 
-        var token = GenerateJwtToken();
+        if (response.Status == 200) // Only return "200 OK" with access token if the refresh token was valid
+        {
+            var accessToken = GenerateJwtToken();
+            return CreateCustomResponse(200, "Login successful", accessToken, response.Data.RefreshToken);
+        }
+        else
+        {
+            return response;
+        }
+    }
 
-        // Return the token in the response
-        return Ok(new { token });
+    private async Task SaveLoginHistoryAsync(string username, string ipAddress, DateTime date, string status)
+    {
+        var loginHistory = new LoginHistory
+        {
+            Username = username,
+            IPAddress = ipAddress,
+            Date = date,
+            Status = status.ToString(),
+        };
+
+        _context.LoginHistory.Add(loginHistory);
+        await _context.SaveChangesAsync();
+    }
+
+    private async Task SaveRefreshTokenToDatabaseAsync(string refreshToken, DateTime refreshTokenExpirationDate)
+    {
+        var token = new RefreshToken
+        {
+            Token = refreshToken,
+            RefreshTokenExpirationDate = refreshTokenExpirationDate
+        };
+
+        _context.RefreshToken.Attach(token);
+        _context.Entry(token).Property(x => x.RefreshTokenExpirationDate).IsModified = true;
+
+        await _context.SaveChangesAsync();
+    }
+
+    private async Task SaveRevokedTokenToDatabaseAsync(string refreshToken, DateTime refreshTokenExpirationDate)
+    {
+        var token = new RevokedTokens
+        {
+            Token = refreshToken,
+            RefreshTokenExpirationDate = refreshTokenExpirationDate
+        };
+
+        _context.RevokedTokens.Attach(token);
+        _context.Entry(token).Property(x => x.RefreshTokenExpirationDate).IsModified = true;
+
+        await _context.SaveChangesAsync();
+    }
+
+    private async Task<bool> ValidateCredentialsAsync(string username, string password)
+    {
+        var user = await _context.Credentials.FirstOrDefaultAsync(lm => lm.Username == username && lm.Password == password);
+
+        return user != null;
+    }
+
+    private string GenerateJwtToken(bool isRefreshToken = false)
+    {
+        string jwtSecretKey = _configuration["JwtSettings:SecretKey"];
+        string jwtIssuer = _configuration["JwtSettings:Issuer"];
+        string jwtAudience = _configuration["JwtSettings:Audience"];
+
+        if (string.IsNullOrEmpty(jwtSecretKey) || string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtAudience))
+        {
+            throw new ApplicationException("JWT settings are not properly configured");
+        }
+
+        var expiration = isRefreshToken ? (DateTime?) CalculateNewRefreshTokenExpirationDate()
+                                        : DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:AccessTokenExpirationMinutes"]));
+
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            jwtIssuer,
+            jwtAudience,
+            claims: new List<Claim>(),
+            expires: expiration,
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private DateTime CalculateNewRefreshTokenExpirationDate()
+    {
+        var date = Convert.ToDouble(_configuration["JwtSettings:RefreshTokenExpirationDays"]);
+        return DateTime.UtcNow.AddDays(date);
+    }
+
+    private bool IsRefreshTokenExpired(DateTime refreshTokenExpirationDate)
+    {
+        return refreshTokenExpirationDate <= DateTime.UtcNow;
+    }
+
+    private RefreshToken RetrieveRefreshTokenFromDatabase(string refreshToken)
+    {
+        return _context.RefreshToken.FirstOrDefault(lm => lm.Token == refreshToken);
+    }
+
+    private RevokedTokens RetrieveRevokedTokenFromDatabase(string refreshToken)
+    {
+        return _context.RevokedTokens.FirstOrDefault(lm => lm.Token == refreshToken);
     }
 
     /*[HttpPost("password-reset")]
@@ -80,32 +289,4 @@ public class AuthController : ControllerBase
         }
     }*/
 
-    private bool ValidateCredentials(string username, string password)
-    {
-        if (username == "admin" && password == "valid_password")
-        {
-            return true; // Credentials are valid
-        }
-
-        return false; // Credentials are invalid
-    }
-
-    private string GenerateJwtToken()
-    {
-        // Generate and return JWT token
-        // You can use a library like System.IdentityModel.Tokens.Jwt
-
-        // Example code:
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            _configuration["Jwt:Issuer"],
-            _configuration["Jwt:Audience"],
-            // Set any additional claims or token properties
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
 }
