@@ -66,33 +66,36 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    public async Task<IActionResult> Logout(string username, string refreshToken)
+    public async Task<CustomResponse> Logout([FromBody] LoginInputModel model)
     {
+        string username = model.Username;
+        string refreshToken = model.RefreshToken;
+
         var refreshTokenMatch = RetrieveRefreshTokenFromDatabase(refreshToken);
         var revokedTokenMatch = RetrieveRevokedTokenFromDatabase(refreshToken);
 
         if (refreshTokenMatch != null && revokedTokenMatch == null)
         {
-            await SaveRevokedTokenToDatabaseAsync(refreshToken, refreshTokenMatch.RefreshTokenExpirationDate);
+            await RevokeTokenAndSaveToDatabaseAsync(refreshToken, refreshTokenMatch.RefreshTokenExpirationDate);
             await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Logout successful!");
-            return StatusCode(200, "Logout successful!");
+            return CreateCustomResponse(200, "Logout successful!");
         }
 
         if (refreshTokenMatch != null && revokedTokenMatch != null)
         {
             // The provided refresh token is already revoked, no further action needed
             await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Logout successful!");
-            return StatusCode(200, "Logout successful!");
+            return CreateCustomResponse(200, "Logout successful!");
         }
 
         if (refreshTokenMatch == null)
         {
             // Invalid refresh token provided
             await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Invalid refresh token");
-            return BadRequest("Invalid refresh token");
+            return CreateCustomResponse(400, "Invalid refresh token");
         }
 
-        return BadRequest("Something went wrong with the logout process...");
+        return CreateCustomResponse(400, "Something went wrong with the logout process...");
     }
 
     [HttpPost("refresh-token")]
@@ -177,7 +180,7 @@ public class AuthController : ControllerBase
         await _context.SaveChangesAsync();
     }
 
-    private async Task SaveRevokedTokenToDatabaseAsync(string refreshToken, DateTime refreshTokenExpirationDate)
+    private async Task RevokeTokenAndSaveToDatabaseAsync(string refreshToken, DateTime refreshTokenExpirationDate)
     {
         var token = new RevokedTokens
         {

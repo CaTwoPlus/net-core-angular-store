@@ -9,6 +9,8 @@ import { json } from 'body-parser';
 })
 export class AuthenticationService {
   readonly bontoAPIUrl = "https://localhost:7094/api";
+  accessToken: any;
+  refreshToken: any;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -16,12 +18,14 @@ export class AuthenticationService {
     this.http.post<any>(this.bontoAPIUrl + '/auth/login', credentials).subscribe({
       next: (response) => {
         if (response.status === 200) {
-          const data = response.data;
+          const data = response.error.data;
           if (data.accessToken) {
             localStorage.setItem('accessToken', data.accessToken);
+            console.log(data.accessToken);
           }
           if (data.refreshToken) {
             localStorage.setItem('refreshToken', data.refreshToken);
+            console.log(data.refreshToken);
           }
           this.router.navigate(['/admin/alkatreszek']); 
         } else {
@@ -34,8 +38,9 @@ export class AuthenticationService {
         } else if (error.status === 404) {
           alert('A kért állomány nem található!')
         } else if (error.status === 400) {
-          localStorage.setItem('accessToken', error.accessToken);
-          localStorage.setItem('refreshToken', error.refreshToken);
+          const data = error.error.data;
+          localStorage.setItem('accessToken', data.accessToken);
+          localStorage.setItem('refreshToken', data.refreshToken);
           this.router.navigate(['/admin/alkatreszek']);
         } else {
           alert('Egyéb hiba történt!')
@@ -47,14 +52,16 @@ export class AuthenticationService {
 
   logout(credentials: any) {
     this.http.post<any>(this.bontoAPIUrl + '/auth/logout', credentials).subscribe({
-      next: () => {
-        localStorage.clear();
-        this.router.navigate(['/admin/bejelentkezes']);
+      next: (response) => {
+        if (response.status === 200) {
+          localStorage.clear();
+          this.router.navigate(['/admin/bejelentkezes']);
+        }
       }, 
       error: (error) => {
         if (error.status === 400) {
           alert("Hiba történt a kijelentkezés során!");
-          throwError(() => new Error(error));
+          throwError(() => new Error(error.message));
         }
       }
     });
