@@ -12,7 +12,6 @@ export const canActivate: CanActivateFn = (
   
     return authService.checkLogin().pipe(
         map(() => {
-        console.log('AuthGuard: User is authenticated');
         return true;
         }),
         catchError(() => {

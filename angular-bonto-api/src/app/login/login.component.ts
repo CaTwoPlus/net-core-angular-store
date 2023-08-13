@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthenticationService } from './auth.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   missingLoginDetails: boolean = true;
   activatePasswordResetModal: boolean = false;
 
-  constructor(private auth: AuthenticationService) {}
+  constructor(private auth: AuthenticationService, private cookie: CookieService) {}
 
   onSubmit() {
     const credentials = {
@@ -26,7 +27,7 @@ export class LoginComponent {
     if (this.username.length === 0 || this.password.length === 0) {
       return;
     } else if (this.username.length !== 0 && this.password.length !== 0) {
-      localStorage.setItem('username', credentials.username);
+      this.cookie.set('username', credentials.username);
       this.auth.authenticate(credentials)
     }
     this.missingLoginDetails = true;

@@ -3,14 +3,15 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/c
 import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
 import { AuthenticationService } from './auth.service';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthenticationService, private router: Router) {}
+  constructor(private authService: AuthenticationService, private router: Router, private cookie: CookieService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = this.cookie.get('accessToken');
     
     if (accessToken) {
       const expirationTimestamp = this.authService.getAccessTokenExpiration();
@@ -29,8 +30,7 @@ export class TokenInterceptor implements HttpInterceptor {
           }),
           catchError((error) => {
             // Handle refresh token failure or other errors
-            // You might want to redirect the user to the login page
-            alert ('A munkamenet lejárt, jelentkezz be újra!');
+            alert ('Nem sikerült megújítani a munkamenetet, jelentkezz be újra!');
             this.router.navigate(['/admin/bejelentkezes']);
             return throwError(() => new Error(error));
           })

@@ -2,17 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { json } from 'body-parser';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
   readonly bontoAPIUrl = "https://localhost:7094/api";
-  accessToken: any;
-  refreshToken: any;
+  setGuard = false;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private cookie: CookieService) { }
 
   authenticate(credentials: any) {
     this.http.post<any>(this.bontoAPIUrl + '/auth/login', credentials).subscribe({
@@ -20,13 +19,12 @@ export class AuthenticationService {
         if (response.status === 200) {
           const data = response.error.data;
           if (data.accessToken) {
-            localStorage.setItem('accessToken', data.accessToken);
-            console.log(data.accessToken);
+            this.cookie.set('accessToken', data.accessToken);
           }
           if (data.refreshToken) {
-            localStorage.setItem('refreshToken', data.refreshToken);
-            console.log(data.refreshToken);
+            this.cookie.set('refreshToken', data.refreshToken);
           }
+          this.setGuard = true;
           this.router.navigate(['/admin/alkatreszek']); 
         } else {
           alert('Hiba történt a belépési tokenek eltárolásában!');
@@ -39,8 +37,9 @@ export class AuthenticationService {
           alert('A kért állomány nem található!')
         } else if (error.status === 400) {
           const data = error.error.data;
-          localStorage.setItem('accessToken', data.accessToken);
-          localStorage.setItem('refreshToken', data.refreshToken);
+          this.cookie.set('accessToken', data.accessToken);
+          this.cookie.set('refreshToken', data.refreshToken);
+          this.setGuard = true;
           this.router.navigate(['/admin/alkatreszek']);
         } else {
           alert('Egyéb hiba történt!')
@@ -54,7 +53,8 @@ export class AuthenticationService {
     this.http.post<any>(this.bontoAPIUrl + '/auth/logout', credentials).subscribe({
       next: (response) => {
         if (response.status === 200) {
-          localStorage.clear();
+          this.cookie.deleteAll();
+          this.setGuard = false;
           this.router.navigate(['/admin/bejelentkezes']);
         }
       }, 
@@ -68,7 +68,7 @@ export class AuthenticationService {
   }
 
   refreshAccessToken(): Observable<any> {
-    const refreshToken = localStorage.getItem('refreshToken'); // Example, use your own logic
+    const refreshToken = this.cookie.get('refreshToken'); // Example, use your own logic
     
     if (!refreshToken) {
       return throwError(() => new Error('Refresh token not found.'));
@@ -78,7 +78,7 @@ export class AuthenticationService {
   }
 
   getAccessTokenExpiration(): number {
-    const tokenParts = localStorage.getItem('accessToken');
+    const tokenParts = this.cookie.get('accessToken');
     if (tokenParts) {
       const payload = JSON.parse(atob(tokenParts[1]));
       const expirationTimestamp = payload.exp * 1000; // Convert to milliseconds
@@ -89,9 +89,7 @@ export class AuthenticationService {
   }
 
   checkLogin(): Observable<boolean> {
-    const isAuthenticated = localStorage.getItem('accessToken');
-    
-    if (isAuthenticated != null && isAuthenticated != undefined) {
+    if (this.setGuard) {
       return of(true);
     } else {
       return throwError(() => new Error('Az oldal eléréséhez, előbb azonosítás szükséges!'));

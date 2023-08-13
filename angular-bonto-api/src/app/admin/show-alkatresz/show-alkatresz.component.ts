@@ -5,6 +5,7 @@ import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
 import { AuthenticationService } from 'src/app/login/auth.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-show-alkatresz',
@@ -17,7 +18,7 @@ export class ShowAlkatreszComponent implements OnInit{
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
   constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
-    private auth: AuthenticationService) {}
+    private auth: AuthenticationService, private cookie: CookieService) {}
 
   alkatreszList$!:Observable<any[]>;
   kategoriaList$!:Observable<any[]>;
@@ -172,8 +173,8 @@ export class ShowAlkatreszComponent implements OnInit{
 
   logOut() {
     const credentials = {
-      username: localStorage.getItem('username'),
-      refreshToken: localStorage.getItem('refreshToken')
+      username: this.cookie.get('username'),
+      refreshToken: this.cookie.get('refreshToken')
     }
     this.auth.logout(credentials);
   }

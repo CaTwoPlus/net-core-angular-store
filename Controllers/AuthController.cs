@@ -11,6 +11,7 @@ using System.Security.Claims;
 using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using NuGet.Protocol;
 using Azure.Identity;
+using Azure;
 
 [ApiController]
 [Route("api/auth")]
@@ -51,6 +52,29 @@ public class AuthController : ControllerBase
         };
     }
 
+    private void appendHTTPResponse(CustomResponse response, bool accessToken, bool refreshToken = false)
+    {
+        if (accessToken)
+        {
+            Response.Cookies.Append("accessToken", response.Data.AccessToken, new CookieOptions
+            {
+                HttpOnly = true,
+                //Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:AccessTokenExpirationMinutes"])),
+                Expires = DateTime.UtcNow.AddMinutes(1),
+            });
+        }
+        
+        if (refreshToken)
+        {
+            Response.Cookies.Append("refreshToken", response.Data.RefreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                //Expires = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JwtSettings:RefreshTokenExpirationDays"])),
+                Expires = DateTime.UtcNow.AddMinutes(5),
+            });
+        }
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginInputModel model)
     {
@@ -78,6 +102,8 @@ public class AuthController : ControllerBase
         {
             await RevokeTokenAndSaveToDatabaseAsync(refreshToken, refreshTokenMatch.RefreshTokenExpirationDate);
             await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Logout successful!");
+            Response.Cookies.Delete("accessToken");
+            Response.Cookies.Delete("refreshToken");
             return CreateCustomResponse(200, "Logout successful!");
         }
 
@@ -85,6 +111,8 @@ public class AuthController : ControllerBase
         {
             // The provided refresh token is already revoked, no further action needed
             await SaveLoginHistoryAsync(username, HttpContext.Connection.RemoteIpAddress.ToString(), DateTime.UtcNow, "Logout successful!");
+            Response.Cookies.Delete("accessToken");
+            Response.Cookies.Delete("refreshToken");
             return CreateCustomResponse(200, "Logout successful!");
         }
 
@@ -114,20 +142,32 @@ public class AuthController : ControllerBase
 
         if (refreshTokenDB == null || IsRefreshTokenExpired(refreshTokenDB.RefreshTokenExpirationDate) || refreshToken != refreshTokenDB.Token)
         {
-            var newRefreshToken = GenerateJwtToken();
+            var newRefreshToken = GenerateJwtToken(true);
 
             // Save the new refresh token and its expiration date to the database
             await SaveRefreshTokenToDatabaseAsync(newRefreshToken, CalculateNewRefreshTokenExpirationDate());
 
-            return CreateCustomResponse(400, "refresh_token_expired or NULL", newRefreshToken, accessToken);
+            var response = CreateCustomResponse(400, "refresh_token_expired or NULL", accessToken, newRefreshToken);
+
+            appendHTTPResponse(response, true, true);
+
+            return response;
         }
 
         if (isRefreshTokenRevoked != null)
         {
-            return CreateCustomResponse(400, "refresh_token_revoked", null, accessToken);
+            var response = CreateCustomResponse(400, "refresh_token_revoked", null, accessToken);
+
+            appendHTTPResponse(response, true);
+
+            return response;
         }
 
-        return CreateCustomResponse(200, "Access token refreshed successfully", null, accessToken);
+        var responseOK = CreateCustomResponse(200, "Access token refreshed successfully", null, accessToken);
+
+        appendHTTPResponse(responseOK, true);
+
+        return responseOK;
     }
 
     private async Task<CustomResponse> AuthenticateAndGenerateTokenAsync(string username, string password, string refreshToken)
@@ -136,7 +176,7 @@ public class AuthController : ControllerBase
 
         if (!isValidCredentials)
         {
-            return CreateCustomResponse(400, "Invalid credentials");
+            return CreateCustomResponse(401, "Invalid credentials");
         }
 
         var response = await RefreshTokenAsync(refreshToken);
@@ -144,6 +184,7 @@ public class AuthController : ControllerBase
         if (response.Status == 200) // Only return "200 OK" with access token if the refresh token was valid
         {
             var accessToken = GenerateJwtToken();
+            appendHTTPResponse(response, true);
             return CreateCustomResponse(200, "Login successful", accessToken, response.Data.RefreshToken);
         }
         else
