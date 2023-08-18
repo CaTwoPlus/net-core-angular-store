@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -22,6 +22,7 @@ import { SearchService } from './search/search.service';
 import { CarouselComponent } from './category-page/carousel/carousel.component';
 import { RecaptchaModule, RecaptchaFormsModule } from "ng-recaptcha";
 import { AuthenticationService } from './login/auth.service';
+import { TokenInterceptor } from './login/token.interceptor';
 
 // Angular Materials
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -82,7 +83,11 @@ export function tokenGetter() {
     SearchBarComponent,
     AppRoutingModule
   ], 
-  providers: [BontoApiService, SearchService, AuthenticationService],
+  providers: [BontoApiService, SearchService, AuthenticationService,  {
+    provide: HTTP_INTERCEPTORS,
+    useClass: TokenInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, of } from 'rxjs';
-import { map, startWith, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, Subject, combineLatest, of } from 'rxjs';
+import { catchError, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
@@ -18,7 +18,7 @@ export class ShowAlkatreszComponent implements OnInit{
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
   constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
-    private auth: AuthenticationService, private cookie: CookieService) {}
+    private authService: AuthenticationService, private cookie: CookieService) {}
 
   alkatreszList$!:Observable<any[]>;
   kategoriaList$!:Observable<any[]>;
@@ -50,18 +50,31 @@ export class ShowAlkatreszComponent implements OnInit{
 
   ngAfterViewInit(): void {
     combineLatest([
+      this.alkatreszList$, 
       this.filteredAlkatreszek$,
       this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
       this.kategoriak
     ]).pipe(
-      tap(([_, searchTermValue, kategoriakValue]) => {
-        const keyword = searchTermValue ? searchTermValue.trim() : '';
-        const kategoriakString = kategoriakValue.join(';');
-        this.filteredAlkatreszek$ = this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder).pipe(
-          takeUntil(this.unsubscribe$)
+      switchMap(([__, _, searchTermValue, kategoriakValue]) => {
+        return this.authService.checkTokenExpiration().pipe(
+          switchMap((sessionExpired) => {
+            if (sessionExpired) {
+              alert('Lejárt a munkamenet, jelentkezz be újra!');
+              this.authService.logout().subscribe(() => {
+              });
+              return EMPTY;
+            } else {
+            const keyword = searchTermValue ? searchTermValue.trim() : '';
+            const kategoriakString = kategoriakValue.join(';');
+            return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder);
+            }
+          })
         );
-      })
-    ).subscribe();
+      }),
+      takeUntil(this.unsubscribe$)
+    ).subscribe(filteredAlkatreszek => {
+      this.filteredAlkatreszek$ = of(filteredAlkatreszek);
+    });
   }
   
   ngOnDestroy() {
@@ -172,11 +185,7 @@ export class ShowAlkatreszComponent implements OnInit{
   }
 
   logOut() {
-    const credentials = {
-      username: this.cookie.get('username'),
-      refreshToken: this.cookie.get('refreshToken')
-    }
-    this.auth.logout(credentials);
+    this.authService.logout();
   }
 }
 

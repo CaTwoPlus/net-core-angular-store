@@ -59,8 +59,7 @@ public class AuthController : ControllerBase
             Response.Cookies.Append("accessToken", response.Data.AccessToken, new CookieOptions
             {
                 HttpOnly = true,
-                //Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:AccessTokenExpirationMinutes"])),
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:AccessTokenExpirationMinutes"])),
             });
         }
         
@@ -69,8 +68,7 @@ public class AuthController : ControllerBase
             Response.Cookies.Append("refreshToken", response.Data.RefreshToken, new CookieOptions
             {
                 HttpOnly = true,
-                //Expires = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JwtSettings:RefreshTokenExpirationDays"])),
-                Expires = DateTime.UtcNow.AddMinutes(5),
+                Expires = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["JwtSettings:RefreshTokenExpirationMinutes"])),
             });
         }
     }
@@ -129,7 +127,16 @@ public class AuthController : ControllerBase
     [HttpPost("refresh-token")]
     public async Task<IActionResult> RefreshToken(string refreshToken)
     {
-        var response = await RefreshTokenAsync(refreshToken);
+        CustomResponse response;
+
+        if (!string.IsNullOrEmpty(refreshToken))
+        {
+            response = await RefreshTokenAsync(refreshToken);
+
+            return StatusCode(response.Status, response);
+        }
+
+        response = CreateCustomResponse(400, "Invalid refresh token");
 
         return StatusCode(response.Status, response);
     }
@@ -140,12 +147,16 @@ public class AuthController : ControllerBase
         var isRefreshTokenRevoked = RetrieveRevokedTokenFromDatabase(refreshToken);
         var accessToken = GenerateJwtToken();
 
-        if (refreshTokenDB == null || IsRefreshTokenExpired(refreshTokenDB.RefreshTokenExpirationDate) || refreshToken != refreshTokenDB.Token)
+        if ((refreshTokenDB != null && IsRefreshTokenExpired(refreshTokenDB.RefreshTokenExpirationDate)) || refreshTokenDB == null)
         {
             var newRefreshToken = GenerateJwtToken(true);
 
-            // Save the new refresh token and its expiration date to the database
-            await SaveRefreshTokenToDatabaseAsync(newRefreshToken, CalculateNewRefreshTokenExpirationDate());
+            await SaveRefreshTokenToDatabaseAsync(newRefreshToken, DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:RefreshTokenExpirationMinutes"])));
+
+            if (refreshTokenDB != null)
+            {
+                await RevokeTokenAndSaveToDatabaseAsync(refreshTokenDB.Token, refreshTokenDB.RefreshTokenExpirationDate);
+            }
 
             var response = CreateCustomResponse(400, "refresh_token_expired or NULL", accessToken, newRefreshToken);
 
@@ -156,21 +167,26 @@ public class AuthController : ControllerBase
 
         if (isRefreshTokenRevoked != null)
         {
-            var response = CreateCustomResponse(400, "refresh_token_revoked", null, accessToken);
+            var response = CreateCustomResponse(401, "refresh_token_revoked");
 
             appendHTTPResponse(response, true);
 
             return response;
         }
 
-        var responseOK = CreateCustomResponse(200, "Access token refreshed successfully", null, accessToken);
+        if (refreshTokenDB != null && !IsRefreshTokenExpired(refreshTokenDB.RefreshTokenExpirationDate))
+        {
+            var responseOK = CreateCustomResponse(200, "Access token refreshed successfully", accessToken, null);
 
-        appendHTTPResponse(responseOK, true);
+            appendHTTPResponse(responseOK, true);
 
-        return responseOK;
+            return responseOK;
+        }
+
+        return CreateCustomResponse(400, "Something went wrong with the token refreshment process...");
     }
 
-    private async Task<CustomResponse> AuthenticateAndGenerateTokenAsync(string username, string password, string refreshToken)
+    private async Task<CustomResponse> AuthenticateAndGenerateTokenAsync(string username, string password, string refreshToken = null)
     {
         bool isValidCredentials = await ValidateCredentialsAsync(username, password);
 
@@ -187,10 +203,8 @@ public class AuthController : ControllerBase
             appendHTTPResponse(response, true);
             return CreateCustomResponse(200, "Login successful", accessToken, response.Data.RefreshToken);
         }
-        else
-        {
-            return response;
-        }
+        
+        return response;
     }
 
     private async Task SaveLoginHistoryAsync(string username, string ipAddress, DateTime date, string status)
@@ -253,7 +267,7 @@ public class AuthController : ControllerBase
             throw new ApplicationException("JWT settings are not properly configured");
         }
 
-        var expiration = isRefreshToken ? (DateTime?) CalculateNewRefreshTokenExpirationDate()
+        var expiration = isRefreshToken ? DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:RefreshTokenExpirationMinutes"]))
                                         : DateTime.UtcNow.AddMinutes(Convert.ToInt32(_configuration["JwtSettings:AccessTokenExpirationMinutes"]));
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey));
@@ -268,12 +282,6 @@ public class AuthController : ControllerBase
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    private DateTime CalculateNewRefreshTokenExpirationDate()
-    {
-        var date = Convert.ToDouble(_configuration["JwtSettings:RefreshTokenExpirationDays"]);
-        return DateTime.UtcNow.AddDays(date);
     }
 
     private bool IsRefreshTokenExpired(DateTime refreshTokenExpirationDate)
