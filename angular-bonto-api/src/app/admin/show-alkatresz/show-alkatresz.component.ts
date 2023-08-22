@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { BehaviorSubject, EMPTY, Observable, Subject, combineLatest, of } from 'rxjs';
-import { catchError, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { SearchBarComponent } from 'src/app/search/search.component';
@@ -42,20 +42,21 @@ export class ShowAlkatreszComponent implements OnInit{
   isFilterActive:boolean = false;
 
   async ngOnInit() {
-    this.alkatreszList$ = this.service.getAlkatreszList();
+    //this.viewAlkatreszService.alkatreszList$ = this.service.getAlkatreszList();
+    //this.alkatreszList$ = this.viewAlkatreszService.alkatreszList$;
+    //this.alkatreszList$ = this.service.getAlkatreszList();
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
-    this.filteredAlkatreszek$ = this.alkatreszList$;
+    this.filteredAlkatreszek$ = this.service.getAlkatreszList();
   }
 
   ngAfterViewInit(): void {
     combineLatest([
-      this.alkatreszList$, 
       this.filteredAlkatreszek$,
       this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
       this.kategoriak
     ]).pipe(
-      switchMap(([__, _, searchTermValue, kategoriakValue]) => {
+      switchMap(([_, searchTermValue, kategoriakValue]) => {
         return this.authService.checkTokenExpiration().pipe(
           switchMap((sessionExpired) => {
             if (sessionExpired) {
@@ -64,9 +65,9 @@ export class ShowAlkatreszComponent implements OnInit{
               });
               return EMPTY;
             } else {
-            const keyword = searchTermValue ? searchTermValue.trim() : '';
-            const kategoriakString = kategoriakValue.join(';');
-            return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder);
+              const keyword = searchTermValue ? searchTermValue.trim() : '';
+              const kategoriakString = kategoriakValue.join(';');
+              return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder);
             }
           })
         );

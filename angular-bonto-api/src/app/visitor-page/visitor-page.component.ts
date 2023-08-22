@@ -170,10 +170,12 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
           return this.service.searchAlkatreszByCategories(kategoria, orderBy).pipe(
             takeUntil(this.unsubscribe$), 
             tap(results => {
-              if (results.length === 0 && this.isFilterActive) {
-                this.onAppliedFilterInvalid(true);
-              } else {
-                this.isFilterResultEmptyAlert = false;
+              if (results) {
+                if (results.length === 0 && this.isFilterActive) {
+                  this.onAppliedFilterInvalid(true);
+                } else {
+                  this.isFilterResultEmptyAlert = false;
+                }
               }
             })
           )

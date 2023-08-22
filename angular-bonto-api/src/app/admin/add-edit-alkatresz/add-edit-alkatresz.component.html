@@ -1,4 +1,4 @@
-<form id="add-edit-alkatresz-form">
+<form *ngIf="alkatresz$ | async as item" id="add-edit-alkatresz-form">
     <div class="mb-3">
         <label for="nevInput" class="form-label">Név</label>
         <input type="text" class="form-control" [class.is-invalid]="!nev" id="nevInput" [(ngModel)]="nev" name="nevInput">
@@ -41,10 +41,10 @@
           </div>
         </ng-container>
     </div>
-    <button (click)="addAlkatresz()" *ngIf="alkatresz?.id===0" class="btn btn-primary">
+    <button (click)="addAlkatresz()" *ngIf="item.id === 0" class="btn btn-primary">
         Hozzáadás
     </button>
-    <button (click)="updateAlkatresz()" *ngIf="alkatresz?.id!=0" class="btn btn-primary">
+    <button (click)="updateAlkatresz()" *ngIf="item.id !== 0" class="btn btn-primary">
         Módosítás
     </button>
 </form>

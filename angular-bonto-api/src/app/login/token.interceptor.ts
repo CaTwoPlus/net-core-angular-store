@@ -9,7 +9,8 @@ export class TokenInterceptor implements HttpInterceptor {
   constructor(private authService: AuthenticationService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (request.url.includes('/auth/login')) {
+    if (request.url.includes('/auth/login') || request.url.includes('/Alkatresz') 
+        || request.url.includes('/Kategoria') || request.url.includes('/AutoTipus')) {
       return next.handle(request);
     }
     return this.authService.checkTokenExpiration().pipe(

@@ -9,6 +9,7 @@ export class ViewAlkatreszService {
   private selectedId!: number;
   private selectedKepek!: string;
   private alkatresz$!: Observable<any>;
+  alkatreszList$!: Observable<any>;
 
   constructor() { }
 

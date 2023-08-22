@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BontoAPI;
 using BontoAPI.Data;
+using System.Security.Cryptography;
+using System.Text;
+using System.Net;
 
 namespace BontoAPI.Controllers
 {
@@ -25,11 +28,22 @@ namespace BontoAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Alkatresz>>> GetAlkatreszek()
         {
-          if (_context.Alkatreszek == null)
-          {
-              return NotFound();
-          }
-            return await _context.Alkatreszek.ToListAsync();
+            if (_context.Alkatreszek == null)
+            {
+                return NotFound();
+            }
+
+            var alkatreszek = await _context.Alkatreszek.ToListAsync();
+            var eTag = GenerateUniqueETag(alkatreszek);
+            var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
+
+            if (requestETag == eTag)
+            {
+                return StatusCode(304);
+            }
+
+            Response.Headers.Add("ETag", eTag);
+            return Ok(alkatreszek);
         }
 
         // GET: api/Alkatresz/5
@@ -46,6 +60,16 @@ namespace BontoAPI.Controllers
             {
                 return NotFound();
             }
+
+            var eTag = GenerateUniqueETag((IEnumerable<Alkatresz>)alkatresz);
+            var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
+
+            if (requestETag == eTag)
+            {
+                return StatusCode(304);
+            }
+
+            Response.Headers.Add("ETag", eTag);
 
             return alkatresz;
         }
@@ -143,6 +167,14 @@ namespace BontoAPI.Controllers
                     break;
             }
 
+            var eTag = GenerateUniqueETag(filteredAlkatreszek);
+            var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (requestETag == eTag)
+            {
+                return StatusCode(304);
+            }
+            Response.Headers.Add("ETag", eTag);
+
             return Ok(filteredAlkatreszek);
         }
 
@@ -177,7 +209,41 @@ namespace BontoAPI.Controllers
                     break;
             }
 
+            var eTag = GenerateUniqueETag(categorizedAlkatreszek);
+            var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (requestETag == eTag)
+            {
+                return StatusCode((int)HttpStatusCode.NotModified);
+            }
+            Response.Headers.Add("ETag", eTag);
+
             return Ok(categorizedAlkatreszek);
+        }
+
+        private string GenerateUniqueETag(IEnumerable<Alkatresz> data)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var alkatresz in data)
+                {
+                    // Include relevant properties of the Alkatresz object to generate the hash
+                    sb.Append(alkatresz.Id);
+                    sb.Append(alkatresz.Nev);
+                    sb.Append(alkatresz.Megjegyzes);
+                    sb.Append(alkatresz.Kategoriak);
+                    sb.Append(alkatresz.Generacio);
+                    sb.Append(alkatresz.Ar);
+                    sb.Append(alkatresz.Kepek);
+                    sb.Append(';');
+                }
+
+                byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
+                string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+                return hash;
+            }
         }
 
         private bool AlkatreszExists(int id)

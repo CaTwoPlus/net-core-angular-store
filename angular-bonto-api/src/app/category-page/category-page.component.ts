@@ -30,7 +30,6 @@ export class CategoryPageComponent implements OnInit {
 
   async ngOnInit() {
     this.kategoriaList$ = this.service.getKategoriaList();
-    this.autoTipusList$ = this.service.getAutoTipusList();
     this.showCategoryPage$ = this.categoryService.showCategoryPage$;
   }
 

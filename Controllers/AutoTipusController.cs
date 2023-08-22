@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BontoAPI;
 using BontoAPI.Data;
+using System.Security.Cryptography;
+using System.Text;
+using System.Net;
 
 namespace BontoAPI.Controllers
 {
@@ -26,11 +29,21 @@ namespace BontoAPI.Controllers
         [ResponseCache(Duration = 86400)]
         public async Task<ActionResult<IEnumerable<AutoTipus>>> GetAutoTipusok()
         {
-          if (_context.AutoTipusok == null)
-          {
-              return NotFound();
-          }
-            return await _context.AutoTipusok.ToListAsync();
+            if (_context.AutoTipusok == null)
+            {
+                return NotFound();
+            }
+
+            var list = await _context.AutoTipusok.ToListAsync();
+            var eTag = GenerateUniqueETag(list);
+            var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (requestETag == eTag)
+            {
+                return StatusCode((int)HttpStatusCode.NotModified);
+            }
+            Response.Headers.Add("ETag", eTag);
+
+            return Ok(list);
         }
 
         // GET: api/AutoTipus/5
@@ -120,6 +133,27 @@ namespace BontoAPI.Controllers
         private bool AutoTipusExists(int id)
         {
             return (_context.AutoTipusok?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private string GenerateUniqueETag(IEnumerable<AutoTipus> data)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                StringBuilder sb = new StringBuilder();
+
+                foreach (var alkatresz in data)
+                {
+                    // Include relevant properties of the Alkatresz object to generate the hash
+                    sb.Append(alkatresz.Id);
+                    sb.Append(alkatresz.Nev);
+                    sb.Append(';');
+                }
+
+                byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
+                string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+                return hash;
+            }
         }
     }
 }

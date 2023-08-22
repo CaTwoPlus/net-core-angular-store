@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Output, ViewChild, } from '@angular/core';
 import { Observable } from "rxjs";
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { ViewAlkatreszService } from 'src/app/view-alkatresz.service';
@@ -15,10 +15,9 @@ export class AddEditAlkatreszComponent implements OnInit {
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
 
-  constructor(private service:BontoApiService, private viewAlkatresz: ViewAlkatreszService) {}
+  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
 
-  @Input() alkatresz: any;
-  id: number = 0;
+  @Input() id: number = 0;
   nev: string = "";
   megjegyzes: string = "";
   kategoriak: string = "";
@@ -30,19 +29,22 @@ export class AddEditAlkatreszComponent implements OnInit {
   activateImagePreview: boolean = false;
 
   ngOnInit(): void{
-    this.id = this.alkatresz.id;
-    this.nev = this.alkatresz.nev;
-    this.megjegyzes = this.alkatresz.megjegyzes;
-    this.kategoriak = this.alkatresz.kategoriak;
-    this.generacio = this.alkatresz.generacio;
-    this.ar = this.alkatresz.ar;
-    this.kepek = this.alkatresz.kepek;
+    this.alkatresz$ = this.service.getAlkatresz(this.id);
+    if (this.alkatresz$) {
+      this.alkatresz$.subscribe((item) => {
+        this.nev = item.nev;
+        this.megjegyzes = item.megjegyzes;
+        this.kategoriak = item.kategoriak;
+        this.generacio = item.generacio;
+        this.ar = item.ar;
+        this.kepek = item.kepek;
+      })
+    }
     this.kategoriakInput = this.kategoriakInput;
     this.autoTipusokInput = this.autoTipusokInput;
 
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
-    this.alkatresz$ = this.viewAlkatresz.getAlkatresz();
   }
 
   addAlkatresz() {
@@ -63,7 +65,6 @@ export class AddEditAlkatreszComponent implements OnInit {
       if(closeModalBtn) {
         closeModalBtn.click();
       }
-
       var showAddSuccess = document.getElementById('add-success-alert');
       if(showAddSuccess) {
         showAddSuccess.style.display = "block";
@@ -85,14 +86,14 @@ export class AddEditAlkatreszComponent implements OnInit {
     
     var alkatresz = {
       id: this.id,
-      nev:this.nev,
-      megjegyzes:this.megjegyzes,
-      kategoriak:this.kategoriak,
-      generacio:this.generacio,
-      ar:this.ar,
-      kepek:this.kepek
+      nev: this.nev,
+      megjegyzes: this.megjegyzes,
+      kategoriak: this.kategoriak,
+      generacio: this.generacio,
+      ar: this.ar,
+      kepek: this.kepek
     }
-    var id:number = this.id;
+    var id: number = this.id;
     this.service.updateAlkatresz(id, alkatresz).subscribe(res => {
       var closeModalBtn = document.getElementById('add-edit-modal-close');
       if(closeModalBtn) {

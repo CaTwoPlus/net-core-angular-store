@@ -35,7 +35,7 @@ builder.Services.AddCors(options =>
             builder.WithOrigins("http://[::1]:4200", "http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithExposedHeaders("Cache-Control", "must-revalidate");
+            .WithExposedHeaders("Cache-Control", "must-revalidate", "ETag");
         });
 });
 
