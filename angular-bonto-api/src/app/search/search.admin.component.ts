@@ -1,15 +1,14 @@
-import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { BontoApiService } from '../bonto-api.service';
 import { SearchService } from './search.service';
-import { CategoryPageService } from '../category-page.service';
 import { Observable } from 'rxjs';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-search-bar',
+  selector: 'app-admin-search-bar',
   template: `
-  <div class="container" id="searchBarContainer">
+  <div class="container" id="searchBarContainerAdmin">
     <div class="input-group">
       <input type="text"
       style="z-index: 4"
@@ -52,13 +51,11 @@ import { Router } from '@angular/router';
     </div>
   </div>
   `,
-  styleUrls: ['./search.component.css'],
+  styleUrls: ['./search.admin.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class SearchBarComponent {
+export class AdminSearchBarComponent {
   @Input() alkatreszList$!: Observable<any[]>;
-  @Output() isSearchTermInvalid = new EventEmitter<boolean>(false);
-  @Output() isSearchTermShort = new EventEmitter<boolean>(false);
 
   searchTermValue = '';
   showOptions = false;
@@ -69,8 +66,7 @@ export class SearchBarComponent {
   currentSearchTermValue: string = '';
   previousSearchTermValue: string = '';
 
-  constructor(private service: BontoApiService, private categoryService: CategoryPageService, 
-    private searchService: SearchService, private router: Router) {}
+  constructor(private service: BontoApiService, private searchService: SearchService, private router: Router) {}
 
   checkValueEmission() {
     if (this.searchTermValue.length >= 3) {
@@ -85,23 +81,12 @@ export class SearchBarComponent {
           this.previousSearchTermValue = this.currentSearchTermValue;
           this.emitValues();
         }
-      } else if (this.categoryService.getCategory() !== '') {
-        this.emitValues();
       }
     }
   }
 
   emitValues() {
-    this.searchService.setSearchState(true)
-    this.searchService.setSearchTerm(this.searchTermValue.trim());
-    if (this.service.searchByKeywordResponse) {
-      this.setFilterCache();
-    }
-    if (!this.categoryService.getShowCategoryPage()) {
-      this.categoryService.setShowCategoryPage(true);
-    }
-    this.isSearchTermInvalid.emit(false);
-    this.router.navigate(['/alkatreszek', { talalatok: this.searchTermValue.trim() }]);
+    this.searchService.setSearchTerm(this.searchTermValue.trim(), true);
   }
 
   onSearchInput() {
@@ -128,7 +113,7 @@ export class SearchBarComponent {
     this.currentSearchTermValue = '';
     this.previousSearchTermValue = '';
     this.isSearchFilterApplied = false;
-    this.searchService.setSearchState(false);
+    this.searchService.setSearchTerm('', true)
   }
 
   onTypeaheadSelect(event: TypeaheadMatch) {
@@ -138,20 +123,10 @@ export class SearchBarComponent {
   typeaheadNoResults(event: boolean) {
     if (event && this.searchTermValue.length < 3 && this.searchTermValue.length >= this.previousSearchTermValue.length) {
       this.invalidInput = event;
-      this.isSearchTermShort.emit(true);
     } else if (event && this.searchTermValue.length >= 3) {
       this.invalidInput = event;
-      this.isSearchTermInvalid.emit(true);
     } else if (this.invalidInput && !event && this.searchTermValue.length >= 3) {
       this.invalidInput = false;
     }
-  }
-
-  setFilterCache() {
-    const response = this.service.searchByKeywordResponse;
-    const newETag = response?.headers.get('ETag') || '';
-    const keyword = this.searchTermValue.trim();
-    this.service.cachedFilteredAlkatreszek[keyword] = { data: response?.body as any[], eTag: newETag };
-    localStorage.setItem(`cachedFilteredAlkatreszek=${keyword}`, JSON.stringify(this.service.cachedFilteredAlkatreszek[keyword]));
   }
 }

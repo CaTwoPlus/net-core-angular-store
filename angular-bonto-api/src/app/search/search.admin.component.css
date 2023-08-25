@@ -1,0 +1,46 @@
+  #searchBarContainerAdmin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #searchBarContainerAdmin button {
+    border-top-right-radius: 0.375rem !important;
+    border-bottom-right-radius: 0.375rem !important;
+  }
+
+  [typeahead-container][id^="ngb-typeahead"][id$="-"]:not([id*="-"]) {
+    height: 500px !important;
+  }  
+
+  typeahead-container span {
+    white-space: pre-wrap;
+  }
+
+  @media (width: 960px) and (height: 600px) {
+    #searchBarContainerAdmin .form-control {
+      width: 24vw;
+    }
+    typeahead-container {
+      width: 24vw;
+    }
+  }
+
+  @media (min-width: 968px) {
+    #searchBarContainerAdmin .form-control {
+      width: 20vw;
+    }
+    typeahead-container {
+      width: 20vw;
+    }
+  }
+
+  @media (max-width: 959px) {
+    #searchBarContainerAdmin .form-control {
+      width: 50vw;
+    }
+    typeahead-container {
+      width: 50vw;
+    }
+  }
+  

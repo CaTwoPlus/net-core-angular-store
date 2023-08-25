@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject, combineLatest, of } from 'rxjs';
-import { map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, combineLatest, of } from 'rxjs';
+import { map, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
-import { SearchBarComponent } from 'src/app/search/search.component';
 import { AuthenticationService } from 'src/app/login/auth.service';
-import { CookieService } from 'ngx-cookie-service';
+import { SearchService } from 'src/app/search/search.service';
 
 @Component({
   selector: 'app-show-alkatresz',
@@ -13,21 +12,22 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./show-alkatresz.component.css']
 })
 export class ShowAlkatreszComponent implements OnInit{
-  @ViewChild('searchBar', { static: false }) searchBar!: SearchBarComponent;
   @ViewChild('viewAlkatreszModal') viewAlkatreszModal!: ElementRef;
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
   constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
-    private authService: AuthenticationService, private cookie: CookieService) {}
+    private authService: AuthenticationService, private searchService: SearchService) {}
 
-  alkatreszList$!:Observable<any[]>;
-  kategoriaList$!:Observable<any[]>;
-  autoTipusList$!:Observable<any[]>;
-  filteredAlkatreszek$!:Observable<any[]>;
+  kategoriaList$:Observable<any[]> = this.service.getKategoriaList();
+  autoTipusList$:Observable<any[]> = this.service.getAutoTipusList();
+  alkatreszList$:Observable<any[]> = this.service.getAlkatreszList();
+  filteredAlkatreszek$: Observable<any[]> = this.alkatreszList$;
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   kategoriak: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   private unsubscribe$ = new Subject<void>();
+
+  private searchSubscription: Subscription | undefined;
   
   modalTitle: string = '';
   filterOrder: string = '';
@@ -41,19 +41,24 @@ export class ShowAlkatreszComponent implements OnInit{
   activateViewAlkatreszComponent:boolean = false;
   isFilterActive:boolean = false;
 
-  async ngOnInit() {
-    //this.viewAlkatreszService.alkatreszList$ = this.service.getAlkatreszList();
-    //this.alkatreszList$ = this.viewAlkatreszService.alkatreszList$;
-    //this.alkatreszList$ = this.service.getAlkatreszList();
-    this.kategoriaList$ = this.service.getKategoriaList();
-    this.autoTipusList$ = this.service.getAutoTipusList();
-    this.filteredAlkatreszek$ = this.service.getAlkatreszList();
+  ngOnInit() {
+    this.filteredAlkatreszek$.subscribe(() => {
+      this.performSearch();
+    })
+  }
+  
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
   }
 
-  ngAfterViewInit(): void {
-    combineLatest([
+  performSearch() {
+    this.searchSubscription = combineLatest([
       this.filteredAlkatreszek$,
-      this.searchBar ? this.searchBar.searchTerm.pipe(startWith('')) : of(''),
+      this.searchService.searchTermAdmin$,
       this.kategoriak
     ]).pipe(
       switchMap(([_, searchTermValue, kategoriakValue]) => {
@@ -67,7 +72,7 @@ export class ShowAlkatreszComponent implements OnInit{
             } else {
               const keyword = searchTermValue ? searchTermValue.trim() : '';
               const kategoriakString = kategoriakValue.join(';');
-              return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder);
+              return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder, true);
             }
           })
         );
@@ -76,11 +81,6 @@ export class ShowAlkatreszComponent implements OnInit{
     ).subscribe(filteredAlkatreszek => {
       this.filteredAlkatreszek$ = of(filteredAlkatreszek);
     });
-  }
-  
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
   
   modalAdd(){ 
@@ -136,7 +136,6 @@ export class ShowAlkatreszComponent implements OnInit{
       })  
     }
   }
-
 
   modalClose() {
     this.activateAddEditAlkatreszComponent = false;

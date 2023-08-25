@@ -9,6 +9,7 @@ import { ShowAlkatreszComponent } from './admin/show-alkatresz/show-alkatresz.co
 import { AddEditAlkatreszComponent } from './admin/add-edit-alkatresz/add-edit-alkatresz.component';
 import { BontoApiService } from './bonto-api.service';
 import { SearchBarComponent } from './search/search.component';
+import { AdminSearchBarComponent } from './search/search.admin.component';
 import { ViewAlkatreszComponent } from './admin/view-alkatresz/view-alkatresz.component';
 import { LoginComponent } from './login/login.component';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -45,6 +46,7 @@ export function tokenGetter() {
     ShowAlkatreszComponent,
     AddEditAlkatreszComponent,
     SearchBarComponent,
+    AdminSearchBarComponent,
     ViewAlkatreszComponent,
     LoginComponent,
     VisitorPageComponent,
@@ -81,6 +83,7 @@ export function tokenGetter() {
   ],
   exports: [
     SearchBarComponent,
+    AdminSearchBarComponent,
     AppRoutingModule
   ], 
   providers: [BontoApiService, SearchService, AuthenticationService,  {

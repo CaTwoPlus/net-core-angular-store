@@ -15,11 +15,8 @@ export class BontoApiService {
   cachedFilteredCategorizedAlkatreszek: { [keyword: string]: { [category: string]: 
     { data: any[], categoriesETag: string,  keywordETag: string} } } = {};
   searchByKeywordAndCategoriesData: any[] = [];
-  //categories: string = "";
-  searchTerm: string = '';
   setCache: boolean = false;
   searchByKeywordResponse?: HttpResponse<any>;
-  //searchByKeywordAndCategoriesResponse: HttpResponse<any>[] = [];
 
   constructor(private http:HttpClient) { 
   }
@@ -241,10 +238,12 @@ export class BontoApiService {
       map(response => {
         if (response instanceof HttpResponse) {          
           if (response.status === 200) {
-            // Update the cached ETag if available
-            const newETag = response.headers.get('ETag') || '';
-            this.cachedCategorizedAlkatreszek[categories] = { data: response.body as any[], eTag: newETag };
-            localStorage.setItem(`cachedCategorizedAlkatreszek=${categories}`, JSON.stringify(this.cachedCategorizedAlkatreszek[categories]));
+            if (response.body && response.body?.length > 0) {
+              // Update the cached ETag if available
+              const newETag = response.headers.get('ETag') || '';
+              this.cachedCategorizedAlkatreszek[categories] = { data: response.body as any[], eTag: newETag };
+              localStorage.setItem(`cachedCategorizedAlkatreszek=${categories}`, JSON.stringify(this.cachedCategorizedAlkatreszek[categories]));
+            }
             return response.body as any[];
           }
         }
@@ -263,7 +262,7 @@ export class BontoApiService {
     );
   }
 
-  searchAlkatreszByKeywordAndCategories(keyword: string, categories: string, order: string): Observable<any[]> {
+  searchAlkatreszByKeywordAndCategories(keyword: string, categories: string, order: string, noCaching = false): Observable<any[]> {
     const filterParams = new HttpParams().set('searchTerm', keyword).set('orderOption', order);
     const filterRequest = {
       headers: this.headers,
@@ -277,7 +276,7 @@ export class BontoApiService {
       observe: 'response' as const,
     }
 
-    if (this.cachedFilteredCategorizedAlkatreszek[keyword]) {
+    if (this.cachedFilteredCategorizedAlkatreszek[keyword] && !noCaching) {
       const cachedCombinedFilter = this.cachedFilteredCategorizedAlkatreszek[keyword][categories];
       if (cachedCombinedFilter && cachedCombinedFilter.categoriesETag && cachedCombinedFilter.keywordETag) {
         categoriesRequest.headers = categoriesRequest.headers.set('If-None-Match', cachedCombinedFilter.categoriesETag);
@@ -293,23 +292,25 @@ export class BontoApiService {
         if (filtered instanceof HttpResponse && categorized instanceof HttpResponse) {
           if (filtered.status === 200 && categorized.status === 200) {
             this.searchByKeywordAndCategoriesData = this.filterByCategories(filtered.body as any[], categorized.body as any[]);
-            if (!this.cachedFilteredCategorizedAlkatreszek[keyword]) {
-              this.cachedFilteredCategorizedAlkatreszek[keyword] = {};
-            }
-            if (!this.cachedFilteredCategorizedAlkatreszek[keyword][categories]) {
+            if (this.searchByKeywordAndCategoriesData.length > 0 && !noCaching) {
+              if (!this.cachedFilteredCategorizedAlkatreszek[keyword]) {
+                this.cachedFilteredCategorizedAlkatreszek[keyword] = {};
+              }
+              if (!this.cachedFilteredCategorizedAlkatreszek[keyword][categories]) {
+                this.cachedFilteredCategorizedAlkatreszek[keyword][categories] = {
+                  data: [],
+                  keywordETag: '',
+                  categoriesETag: ''
+                };
+              }
               this.cachedFilteredCategorizedAlkatreszek[keyword][categories] = {
-                data: [],
-                keywordETag: '',
-                categoriesETag: ''
-              };
+                data: this.searchByKeywordAndCategoriesData,
+                keywordETag: filtered.headers.get('ETag') || '',
+                categoriesETag: categorized.headers.get('ETag') || ''
+              }
+              localStorage.setItem(`cachedFilteredCategorizedAlkatreszek=${keyword}_${categories}`, JSON.stringify(
+                this.cachedFilteredCategorizedAlkatreszek[keyword][categories]));
             }
-            this.cachedFilteredCategorizedAlkatreszek[keyword][categories] = {
-              data: this.searchByKeywordAndCategoriesData,
-              keywordETag: filtered.headers.get('ETag') || '',
-              categoriesETag: categorized.headers.get('ETag') || ''
-            }
-            localStorage.setItem(`cachedFilteredCategorizedAlkatreszek=${keyword}_${categories}`, JSON.stringify(
-              this.cachedFilteredCategorizedAlkatreszek[keyword][categories]));
             return this.searchByKeywordAndCategoriesData;
           }
         }

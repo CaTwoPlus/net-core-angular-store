@@ -9,12 +9,15 @@ export class CategoryPageService {
   showCategoryPage$ = this.showCategoryPageSubject.asObservable();
   private currentCategorySubject = new BehaviorSubject<string>('');
   currentCategory$ = this.currentCategorySubject.asObservable();
+  private currentYearSubject = new BehaviorSubject<string>('');
+  currentYear$ = this.currentYearSubject.asObservable();
   private orderBySubject = new BehaviorSubject<string>('');
   orderBy$ = this.orderBySubject.asObservable();
   category: string = '';
+  yearFilter: string = ''
   previousCategory: string = '';
-  previousCategoryFilter: string = '';
-  isCategoryFilterApplied: boolean = false;
+  previousYearFilter: string = '';
+  isYearFilterApplied: boolean = false;
 
   getCategory(): string {
     return this.category;
@@ -26,28 +29,23 @@ export class CategoryPageService {
     this.currentCategorySubject.next(categoryIn);
   }
 
-  setCategoryFilter(categoryIn: string) {
-    if (this.isCategoryFilterApplied) {
-      const currentValue = this.currentCategorySubject.getValue().trim();
-      if(!currentValue.includes(categoryIn)) {
-        const updatedValue = [currentValue.replace(this.previousCategoryFilter, categoryIn)];
-        this.currentCategorySubject.next(updatedValue.join(";"));
-        this.previousCategoryFilter = categoryIn;
-      }
-    } else {
-      const currentValue = this.currentCategorySubject.getValue().trim();
-      if(!currentValue.includes(categoryIn)) {
-        const updatedValue = [currentValue, categoryIn];
-        this.currentCategorySubject.next(updatedValue.join(";"));
-        this.previousCategoryFilter = categoryIn;
-        this.isCategoryFilterApplied = true;
-      }
-    }
+  getYearFilter(): string {
+    return this.currentYearSubject.getValue().trim();
   }
 
-  resetCategories() {
-    this.currentCategorySubject.next(this.category);
-    this.isCategoryFilterApplied = false;
+  setYearFilter(yearFilter: string) {
+    if (this.yearFilter !== '') {
+      this.previousYearFilter = this.yearFilter;
+    }
+    this.yearFilter = yearFilter;
+    this.currentYearSubject.next(yearFilter);
+    this.isYearFilterApplied = true;
+  }
+
+  resetYearFilter() {
+    this.yearFilter = '';
+    this.currentYearSubject.next('');
+    this.isYearFilterApplied = false;
   }
 
   resetOrderFilter() {

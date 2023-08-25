@@ -1,9 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, combineLatest, filter, map, of, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, switchMap, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
-import { SearchBarComponent } from 'src/app/search/search.component';
 import { ViewportScroller } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
@@ -20,7 +19,6 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     private viewportScroller: ViewportScroller, private route: ActivatedRoute, private router: Router, 
     private location: Location) {}
   
-  @ViewChild('searchBar') searchBar!: SearchBarComponent;
   @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;
   @HostListener('window:scroll', ['$event'])
   onScroll() {
@@ -44,8 +42,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   showCategoryPage$!:Observable<any>;
 
   private unsubscribe$ = new Subject<void>();
-  private afterViewInitSubscription: Subscription | undefined;
-  private searchTermSubscription: Subscription | undefined;
+  private searchSubscription: Subscription | undefined;
 
   autoTipusokInput: { [key: string]: boolean } = {};
   isFilterActive: boolean = false;
@@ -62,17 +59,17 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   isSearchResultEmptyAlert: boolean = false;
   isFilterResultEmptyAlert: boolean = false;
   isVisitorQuery: boolean = true;
-  dropdownFilterOptionNum: number = 0;
   lastScrollPosition: number = 0;
-  searchCounter: number = 0;
   filterOrder: string = '';
   keyword: string | null = '';
   [key: string]: any;
   
-  categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  yearFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   ngOnInit() {
+    // Service observables are being assigned here based on URL parameters
+    // Cannot combine keyword and category based searches
     this.showCategoryPage$ = this.categoryPageService.showCategoryPage$;
     this.route.paramMap.subscribe(params => {
       const category = params.get('category');
@@ -83,28 +80,40 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       });
 
       if (this.keyword.length >= 3) {
-        this.searchService.isSearchActive = true;
-      } else if (category) {
-        this.setCategoryPage(category);
+        // Perform keyword search
+        this.searchService.setSearchState(true);
+        this.resetFilters();
+        if (this.categoryPageService.getCategory() !== '') {
+          this.categoryPageService.setCategory('');
+        }
+        // Check if navigation was through browser history, as in such a case the search service is not used
+        // directly for setting the keyword value in the relevant observable
+        if (this.searchService.searchTermValue !== this.keyword) {
+          this.searchService.setSearchTerm(this.keyword);
+        }
         this.categoryPageService.setShowCategoryPage(true);
-        this.searchService.isSearchActive = false;
+        this.performSearch(true);
+      } else if (category) {
+        // Perform category search
+        this.searchService.setSearchState(false);
+        this.resetFilters();
+        this.categoryPageService.setCategory(category);
+        this.categoryPageService.setShowCategoryPage(true);
+        this.performSearch();
       } else if (anchorId) {
-        this.categoryPageService.setCategory('');
+        // Navigation to anchors
         this.categoryPageService.setShowCategoryPage(false);
-        this.searchService.isSearchActive = false;
+        this.categoryPageService.setCategory('');
+        this.resetFilters();
+        this.searchService.setSearchState(false);
         this.scrollToAnchor(anchorId);
       } else {
-        this.categoryPageService.setCategory('');
+        // Navigation to home
         this.categoryPageService.setShowCategoryPage(false);
+        this.categoryPageService.setCategory('');
+        this.resetFilters();
+        this.searchService.setSearchState(false);
         this.router.navigateByUrl('');
-      }
-
-      if (this.searchService.isSearchActive && this.keyword !== '') {
-        const keyword = this.keyword ?? '';
-        this.performSearch(keyword, true);
-        this.categoryPageService.setShowCategoryPage(true);
-      } else if (!this.searchService.isSearchActive && this.categoryPageService.getShowCategoryPage()) {
-        this.performSearch('');
       }
     });
   }
@@ -112,73 +121,87 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-    if (this.searchTermSubscription) {
-      this.searchTermSubscription.unsubscribe();
-    }
-    if (this.afterViewInitSubscription) {
-      this.afterViewInitSubscription.unsubscribe();
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
     }
   }
 
-  performSearch(keyword: string, throughNav = false) {
-    this.afterViewInitSubscription =
+  // As per database design, year filter values are part of the categories, 
+  // so the same API call is made for changes in both
+  performSearch(onInit = false) {
+    this.searchSubscription =
     combineLatest([
       this.filteredAlkatreszek$,
       this.categoryPageService.currentCategory$,
       this.categoryPageService.orderBy$,
+      this.categoryPageService.currentYear$,
+      this.searchService.searchTerm$
     ]).pipe(
-      switchMap(([_, category, orderBy]) => {
-        const kategoria = category.replace(/^\s*;/, '').replace(/;\s*$/, '').trim();
+      switchMap(([_, category, orderBy, year, keyword]) => {
+        let kategoria = category.replace(/^\s*;/, '').replace(/;\s*$/, '').trim();
+        // In case new category is selected, reset filters 
         if (this.categoryPageService.previousCategory !== this.categoryPageService.category
           && this.categoryPageService.previousCategory !== '') {
           this.categoryPageService.previousCategory = '';
-          this.deleteFilter();
-          this.deleteOrder();
+          this.resetFilters();
         }
         if (keyword.length > 0) {
           if (!this.isFilterActive) {
             this.isFilterResultEmptyAlert = false;
             return this.service.searchAlkatreszByKeyword(keyword, orderBy).pipe(
               takeUntil(this.unsubscribe$), tap(results => {
-                if (results.length === 0 && throughNav) {
+                if (results.length === 0 && onInit) {
                   this.onAppliedFilterInvalid(true, true);
                 }
               })
             ); 
           } else {
-            if (this.searchCounter > 0) {
-              this.searchCounter = 0;
-              this.deleteFilter();
-              return this.service.searchAlkatreszByKeyword(keyword, orderBy).pipe(
-                takeUntil(this.unsubscribe$)
-              )
-            } else {
-              return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoria, orderBy).pipe(
+              return this.service.searchAlkatreszByKeywordAndCategories(keyword, year, orderBy).pipe(
                 takeUntil(this.unsubscribe$), 
                 tap(results => {
                   if (results.length === 0 && this.isFilterActive) {
                     this.onAppliedFilterInvalid(true);
                   } else if (results.length > 0 && this.isFilterActive) {
-                    this.searchCounter++;
                     this.isFilterResultEmptyAlert = false;
                   }
                 })
               );
             }
-          } 
         } else {
-          return this.service.searchAlkatreszByCategories(kategoria, orderBy).pipe(
-            takeUntil(this.unsubscribe$), 
-            tap(results => {
-              if (results) {
-                if (results.length === 0 && this.isFilterActive) {
-                  this.onAppliedFilterInvalid(true);
-                } else {
-                  this.isFilterResultEmptyAlert = false;
+          if (year !== '' && kategoria !== '') {
+            // Filtering for category search method
+            let yearFilter = kategoria;
+            yearFilter = yearFilter.concat(';' + year);
+            return this.service.searchAlkatreszByCategories(yearFilter, orderBy).pipe(
+              takeUntil(this.unsubscribe$), 
+              tap(results => {
+                if (results) {
+                  if (results.length === 0 && this.isFilterActive) {
+                    this.onAppliedFilterInvalid(true);
+                  } else {
+                    this.isFilterResultEmptyAlert = false;
+                  }
                 }
-              }
-            })
-          )
+              })
+            )
+          } else if (year === '' && kategoria !== '') {
+            // Category search method
+            return this.service.searchAlkatreszByCategories(kategoria, orderBy).pipe(
+              takeUntil(this.unsubscribe$), 
+              tap(results => {
+                if (results) {
+                  if (results.length === 0 && this.isFilterActive) {
+                    this.onAppliedFilterInvalid(true);
+                  } else {
+                    this.isFilterResultEmptyAlert = false;
+                  }
+                }
+              })
+            )
+          } else {
+            // Browser history navigation was used, don't return anything
+            return of([]);
+          }
         }
       })
     ).subscribe(filteredAlkatreszek => {
@@ -190,27 +213,6 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     setTimeout(() => {this.viewportScroller.scrollToAnchor(anchorId); }, 100);
   }
 
-  setCategoryPage(category: string, anchorId = '') {
-    if (category !== this.categoryPageService.getCategory() && category !== '') {
-      this.categoryPageService.setCategory(category.trim());
-      this.categoryPageService.setShowCategoryPage(true);
-      if (this.searchBar) {
-        this.searchBar.resetSearch();
-      }
-    } else if (anchorId !== 'home' && category === this.categoryPageService.getCategory() && this.searchService.isSearchActive) {
-      if (this.searchBar) {
-        this.searchBar.resetSearch();
-      }
-    } else if (category === '') {
-      this.categoryPageService.setShowCategoryPage(false);
-      this.categoryPageService.setCategory('');
-      if (this.searchBar) {
-        this.searchBar.resetSearch();
-      }
-      this.scrollToAnchor(anchorId);
-    }
-  }
-
   filterByYear() {
     // Find the selected key
     const selectedKey = Object.keys(this.autoTipusokInput).find(key => this.autoTipusokInput[key]);
@@ -220,18 +222,14 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       // Set the selected checkbox to true
       this.autoTipusokInput[selectedKey] = true;
       const autoTipusokFormatted = selectedKey.trim().replace(/\s+/g, ' ');
-      const currentFilter = this.categoryFilter.getValue();
+      const currentFilter = this.yearFilter.getValue();
       const updateFilter: string[] = [];
       if (autoTipusokFormatted.length > 0 && autoTipusokFormatted !== currentFilter[0]) {
         const newValues = [autoTipusokFormatted].filter(value => !currentFilter.includes(value));
         updateFilter.push(...newValues);
         this.isFilterActive = true;
-        this.categoryFilter.next(updateFilter);
-        this.categoryPageService.setCategoryFilter(newValues[0]);
-      }
-      else {
-        updateFilter[0] = this.categoryPageService.getCategory();
-        this.categoryFilter.next(updateFilter);
+        this.yearFilter.next(updateFilter);
+        this.categoryPageService.setYearFilter(newValues[0]);
       }
     }
     this.filterDeleteBtnDisabled = false;
@@ -250,38 +248,39 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     this.orderDeleteBtnDisabled = false;
   }
 
+  resetFilters() { 
+    this.deleteFilter();
+    this.deleteOrder();
+  }
+
   deleteFilter() {
-    if (this.isFilterActive) {
-      this.autoTipusokInput = {};
-      this.isFilterActive = false;
-      this.filterButtonDisabled = true;
-      this.filterDeleteBtnDisabled = true;
-      this.categoryFilter.next([]);
-      this.categoryPageService.resetCategories();
-    }
+    this.autoTipusokInput = {};
+    this.isFilterActive = false;
+    this.filterButtonDisabled = true;
+    this.filterDeleteBtnDisabled = true;
+    this.yearFilter.next([]);
+    this.categoryPageService.resetYearFilter();
   }
 
   deleteOrder() {
-    if (this.isOrderActive) {
-      this.filterOrder = '';
-      this.isOrderActive = false;
-      this.orderButtonDisabled = true;
-      this.orderDeleteBtnDisabled = true;
-      this.orderFilter.next('');
-      this.categoryPageService.resetOrderFilter();
+    this.filterOrder = '';
+    this.isOrderActive = false;
+    this.orderButtonDisabled = true;
+    this.orderDeleteBtnDisabled = true;
+    this.orderFilter.next('');
+    this.categoryPageService.resetOrderFilter();
 
-      if (this.isDescPriceChecked) {
-        this.isDescPriceChecked = false;
-      }
-      if (this.isAscPriceChecked) {
-        this.isAscPriceChecked = false;
-      }
-      if (this.isDescNameChecked) {
-        this.isDescNameChecked = false;
-      }
-      if (this.isAscNameChecked) {
-        this.isAscNameChecked = false;
-      }
+    if (this.isDescPriceChecked) {
+      this.isDescPriceChecked = false;
+    }
+    if (this.isAscPriceChecked) {
+      this.isAscPriceChecked = false;
+    }
+    if (this.isDescNameChecked) {
+      this.isDescNameChecked = false;
+    }
+    if (this.isAscNameChecked) {
+      this.isAscNameChecked = false;
     }
   }
 

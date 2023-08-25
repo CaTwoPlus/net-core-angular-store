@@ -3,7 +3,7 @@
   <div>
     <nav class="navbar">
       <div class="d-flex justify-content-start align-items-center">
-        <a mat-icon-button routerLink="" class="icon-button" (click)="setCategoryPage('', 'home')">
+        <a mat-icon-button routerLink="" class="icon-button">
           <mat-icon>home</mat-icon>
         </a>
         <span fxHide.gt-sm>
@@ -13,21 +13,21 @@
           <mat-menu #menuSm="matMenu">
               <button mat-menu-item [matMenuTriggerFor]="alkatreszekMenu">Alkatrészek</button>
             <a routerLink="/szolgaltatasok" style="text-decoration: none;"><button mat-menu-item
-              (click)="setCategoryPage('', 'szolgaltatasok')">Szolgáltatások</button></a>
+              >Szolgáltatások</button></a>
             <a routerLink="/vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item
-              (click)="setCategoryPage('', 'vasarlasi_infok')">Vásárlási információk</button></a>
+              >Vásárlási információk</button></a>
             <a routerLink="/kapcsolat" style="text-decoration: none;"><button mat-menu-item 
-              (click)="setCategoryPage('', 'kapcsolat')">Kapcsolat</button></a>
+              >Kapcsolat</button></a>
           </mat-menu>
         </span>
         <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
           <button type="button" class="btn btn-primary" [matMenuTriggerFor]="alkatreszekMenu"><b>Alkatrészek</b></button>
           <a routerLink="/szolgaltatasok"><button type="button" class="btn btn-primary"
-            (click)="setCategoryPage('', 'szolgaltatasok')"><b>Szolgáltatások</b></button></a>
+            ><b>Szolgáltatások</b></button></a>
           <a routerLink="/vasarlasi_infok"><button type="button" class="btn btn-primary"
-            (click)="setCategoryPage('', 'vasarlasi_infok')"><b>Vásárlási információk</b></button></a>
+            ><b>Vásárlási információk</b></button></a>
           <a routerLink="/kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
-            (click)="setCategoryPage('', 'kapcsolat')"><b>Kapcsolat</b></button></a>
+            ><b>Kapcsolat</b></button></a>
         </span>
       </div>
       <div>
@@ -57,7 +57,7 @@
         </mat-menu>
         <ng-container *ngIf="alkatreszList$">
           <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
-          (searchTerm)="performSearch($event)" [alkatreszList$]="alkatreszList$" [isVisitorQuery]="isVisitorQuery" #searchBar></app-search-bar>
+           [alkatreszList$]="alkatreszList$"></app-search-bar>
           <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
             <b>Nincs ilyen találat!</b>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
