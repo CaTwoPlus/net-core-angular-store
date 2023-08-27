@@ -37,8 +37,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   title = 'ford';
   kategoriaList$:Observable<any[]> = this.service.getKategoriaList();
   autoTipusList$:Observable<any[]> = this.service.getAutoTipusList();
-  alkatreszList$:Observable<any[]> = this.service.getAlkatreszList();
-  filteredAlkatreszek$: Observable<any[]> = this.alkatreszList$;
+  filteredAlkatreszek$: Observable<any[]> = this.service.getAlkatreszList();
   showCategoryPage$!:Observable<any>;
 
   private unsubscribe$ = new Subject<void>();

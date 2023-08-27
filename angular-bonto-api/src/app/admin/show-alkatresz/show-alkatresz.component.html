@@ -21,9 +21,7 @@
     </button>
   </div>
   <div>
-    <ng-container *ngIf="alkatreszList$">
-      <app-admin-search-bar [alkatreszList$]="alkatreszList$"></app-admin-search-bar>
-    </ng-container>
+    <app-admin-search-bar></app-admin-search-bar>
   </div>
 </nav>
 
@@ -47,7 +45,7 @@
 
 <!-- Add or edit alkatresz modal -->
 <div class="modal fade" id="addNewAlkatresz" data-bs-backdrop="static" tabindex="-1" aria-labelledby="addNewAlkatreszLabel" #addEditAlkatreszModal>  
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
@@ -61,7 +59,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <app-add-edit-alkatresz [id]="alkatresz.id" *ngIf="activateAddEditAlkatreszComponent"></app-add-edit-alkatresz>
+        <app-add-edit-alkatresz [alkatresz]="alkatresz" *ngIf="activateAddEditAlkatreszComponent"></app-add-edit-alkatresz>
       </div>
     </div>
   </div>
@@ -69,11 +67,11 @@
 
 <!-- View alkatresz modal -->
 <div class="modal fade" id="viewAlkatresz" data-bs-backdrop="static" tabindex="-1" aria-labelledby="ViewAlkatreszLabel" #viewAlkatreszModal>  
-  <div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">{{modalTitle}}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="modalClose()" id="add-edit-modal-close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="add-edit-modal-close"></button>
       </div>
       <div class="modal-body" #viewAlkatreszModalBody>
         <app-view-alkatresz *ngIf="activateViewAlkatreszComponent"></app-view-alkatresz>

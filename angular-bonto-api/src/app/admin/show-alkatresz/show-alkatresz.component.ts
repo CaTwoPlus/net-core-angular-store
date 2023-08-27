@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, combineLatest, of } from 'rxjs';
-import { map, startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, Subject, combineLatest, forkJoin } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { AuthenticationService } from 'src/app/login/auth.service';
@@ -18,16 +18,16 @@ export class ShowAlkatreszComponent implements OnInit{
   constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
     private authService: AuthenticationService, private searchService: SearchService) {}
 
-  kategoriaList$:Observable<any[]> = this.service.getKategoriaList();
-  autoTipusList$:Observable<any[]> = this.service.getAutoTipusList();
-  alkatreszList$:Observable<any[]> = this.service.getAlkatreszList();
-  filteredAlkatreszek$: Observable<any[]> = this.alkatreszList$;
+  kategoriaList$!:Observable<any[]>;
+  autoTipusList$!:Observable<any[]>;
+  private filteredAlkatreszekSubject$ = new BehaviorSubject<any[]>([]);
+  filteredAlkatreszek$ = this.filteredAlkatreszekSubject$.asObservable();
 
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  kategoriak: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  private unsubscribe$ = new Subject<void>();
+  kategoriakSubject$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
+  kategoriak$ = this.kategoriakSubject$.asObservable();
 
-  private searchSubscription: Subscription | undefined;
+  private unsubscribe$ = new Subject<void>();
   
   modalTitle: string = '';
   filterOrder: string = '';
@@ -41,46 +41,57 @@ export class ShowAlkatreszComponent implements OnInit{
   activateViewAlkatreszComponent:boolean = false;
   isFilterActive:boolean = false;
 
-  ngOnInit() {
-    this.filteredAlkatreszek$.subscribe(() => {
-      this.performSearch();
-    })
-  }
-  
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-    if (this.searchSubscription) {
-      this.searchSubscription.unsubscribe();
-    }
+  async ngOnInit() {
+    this.kategoriaList$ = this.service.getKategoriaList();
+    this.autoTipusList$ = this.service.getAutoTipusList();
+    this.performSearch();
   }
 
   performSearch() {
-    this.searchSubscription = combineLatest([
-      this.filteredAlkatreszek$,
+    combineLatest([
       this.searchService.searchTermAdmin$,
-      this.kategoriak
+      this.kategoriak$,
     ]).pipe(
-      switchMap(([_, searchTermValue, kategoriakValue]) => {
+      switchMap(([searchTermValue, kategoriakValue]) => {
         return this.authService.checkTokenExpiration().pipe(
           switchMap((sessionExpired) => {
             if (sessionExpired) {
               alert('Lejárt a munkamenet, jelentkezz be újra!');
-              this.authService.logout().subscribe(() => {
-              });
+              this.authService.logout().subscribe(() => {});
               return EMPTY;
-            } else {
-              const keyword = searchTermValue ? searchTermValue.trim() : '';
+            } else if (searchTermValue.length >= 3 || kategoriakValue.length > 0) {
               const kategoriakString = kategoriakValue.join(';');
-              return this.service.searchAlkatreszByKeywordAndCategories(keyword, kategoriakString, this.filterOrder, true);
+              
+              const filteredResults$ = this.service.searchAlkatreszByKeywordAndCategories(
+                searchTermValue, kategoriakString, this.filterOrder, true
+              );
+              
+              const alkatreszList$ = this.service.getAlkatreszList();
+              
+              return forkJoin([filteredResults$, alkatreszList$]).pipe(
+                map(([filteredResults, allResults]) => {
+                  return this.combineResults(filteredResults, allResults);
+                })
+              );
+            } else {
+              return this.service.getAlkatreszList();
             }
           })
         );
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe(filteredAlkatreszek => {
-      this.filteredAlkatreszek$ = of(filteredAlkatreszek);
+      this.filteredAlkatreszekSubject$.next(filteredAlkatreszek);
     });
+  }
+  
+  private combineResults(filtered: any[], alkatreszList: any[]): any[] {
+    return alkatreszList.filter((item) => filtered.some((filteredItem) => filteredItem.id === item.id));
+  }
+  
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
   
   modalAdd(){ 
@@ -111,10 +122,6 @@ export class ShowAlkatreszComponent implements OnInit{
   delete(item:any) {
     if (confirm(`Biztos, hogy törlöd a ${item.nev} alkatrészt?`)) {
       this.service.deleteAlkatresz(item.id).subscribe(res => {
-        // remove deleted item from the observable
-        this.alkatreszList$ = this.alkatreszList$.pipe(
-          map(list => list.filter(alkatresz => alkatresz.id !== item.id))
-        );
         // update the filtered observable as well
         this.filteredAlkatreszek$ = this.filteredAlkatreszek$.pipe(
           map(list => list.filter(alkatresz => alkatresz.id !== item.id))
@@ -140,7 +147,7 @@ export class ShowAlkatreszComponent implements OnInit{
   modalClose() {
     this.activateAddEditAlkatreszComponent = false;
     this.activateViewAlkatreszComponent = false;
-    this.alkatreszList$ = this.service.getAlkatreszList();
+    this.performSearch();
   }
 
   filterByCategory() {
@@ -165,12 +172,12 @@ export class ShowAlkatreszComponent implements OnInit{
       this.isFilterActive = true;
     }
   
-    const kategoriakValue = this.kategoriak.getValue();
+    const kategoriakValue = this.kategoriakSubject$.getValue();
     const concatenatedKategoriak = [...kategoriakValue, ...updatedKategoriak];
     const uniqueKategoriak = Array.from(new Set(concatenatedKategoriak));
   
     this.kategoriakLabel = this.kategoriakLabel.concat(currentFilter.join(";"), updatedKategoriak.join(";"));
-    this.kategoriak.next(uniqueKategoriak);
+    this.kategoriakSubject$.next(uniqueKategoriak);
   
     const closeModalBtn = document.getElementById('filter-alkatresz-modal-close');
     if (closeModalBtn) {
@@ -179,7 +186,7 @@ export class ShowAlkatreszComponent implements OnInit{
   }  
 
   deleteFilter() {
-    this.kategoriak.next([]);
+    this.kategoriakSubject$.next([]);
     this.kategoriakLabel = '';
     this.isFilterActive = false;
   }

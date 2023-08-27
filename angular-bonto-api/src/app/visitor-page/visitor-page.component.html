@@ -55,15 +55,12 @@
           <a [routerLink]="['/alkatreszek', { category: 'Üzemanyag ellátó rendszer' }]" style="text-decoration: none;">
             <button mat-menu-item>Üzemanyag ellátó rendszer</button></a>
         </mat-menu>
-        <ng-container *ngIf="alkatreszList$">
-          <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"
-           [alkatreszList$]="alkatreszList$"></app-search-bar>
-          <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
-            <b>Nincs ilyen találat!</b>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-            (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
-          </div>
-        </ng-container>
+        <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"></app-search-bar>
+        <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
+          <b>Nincs ilyen találat!</b>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+          (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
+        </div>
       </div>
     </nav>
   </div>

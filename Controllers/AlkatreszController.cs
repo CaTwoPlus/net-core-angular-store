@@ -34,7 +34,7 @@ namespace BontoAPI.Controllers
             }
 
             var alkatreszek = await _context.Alkatreszek.ToListAsync();
-            var eTag = GenerateUniqueETag(alkatreszek);
+            var eTag = GenerateUniqueETagForItemList(alkatreszek);
             var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
 
             if (requestETag == eTag)
@@ -61,7 +61,7 @@ namespace BontoAPI.Controllers
                 return NotFound();
             }
 
-            var eTag = GenerateUniqueETag((IEnumerable<Alkatresz>)alkatresz);
+            var eTag = GenerateUniqueETag(alkatresz);
             var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
 
             if (requestETag == eTag)
@@ -102,7 +102,7 @@ namespace BontoAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Alkatresz
@@ -137,7 +137,7 @@ namespace BontoAPI.Controllers
             _context.Alkatreszek.Remove(alkatresz);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpGet("filtered-alkatreszek")]
@@ -167,7 +167,7 @@ namespace BontoAPI.Controllers
                     break;
             }
 
-            var eTag = GenerateUniqueETag(filteredAlkatreszek);
+            var eTag = GenerateUniqueETagForItemList(filteredAlkatreszek);
             var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
             if (requestETag == eTag)
             {
@@ -209,7 +209,7 @@ namespace BontoAPI.Controllers
                     break;
             }
 
-            var eTag = GenerateUniqueETag(categorizedAlkatreszek);
+            var eTag = GenerateUniqueETagForItemList(categorizedAlkatreszek);
             var requestETag = Request.Headers["If-None-Match"].FirstOrDefault();
             if (requestETag == eTag)
             {
@@ -220,7 +220,30 @@ namespace BontoAPI.Controllers
             return Ok(categorizedAlkatreszek);
         }
 
-        private string GenerateUniqueETag(IEnumerable<Alkatresz> data)
+        private string GenerateUniqueETag(Alkatresz alkatresz)
+        {
+            using (MD5 md5 = MD5.Create())
+            {
+                StringBuilder sb = new StringBuilder();
+
+                // Include relevant properties of the Alkatresz object to generate the hash
+                sb.Append(alkatresz.Id);
+                sb.Append(alkatresz.Nev);
+                sb.Append(alkatresz.Megjegyzes);
+                sb.Append(alkatresz.Kategoriak);
+                sb.Append(alkatresz.Generacio);
+                sb.Append(alkatresz.Ar);
+                sb.Append(alkatresz.Kepek);
+                sb.Append(';');
+
+                byte[] hashBytes = md5.ComputeHash(Encoding.UTF8.GetBytes(sb.ToString()));
+                string hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+
+                return hash;
+            }
+        }
+
+        private string GenerateUniqueETagForItemList(IEnumerable<Alkatresz> data)
         {
             using (MD5 md5 = MD5.Create())
             {

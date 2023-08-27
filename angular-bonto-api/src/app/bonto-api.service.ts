@@ -85,7 +85,8 @@ export class BontoApiService {
     const cachedKategoriaList = localStorage.getItem('cachedKategoriaList');
     const cachedKategoriaListETag = localStorage.getItem('cachedKategoriaListETag');
     if (cachedKategoriaList && cachedKategoriaListETag) {
-      listRequest.headers = listRequest.headers.set('If-None-Match', cachedKategoriaListETag);
+      const parsedETag = JSON.parse(cachedKategoriaListETag);
+      listRequest.headers = listRequest.headers.set('If-None-Match', parsedETag);
     }
 
     return this.http.get<any>(this.bontoAPIUrl + '/Kategoria', listRequest).pipe(

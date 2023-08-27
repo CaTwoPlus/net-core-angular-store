@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,10 +8,7 @@ export class ViewAlkatreszService {
 
   private selectedId!: number;
   private selectedKepek!: string;
-  private alkatresz$!: Observable<any>;
-  alkatreszList$!: Observable<any>;
-
-  constructor() { }
+  viewAlkatresz$!: Observable<any[]>;
 
   setSelectedId(id: number) {
     this.selectedId = id;
@@ -29,11 +26,7 @@ export class ViewAlkatreszService {
     return this.selectedKepek;
   }
 
-  setAlkatresz(alkatreszInput: Observable<any>) {
-    this.alkatresz$ = alkatreszInput;
-  }
-
-  getAlkatresz() {
-    return this.alkatresz$;
+  setViewAlkatresz(alkatreszInput: Observable<any>) {
+    this.viewAlkatresz$ = alkatreszInput;
   }
 }

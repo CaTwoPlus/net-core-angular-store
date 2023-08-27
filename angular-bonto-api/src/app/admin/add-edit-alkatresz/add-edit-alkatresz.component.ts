@@ -1,7 +1,6 @@
-import { Component, ElementRef, Input, OnInit, Output, ViewChild, } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, } from '@angular/core';
 import { Observable } from "rxjs";
 import { BontoApiService } from 'src/app/bonto-api.service';
-import { ViewAlkatreszService } from 'src/app/view-alkatresz.service';
 
 @Component({
   selector: 'app-add-edit-alkatresz',
@@ -15,33 +14,36 @@ export class AddEditAlkatreszComponent implements OnInit {
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
 
-  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService) {}
+  constructor(private service: BontoApiService) {}
 
-  @Input() id: number = 0;
+  @Input() alkatresz: any;
   nev: string = "";
   megjegyzes: string = "";
   kategoriak: string = "";
   generacio: string = "";
   ar: number = 0;
   kepek: string = "";
+  kepekInput: string = "";
   kategoriakInput: string[] = [];
   autoTipusokInput: string[] = [];
   activateImagePreview: boolean = false;
 
   ngOnInit(): void{
-    this.alkatresz$ = this.service.getAlkatresz(this.id);
-    if (this.alkatresz$) {
-      this.alkatresz$.subscribe((item) => {
-        this.nev = item.nev;
-        this.megjegyzes = item.megjegyzes;
-        this.kategoriak = item.kategoriak;
-        this.generacio = item.generacio;
-        this.ar = item.ar;
-        this.kepek = item.kepek;
-      })
+    if (this.alkatresz.id !== 0) {
+      this.nev = this.alkatresz.nev;
+      this.megjegyzes = this.alkatresz.megjegyzes;
+      this.kategoriak = this.alkatresz.kategoriak;
+      this.generacio = this.alkatresz.generacio;
+      this.ar = this.alkatresz.ar;
+      this.kepek = this.alkatresz.kepek;
+    } else {
+      this.nev = '';
+      this.megjegyzes = '';
+      this.kategoriak = '';
+      this.generacio = '';
+      this.ar = 0;
+      this.kepek = '';
     }
-    this.kategoriakInput = this.kategoriakInput;
-    this.autoTipusokInput = this.autoTipusokInput;
 
     this.kategoriaList$ = this.service.getKategoriaList();
     this.autoTipusList$ = this.service.getAutoTipusList();
@@ -85,7 +87,7 @@ export class AddEditAlkatreszComponent implements OnInit {
     }     
     
     var alkatresz = {
-      id: this.id,
+      id: this.alkatresz.id,
       nev: this.nev,
       megjegyzes: this.megjegyzes,
       kategoriak: this.kategoriak,
@@ -93,13 +95,13 @@ export class AddEditAlkatreszComponent implements OnInit {
       ar: this.ar,
       kepek: this.kepek
     }
-    var id: number = this.id;
+    var id: number = this.alkatresz.id;
+
     this.service.updateAlkatresz(id, alkatresz).subscribe(res => {
       var closeModalBtn = document.getElementById('add-edit-modal-close');
       if(closeModalBtn) {
         closeModalBtn.click();
       }
-
       var showUpdateSuccess = document.getElementById('update-success-alert');
       if(showUpdateSuccess) {
         showUpdateSuccess.style.display = "block";
@@ -114,15 +116,15 @@ export class AddEditAlkatreszComponent implements OnInit {
 
   uploadImages() {
     const files: FileList | null = this.fileInput.nativeElement.files;
-
     if (files) {
+      var imageOverride = false;
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        
-        // Append file name to kepek property
+        if (this.kepek.length > 0 && !imageOverride) {
+          this.kepek = '';
+          imageOverride = true;
+        }
         this.kepek += file.name;
-        
-        // Add delimiter if not the last file
         if (i !== files.length - 1) {
           this.kepek += ';';
         }
@@ -130,5 +132,6 @@ export class AddEditAlkatreszComponent implements OnInit {
       this.activateImagePreview = true;
     }
     this.fileInput.nativeElement.value = '';
+    this.kepekInput = '';
   }
 }

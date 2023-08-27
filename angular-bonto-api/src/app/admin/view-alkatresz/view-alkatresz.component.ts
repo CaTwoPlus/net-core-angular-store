@@ -24,7 +24,7 @@ export class ViewAlkatreszComponent implements OnInit{
   fetchAlkatresz() {
     this.selectedId = this.ViewAlkatresz.getSelectedId();
     this.alkatresz$ = this.service.getAlkatresz(this.selectedId);
-    this.ViewAlkatresz.setAlkatresz(this.alkatresz$);
+    this.ViewAlkatresz.setViewAlkatresz(this.alkatresz$);
   }
 
   getAlkatreszForEdit(): Observable<any> {

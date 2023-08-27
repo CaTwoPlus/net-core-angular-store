@@ -1,8 +1,7 @@
-import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
+import { Component, Output, EventEmitter, ViewEncapsulation } from '@angular/core';
 import { BontoApiService } from '../bonto-api.service';
 import { SearchService } from './search.service';
 import { CategoryPageService } from '../category-page.service';
-import { Observable } from 'rxjs';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { Router } from '@angular/router';
 
@@ -56,7 +55,6 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None
 })
 export class SearchBarComponent {
-  @Input() alkatreszList$!: Observable<any[]>;
   @Output() isSearchTermInvalid = new EventEmitter<boolean>(false);
   @Output() isSearchTermShort = new EventEmitter<boolean>(false);
 
@@ -128,7 +126,6 @@ export class SearchBarComponent {
     this.currentSearchTermValue = '';
     this.previousSearchTermValue = '';
     this.isSearchFilterApplied = false;
-    this.searchService.setSearchState(false);
   }
 
   onTypeaheadSelect(event: TypeaheadMatch) {
