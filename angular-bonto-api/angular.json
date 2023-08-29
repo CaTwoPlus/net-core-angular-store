@@ -40,19 +40,24 @@
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "1.5mb"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumError": "9kb"
                 }
               ],
               "outputHashing": "all"
             },
             "development": {
               "buildOptimizer": false,
-              "optimization": false,
+              "optimization": {
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": true
+                }
+              },
               "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
@@ -114,7 +119,7 @@
               "outputHashing": "media"
             },
             "development": {
-              "optimization": false,
+              "optimization": true,
               "sourceMap": true,
               "extractLicenses": false,
               "vendorChunk": true

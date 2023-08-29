@@ -16,7 +16,7 @@ import { Location } from '@angular/common';
 export class VisitorPageComponent implements OnInit, OnDestroy {
   constructor(private service: BontoApiService, private categoryPageService: CategoryPageService, 
     private searchService: SearchService, private changeDetectorRef: ChangeDetectorRef, private elementRef: ElementRef,
-    private viewportScroller: ViewportScroller, private route: ActivatedRoute, private router: Router, 
+    private viewportScroller: ViewportScroller, private route: ActivatedRoute, private router: Router,
     private location: Location) {}
   
   @ViewChild('scrollTarget', { static: false }) scrollTarget!: ElementRef;

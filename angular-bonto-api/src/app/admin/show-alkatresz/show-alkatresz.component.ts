@@ -57,7 +57,7 @@ export class ShowAlkatreszComponent implements OnInit{
           switchMap((sessionExpired) => {
             if (sessionExpired) {
               alert('Lejárt a munkamenet, jelentkezz be újra!');
-              this.authService.logout().subscribe(() => {});
+              this.authService.logout();
               return EMPTY;
             } else if (searchTermValue.length >= 3 || kategoriakValue.length > 0) {
               const kategoriakString = kategoriakValue.join(';');

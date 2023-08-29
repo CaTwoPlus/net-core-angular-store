@@ -74,29 +74,25 @@ export class AuthenticationService {
     this.router.navigate(['/admin/alkatreszek']); 
   }
 
-  logout(): Observable<any> {
-    return new Observable(observer => {
-      this.http.post<any>(this.bontoAPIUrl + '/auth/logout', this.credentials).subscribe({
-        next: (response) => {
-          if (response.status === 200) {
-            var closeModalBtn = document.getElementById('close-logout-modal');
-            if (closeModalBtn) {
-              closeModalBtn.click();
-            }
-            this.cookie.deleteAll();
-            this.setGuard = false;
-            this.router.navigate(['/admin/bejelentkezes']);
-            observer.next(response);
-            observer.complete();
+  logout() {
+    this.http.post<any>(this.bontoAPIUrl + '/auth/logout', this.credentials).subscribe({
+      next: (response) => {
+        if (response.status === 200) {
+          var closeModalBtn = document.getElementById('close-logout-modal');
+          if (closeModalBtn) {
+            closeModalBtn.click();
           }
-        },
-        error: (error) => {
-          if (error.status === 400) {
-            alert("Hiba történt a kijelentkezés során!");
-            observer.error(error);
-          }
+          this.cookie.deleteAll();
+          this.setGuard = false;
+          this.router.navigate(['/admin/bejelentkezes']);
         }
-      });
+      },
+      error: (error) => {
+        if (error.status === 400) {
+          alert("Hiba történt a kijelentkezés során!");
+          throwError(() => new Error(error));
+        }
+      }
     });
   }
 

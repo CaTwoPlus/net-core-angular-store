@@ -2,7 +2,6 @@ using BontoAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Configuration;
 using System.Text;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -59,21 +58,18 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())    
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+};
 
+app.UseRouting();
 app.UseHttpsRedirection();
-
+app.UseDefaultFiles();
 app.UseStaticFiles();
-
 app.UseCors(myAllowSpecificOrigins);
-
 app.UseAuthorization();
-
 app.MapControllers();
-
+app.MapFallbackToFile("index.html");
 app.Run();
