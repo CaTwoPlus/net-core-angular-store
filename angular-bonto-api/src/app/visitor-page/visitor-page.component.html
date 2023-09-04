@@ -163,7 +163,7 @@
         <span class="visually-hidden">Toggle Dropdown</span>
       </button>
       <div class="dropdown-menu" id="dropdown-menu-filter" data-bs-display="static">
-        <div class="form-check" *ngFor="let item of autoTipusList$ | async; let i = index">
+        <div class="form-check" *ngFor="let item of autoTipusok; let i = index">
           <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
           (change)="onCheckboxChange('', $event, item.nev)">
           <label class="form-check-label" [attr.for]="'dropdownFilterOrderOption' + i">
@@ -176,7 +176,7 @@
       </div>
     </div>
   </div>
-  <app-category-page *ngIf="filteredAlkatreszek$" [alkatreszList$]="filteredAlkatreszek$"></app-category-page>
+  <app-category-page [alkatreszList]="alkatreszekOutput"></app-category-page>
 </body>
 
 <!--Footer-->

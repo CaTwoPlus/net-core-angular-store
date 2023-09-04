@@ -15,7 +15,6 @@ export const canActivate: CanActivateFn = (
         return true;
         }),
         catchError(() => {
-        console.log('AuthGuard: User is not authenticated, navigating to login page');
         router.navigate(['/admin/bejelentkezes']);
         return of(false);
         })

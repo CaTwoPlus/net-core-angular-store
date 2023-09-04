@@ -9,14 +9,12 @@ import { BontoApiService } from 'src/app/bonto-api.service';
 })
 export class AddEditAlkatreszComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
-  alkatreszList$!:Observable<any[]>;
-  alkatresz$!:Observable<any>;
-  kategoriaList$!:Observable<any[]>;
-  autoTipusList$!:Observable<any[]>;
-
   constructor(private service: BontoApiService) {}
 
   @Input() alkatresz: any;
+  @Input() autoTipusList: any;
+  @Input() kategoriaList: any;
+
   nev: string = "";
   megjegyzes: string = "";
   kategoriak: string = "";
@@ -44,9 +42,6 @@ export class AddEditAlkatreszComponent implements OnInit {
       this.ar = 0;
       this.kepek = '';
     }
-
-    this.kategoriaList$ = this.service.getKategoriaList();
-    this.autoTipusList$ = this.service.getAutoTipusList();
   }
 
   addAlkatresz() {
@@ -97,7 +92,7 @@ export class AddEditAlkatreszComponent implements OnInit {
     }
     var id: number = this.alkatresz.id;
 
-    this.service.updateAlkatresz(id, alkatresz).subscribe(res => {
+    this.service.updateAlkatresz(id, alkatresz).subscribe(() => {
       var closeModalBtn = document.getElementById('add-edit-modal-close');
       if(closeModalBtn) {
         closeModalBtn.click();

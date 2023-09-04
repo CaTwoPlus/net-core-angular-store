@@ -4,6 +4,7 @@ import { SearchService } from './search.service';
 import { CategoryPageService } from '../category-page.service';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
 import { Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-search-bar',
@@ -66,9 +67,15 @@ export class SearchBarComponent {
   invalidInput: boolean = false;
   currentSearchTermValue: string = '';
   previousSearchTermValue: string = '';
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private service: BontoApiService, private categoryService: CategoryPageService, 
     private searchService: SearchService, private router: Router) {}
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   checkValueEmission() {
     if (this.searchTermValue.length >= 3) {
@@ -106,7 +113,10 @@ export class SearchBarComponent {
     const enteredValue = this.searchTermValue.toLowerCase();
     // Save the current value before it's modified
     const previousValue = this.currentSearchTermValue;
-    this.service.searchAlkatreszByKeyword(enteredValue, '').subscribe((list) => {
+    this.service.searchAlkatreszByKeyword(enteredValue, '').pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)).subscribe((list) => {
       this.options = list
         .filter((option) =>
           option.nev.toLowerCase().includes(enteredValue))

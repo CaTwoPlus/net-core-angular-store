@@ -1,26 +1,26 @@
-<form id="view-alkatresz-form" *ngIf="alkatresz$ | async as item">
+<form id="view-alkatresz-form">
     <div class="mb-3">
         <label for="nevInput" class="form-label">Név</label>
-        <span class="input-group-text" id="nevInput" name="nevInput">{{item.nev}}</span>
+        <span class="input-group-text" id="nevInput" name="nevInput">{{alkatresz.nev}}</span>
     </div>
     <div class="input group mb-3"> 
         <label for="kategoriakInput" class="form-label">Kategóriák</label>
-        <span class="input-group-text" id="kategoriakInput" name="kategoriakInput">{{item.kategoriak}}</span>
+        <span class="input-group-text" id="kategoriakInput" name="kategoriakInput">{{alkatresz.kategoriak}}</span>
     </div>
     <div class="mb-3">
         <label for="arInput" class="form-label">Ár</label>
-        <span class="input-group-text" id="arInput"  name="arInput">{{item.ar}}</span>
+        <span class="input-group-text" id="arInput"  name="arInput">{{alkatresz.ar}}</span>
     </div>
     <div class="mb-3">
         <label for="megjegyzesInput" class="form-label">Megjegyzés</label>
-        <span class="input-group-text" id="megjegyzesInput" name="megjegyzesInput">{{item.megjegyzes}}</span>
+        <span class="input-group-text" id="megjegyzesInput" name="megjegyzesInput">{{alkatresz.megjegyzes}}</span>
     </div>
     <div class="mb-3">
         <label for="generacioInput" class="form-label">Generáció</label>
-        <span class="input-group-text" id="generacioInput" name="generacioInput">{{item.generacio}}</span>
+        <span class="input-group-text" id="generacioInput" name="generacioInput">{{alkatresz.generacio}}</span>
     </div>
     <div class="image-container" *ngIf="activateImageGallery === false">
-        <ng-container *ngFor="let img of item.kepek.split(';')">
+        <ng-container *ngFor="let img of alkatresz.kepek.split(';')">
           <div *ngIf="img.trim() !== ''">
             <img class="img-thumbnail" [lazyLoad]="'https://localhost:7094/images/' + img" style="max-height: 100px;"
             [defaultImage]="'https://localhost:7094/images/placeholder.png'"
@@ -34,12 +34,12 @@
         </ng-container>
     </div>
     <div id="imageCarousel" class="carousel slide" data-bs-keyboard="true" *ngIf="activateImageGallery" #imageCarousel>
-        <div *ngIf="item.kepek.split(';').length > 1" class="carousel-indicators">
-            <button type="button" [attr.data-bs-target]="'#imageCarousel'" [attr.data-bs-slide-to]="i" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';');
+        <div *ngIf="alkatresz.kepek.split(';').length > 1" class="carousel-indicators">
+            <button type="button" [attr.data-bs-target]="'#imageCarousel'" [attr.data-bs-slide-to]="i" [class.active]="i === 0" *ngFor="let img of alkatresz.kepek.split(';');
              let i = index" [attr.aria-label]="'Slide ' + (i + 1)"></button>
         </div>
         <div class="carousel-inner">
-            <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of item.kepek.split(';'); let i = index">
+            <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of alkatresz.kepek.split(';'); let i = index">
                 <ng-container *ngIf="img.trim() !== ''">
                     <img class="d-block w-100" [lazyLoad]="'https://localhost:7094/images/' + img"
                     style="max-height: 100vh; max-width: 100%;">
@@ -55,11 +55,11 @@
                 </svg>
             </button>
         </div>
-        <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+        <button *ngIf="alkatresz.kepek.split(';').length > 1" class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Előző</span>
         </button>
-        <button *ngIf="item.kepek.split(';').length > 1" class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+        <button *ngIf="alkatresz.kepek.split(';').length > 1" class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Következő</span>
         </button>

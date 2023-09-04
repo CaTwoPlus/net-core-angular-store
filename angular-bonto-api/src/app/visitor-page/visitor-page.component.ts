@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, switchMap, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, exhaustMap, of, takeUntil, tap } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
@@ -39,11 +39,11 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   autoTipusList$:Observable<any[]> = this.service.getAutoTipusList();
   filteredAlkatreszek$: Observable<any[]> = this.service.getAlkatreszList();
   showCategoryPage$!:Observable<any>;
-
   private unsubscribe$ = new Subject<void>();
   private searchSubscription: Subscription | undefined;
-
   autoTipusokInput: { [key: string]: boolean } = {};
+  autoTipusok: any[] = [];
+  alkatreszekOutput: any[] = []
   isFilterActive: boolean = false;
   isOrderActive: boolean = false;
   filterButtonDisabled: boolean = true;
@@ -61,8 +61,8 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   lastScrollPosition: number = 0;
   filterOrder: string = '';
   keyword: string | null = '';
+  category: string | null = '';
   [key: string]: any;
-  
   yearFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
@@ -70,8 +70,13 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     // Service observables are being assigned here based on URL parameters
     // Cannot combine keyword and category based searches
     this.showCategoryPage$ = this.categoryPageService.showCategoryPage$;
+    this.autoTipusList$.subscribe(array => {
+      array.forEach(item => {
+        this.autoTipusok.push(item);
+      });
+    });
     this.route.paramMap.subscribe(params => {
-      const category = params.get('category');
+      this.category = params.get('category') ?? '';
       this.keyword = params.get('talalatok') ?? '';
       const currentUrlSegments = this.location.path().split('/');
       const anchorId = currentUrlSegments.find(segment => {
@@ -81,7 +86,8 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       if (this.keyword.length >= 3) {
         // Perform keyword search
         this.searchService.setSearchState(true);
-        this.resetFilters();
+        // Disabled for now, as it causes API call duplication
+        this.resetFilters(); 
         if (this.categoryPageService.getCategory() !== '') {
           this.categoryPageService.setCategory('');
         }
@@ -92,11 +98,11 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
         }
         this.categoryPageService.setShowCategoryPage(true);
         this.performSearch(true);
-      } else if (category) {
+      } else if (this.category) {
         // Perform category search
         this.searchService.setSearchState(false);
         this.resetFilters();
-        this.categoryPageService.setCategory(category);
+        this.categoryPageService.setCategory(this.category);
         this.categoryPageService.setShowCategoryPage(true);
         this.performSearch();
       } else if (anchorId) {
@@ -128,6 +134,10 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   // As per database design, year filter values are part of the categories, 
   // so the same API call is made for changes in both
   performSearch(onInit = false) {
+    if (this.searchSubscription) {
+      // If there's an active search subscription, unsubscribe to it to cancel the previous request
+      this.searchSubscription.unsubscribe();
+    }
     this.searchSubscription =
     combineLatest([
       this.filteredAlkatreszek$,
@@ -136,14 +146,8 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       this.categoryPageService.currentYear$,
       this.searchService.searchTerm$
     ]).pipe(
-      switchMap(([_, category, orderBy, year, keyword]) => {
+      exhaustMap(([_, category, orderBy, year, keyword]) => {
         let kategoria = category.replace(/^\s*;/, '').replace(/;\s*$/, '').trim();
-        // In case new category is selected, reset filters 
-        if (this.categoryPageService.previousCategory !== this.categoryPageService.category
-          && this.categoryPageService.previousCategory !== '') {
-          this.categoryPageService.previousCategory = '';
-          this.resetFilters();
-        }
         if (keyword.length > 0) {
           if (!this.isFilterActive) {
             this.isFilterResultEmptyAlert = false;
@@ -205,6 +209,12 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       })
     ).subscribe(filteredAlkatreszek => {
       this.filteredAlkatreszek$ = of(filteredAlkatreszek);
+      if (this.alkatreszekOutput.length !== 0) {
+        this.alkatreszekOutput = [];
+      } 
+      filteredAlkatreszek.forEach(item => {
+       this.alkatreszekOutput.push(item);
+      })
     });
   }
 

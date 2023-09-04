@@ -1,8 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BehaviorSubject, EMPTY, Observable, Subject, combineLatest, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, combineLatest, forkJoin } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
-import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
 import { AuthenticationService } from 'src/app/login/auth.service';
 import { SearchService } from 'src/app/search/search.service';
 
@@ -15,7 +14,7 @@ export class ShowAlkatreszComponent implements OnInit{
   @ViewChild('viewAlkatreszModal') viewAlkatreszModal!: ElementRef;
   @ViewChild('addEditAlkatreszModal') addEditAlkatreszModal!: ElementRef;
 
-  constructor(private service:BontoApiService, private viewAlkatreszService: ViewAlkatreszService, 
+  constructor(private service:BontoApiService, 
     private authService: AuthenticationService, private searchService: SearchService) {}
 
   kategoriaList$!:Observable<any[]>;
@@ -36,14 +35,26 @@ export class ShowAlkatreszComponent implements OnInit{
   autoTipusokInput: string[] = [];
 
   alkatresz:any;
+  kategoriakOutput:any[] = [];
+  autoTipusokOutput:any[] = [];
 
   activateAddEditAlkatreszComponent:boolean = false;
   activateViewAlkatreszComponent:boolean = false;
   isFilterActive:boolean = false;
 
   async ngOnInit() {
-    this.kategoriaList$ = this.service.getKategoriaList();
-    this.autoTipusList$ = this.service.getAutoTipusList();
+    this.kategoriaList$ = this.service.getKategoriaList(true);
+    this.kategoriaList$.subscribe(array => {
+      array.forEach(item => {
+        this.kategoriakOutput.push(item);
+      });
+    });
+    this.autoTipusList$ = this.service.getAutoTipusList(true);
+    this.autoTipusList$.subscribe(array => {
+      array.forEach(item => {
+        this.autoTipusokOutput.push(item);
+      });
+    });
     this.performSearch();
   }
 
@@ -53,31 +64,19 @@ export class ShowAlkatreszComponent implements OnInit{
       this.kategoriak$,
     ]).pipe(
       switchMap(([searchTermValue, kategoriakValue]) => {
-        return this.authService.checkTokenExpiration().pipe(
-          switchMap((sessionExpired) => {
-            if (sessionExpired) {
-              alert('Lejárt a munkamenet, jelentkezz be újra!');
-              this.authService.logout();
-              return EMPTY;
-            } else if (searchTermValue.length >= 3 || kategoriakValue.length > 0) {
-              const kategoriakString = kategoriakValue.join(';');
-              
-              const filteredResults$ = this.service.searchAlkatreszByKeywordAndCategories(
-                searchTermValue, kategoriakString, this.filterOrder, true
-              );
-              
-              const alkatreszList$ = this.service.getAlkatreszList();
-              
-              return forkJoin([filteredResults$, alkatreszList$]).pipe(
-                map(([filteredResults, allResults]) => {
-                  return this.combineResults(filteredResults, allResults);
-                })
-              );
-            } else {
-              return this.service.getAlkatreszList();
-            }
-          })
-        );
+        if (searchTermValue.length >= 3 || kategoriakValue.length > 0) {
+          const kategoriakString = kategoriakValue.join(';');
+          const filteredResults$ = this.service.searchAlkatreszByKeywordAndCategories(
+            searchTermValue, kategoriakString, this.filterOrder, true, true);
+          const alkatreszList$ = this.service.getAlkatreszList(true);
+          return forkJoin([filteredResults$, alkatreszList$]).pipe(
+            map(([filteredResults, allResults]) => {
+              return this.combineResults(filteredResults, allResults);
+            })
+          );
+        } else {
+          return this.service.getAlkatreszList(true);
+        }
       }),
       takeUntil(this.unsubscribe$)
     ).subscribe(filteredAlkatreszek => {
@@ -114,7 +113,7 @@ export class ShowAlkatreszComponent implements OnInit{
   }
 
   modalView(item:any) {
-    this.viewAlkatreszService.setSelectedId(item.id);
+    this.alkatresz = item;
     this.modalTitle = "Alkatrész megtekintése";
     this.activateViewAlkatreszComponent = true;
   }
@@ -126,7 +125,6 @@ export class ShowAlkatreszComponent implements OnInit{
         this.filteredAlkatreszek$ = this.filteredAlkatreszek$.pipe(
           map(list => list.filter(alkatresz => alkatresz.id !== item.id))
         );
-        // this.options = this.options.filter(option => option !== item.nev);
         var closeModalBtn = document.getElementById('add-edit-modal-close');
         if(closeModalBtn) {
           closeModalBtn.click();

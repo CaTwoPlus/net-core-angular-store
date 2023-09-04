@@ -8,11 +8,11 @@
         <label for="kategoriakOutput" class="form-label">Kategóriák</label>
         <input type="text" class="form-control" id="kategoriakOutput" [value]="kategoriak" name="kategoriakOutput" readonly>
         <select class="form-control" name="kategoriakInput" id="kategoriakInput" [(ngModel)]="kategoriakInput" multiple>
-            <option *ngFor="let type of kategoriaList$|async" [value]="type.nev">{{type.nev}}</option>
+            <option *ngFor="let type of kategoriaList" [value]="type.nev">{{type.nev}}</option>
         </select>
         <label for="autoTipusokInput" class="form-label">Típusok</label>
         <select class="form-control" name="autoTipusokInput" id="autoTipusokInput" [(ngModel)]="autoTipusokInput" multiple>
-            <option *ngFor="let type of autoTipusList$|async" [value]="type.nev">{{type.nev}}</option>
+            <option *ngFor="let type of autoTipusList" [value]="type.nev">{{type.nev}}</option>
         </select>
     </div>
     <div class="mb-3">

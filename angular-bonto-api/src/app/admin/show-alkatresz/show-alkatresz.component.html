@@ -59,7 +59,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <app-add-edit-alkatresz [alkatresz]="alkatresz" *ngIf="activateAddEditAlkatreszComponent"></app-add-edit-alkatresz>
+        <app-add-edit-alkatresz *ngIf="activateAddEditAlkatreszComponent" [alkatresz]="alkatresz"
+        [autoTipusList]="autoTipusokOutput" [kategoriaList]="kategoriakOutput"></app-add-edit-alkatresz>
       </div>
     </div>
   </div>
@@ -74,7 +75,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="add-edit-modal-close"></button>
       </div>
       <div class="modal-body" #viewAlkatreszModalBody>
-        <app-view-alkatresz *ngIf="activateViewAlkatreszComponent"></app-view-alkatresz>
+        <app-view-alkatresz *ngIf="activateViewAlkatreszComponent" [alkatresz]="alkatresz"></app-view-alkatresz>
       </div>
     </div>
   </div>

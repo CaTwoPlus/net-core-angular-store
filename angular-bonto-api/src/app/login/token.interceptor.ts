@@ -1,25 +1,35 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { EMPTY, Observable } from 'rxjs';
 import { AuthenticationService } from './auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   constructor(private authService: AuthenticationService) {}
 
+  private logoutActivated: boolean = false;
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (request.url.includes('/auth/login') || request.url.includes('/Alkatresz') 
-        || request.url.includes('/Kategoria') || request.url.includes('/AutoTipus')) {
+    const adminRequest = request.headers.get('admin') ? true : false;
+    if (request.url.includes('/auth/login') || request.url.includes('/auth/logout') || request.url.includes('/auth/refresh-token')
+        || this.logoutActivated || !adminRequest) {
       return next.handle(request);
     }
-    return this.authService.checkTokenExpiration().pipe(
-      catchError(() => of(null)),
-      switchMap(() => {
-        const modifiedRequest = this.modifyRequestWithNewAccessToken(request);
-        return next.handle(modifiedRequest);
-      })
-    );
+    this.authService.checkAccessTokenExpiration();
+    if (this.authService.accessTokenToRefresh) {
+      this.authService.refreshAccessToken();
+      const modifiedRequest = this.modifyRequestWithNewAccessToken(request);
+      return next.handle(modifiedRequest);
+    } else if (!this.authService.validAccessToken) {
+      if (!this.logoutActivated) {
+        this.logoutActivated = true;
+        alert("A munkamenet lejárt, jelentkezz be újra!");
+        this.authService.logout();
+      }
+      return EMPTY;
+    } else {
+      return next.handle(request);
+    }
   }
 
   private modifyRequestWithNewAccessToken(request: HttpRequest<any>): HttpRequest<any> {

@@ -2,6 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { BontoApiService } from '../bonto-api.service';
 import { SearchService } from './search.service';
 import { TypeaheadMatch } from 'ngx-bootstrap/typeahead';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-admin-search-bar',
@@ -60,8 +61,14 @@ export class AdminSearchBarComponent {
   invalidInput: boolean = false;
   currentSearchTermValue: string = '';
   previousSearchTermValue: string = '';
+  private unsubscribe$ = new Subject<void>();
 
   constructor(private service: BontoApiService, private searchService: SearchService) {}
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   checkValueEmission() {
     if (this.searchTermValue.length >= 3) {
@@ -88,7 +95,10 @@ export class AdminSearchBarComponent {
     const enteredValue = this.searchTermValue.toLowerCase();
     // Save the current value before it's modified
     const previousValue = this.currentSearchTermValue;
-    this.service.searchAlkatreszByKeyword(enteredValue, '').subscribe((list) => {
+    this.service.searchAlkatreszByKeyword(enteredValue, '', true).pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.unsubscribe$)).subscribe((list) => {
       this.options = list
         .filter((option) =>
           option.nev.toLowerCase().includes(enteredValue))

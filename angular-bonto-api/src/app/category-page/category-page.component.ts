@@ -1,7 +1,5 @@
-import { Component, Input, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { BontoApiService } from "src/app/bonto-api.service";
-import { SearchBarComponent } from 'src/app/search/search.component';
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Observable } from 'rxjs';
 import { CategoryPageService } from '../category-page.service';
 
 @Component({
@@ -10,26 +8,14 @@ import { CategoryPageService } from '../category-page.service';
   styleUrls: ['./category-page.component.css'],
 })
 export class CategoryPageComponent implements OnInit {
-  @Input() alkatreszList$!: Observable<any[]>;
-  @ViewChild('searchBar', { static: false }) searchBar!: SearchBarComponent;
+  @Input() alkatreszList: any[] = [];
 
-  constructor(private service: BontoApiService, private categoryService: CategoryPageService, 
+  constructor(private categoryService: CategoryPageService, 
     private cdr: ChangeDetectorRef ) { }
 
-  kategoriaList$!: Observable<any[]>;
-  autoTipusList$!: Observable<any[]>;
   showCategoryPage$!: Observable<any>;
 
-  isFilterActive: boolean = false;
-
-  modalTitle: string = '';
-  kategoriakLabel: string = '';
-  autoTipusokInput: string[] = [];
-
-  categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-
   async ngOnInit() {
-    this.kategoriaList$ = this.service.getKategoriaList();
     this.showCategoryPage$ = this.categoryService.showCategoryPage$;
   }
 

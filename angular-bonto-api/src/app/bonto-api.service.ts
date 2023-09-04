@@ -7,9 +7,9 @@ import { Observable, catchError, combineLatest, map, of } from 'rxjs';
 })
 
 export class BontoApiService {
-
   readonly bontoAPIUrl = "https://localhost:7094/api";
   readonly headers = new HttpHeaders().set('Cache-Control', 'must-revalidate');
+  
   cachedCategorizedAlkatreszek: { [category: string]: { data: any[], eTag: string } } = {};
   cachedFilteredAlkatreszek: { [keyword: string]: { data: any[], eTag: string } } = {};
   cachedFilteredCategorizedAlkatreszek: { [keyword: string]: { [category: string]: 
@@ -21,16 +21,23 @@ export class BontoApiService {
   constructor(private http:HttpClient) { 
   }
 
-  getAlkatresz(id:number|string):Observable<any>{
-    return this.http.get<any>(this.bontoAPIUrl + `/Alkatresz/${id}`, {headers: this.headers});
+  getAlkatresz(id:number|string, admin = false):Observable<any>{
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
+    return this.http.get<any>(this.bontoAPIUrl + `/Alkatresz/${id}`, {headers: headers});
   }
 
-  getAlkatreszList():Observable<any[]>{
+  getAlkatreszList(admin = false):Observable<any[]>{
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
     const listRequest = {
-      headers: this.headers,
+      headers: headers,
       observe: 'response' as const,
     };
-
     const cachedAlaktreszekList = localStorage.getItem('cachedAlaktreszekList');
     const cachedAlkatreszListETag = localStorage.getItem('cachedAlkatreszListETag');
     if (cachedAlaktreszekList && cachedAlkatreszListETag) {
@@ -63,32 +70,39 @@ export class BontoApiService {
   }
 
   addAlkatresz(data:any){
-    return this.http.post(this.bontoAPIUrl + '/Alkatresz', data);
+    let request = new HttpHeaders;
+    request.set('admin', 'true');
+    return this.http.post(this.bontoAPIUrl + '/Alkatresz', data, {headers: request});
   }
 
   updateAlkatresz(id:number|string, data:any){
-    return this.http.put(this.bontoAPIUrl + `/Alkatresz/${id}`, data);
+    let request = new HttpHeaders;
+    request.set('admin', 'true');
+    return this.http.put(this.bontoAPIUrl + `/Alkatresz/${id}`, data, {headers: request});
   }
 
   deleteAlkatresz(id:number|string){
-    return this.http.delete(this.bontoAPIUrl + `/Alkatresz/${id}`);
+    let request = new HttpHeaders;
+    request.set('admin', 'true');
+    return this.http.delete(this.bontoAPIUrl + `/Alkatresz/${id}`, {headers: request});
   }
 
   // Kategoriak
-
-  getKategoriaList():Observable<any[]>{
+  getKategoriaList(admin = false):Observable<any[]>{
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
     const listRequest = {
-      headers: this.headers,
+      headers: headers,
       observe: 'response' as const,
     };
-
     const cachedKategoriaList = localStorage.getItem('cachedKategoriaList');
     const cachedKategoriaListETag = localStorage.getItem('cachedKategoriaListETag');
     if (cachedKategoriaList && cachedKategoriaListETag) {
       const parsedETag = JSON.parse(cachedKategoriaListETag);
       listRequest.headers = listRequest.headers.set('If-None-Match', parsedETag);
     }
-
     return this.http.get<any>(this.bontoAPIUrl + '/Kategoria', listRequest).pipe(
       map(response => {
         if (response instanceof HttpResponse) {          
@@ -126,13 +140,15 @@ export class BontoApiService {
   }
 
   // AutoTipus
-
-  getAutoTipusList():Observable<any[]>{
+  getAutoTipusList(admin = false):Observable<any[]>{
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
     const listRequest = {
-      headers: this.headers,
+      headers: headers,
       observe: 'response' as const,
     };
-
     const cachedAutoTipusList = localStorage.getItem('cachedAutoTipusList');
     const cachedAutoTipusListETag = localStorage.getItem('cachedAutoTipusListETag');
     if (cachedAutoTipusList && cachedAutoTipusListETag) {
@@ -177,15 +193,17 @@ export class BontoApiService {
   }
 
   // Search logic
-  
-  searchAlkatreszByKeyword(keyword: string, order: string): Observable<any[]> {
+  searchAlkatreszByKeyword(keyword: string, order: string, admin = false): Observable<any[]> {
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
     const filterParams = new HttpParams().set('searchTerm', keyword).set('orderOption', order);
     const filterRequest = {
-      headers: this.headers,
+      headers: headers,
       params: filterParams,
       observe: 'response' as const,
     };
-
     const cachedFilter = localStorage.getItem(`cachedFilteredAlkatreszek=${keyword}`);
     if (cachedFilter) {
       const cachedFilterETag = JSON.parse(cachedFilter);
@@ -218,18 +236,20 @@ export class BontoApiService {
     );
   }
 
-  searchAlkatreszByCategories(categories: string, order: string): Observable<any[]> {
+  searchAlkatreszByCategories(categories: string, order: string, admin = false): Observable<any[]> {
     if (categories === '') {
       return of([]);
     }
-
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
     const categoryParams = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
     const categoriesRequest = {
-      headers: this.headers,
+      headers: headers,
       params: categoryParams,
       observe: 'response' as const,
     }
-
     const cachedCategory = this.cachedCategorizedAlkatreszek[categories];
     if (cachedCategory && cachedCategory.eTag) {
       categoriesRequest.headers = categoriesRequest.headers.set('If-None-Match', cachedCategory.eTag);
@@ -263,16 +283,20 @@ export class BontoApiService {
     );
   }
 
-  searchAlkatreszByKeywordAndCategories(keyword: string, categories: string, order: string, noCaching = false): Observable<any[]> {
+  searchAlkatreszByKeywordAndCategories(keyword: string, categories: string, order: string, noCaching = false, admin = false): Observable<any[]> {
+    let headers = this.headers;
+    if (admin) {
+      headers = headers.set('admin', 'true');
+    }
     const filterParams = new HttpParams().set('searchTerm', keyword).set('orderOption', order);
     const filterRequest = {
-      headers: this.headers,
+      headers: headers,
       params: filterParams,
       observe: 'response' as const,
     };
     const categoriesParams = new HttpParams().set('categoryFilter', categories).set('orderOption', order);
     const categoriesRequest = {
-      headers: this.headers,
+      headers: headers,
       params: categoriesParams,
       observe: 'response' as const,
     }

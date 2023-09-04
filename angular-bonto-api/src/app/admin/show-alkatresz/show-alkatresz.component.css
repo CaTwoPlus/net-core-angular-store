@@ -4,14 +4,15 @@
     display:none;
     position: fixed;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 9%);
+    z-index: 1;
 }
 
 #add-success-alert,
 #update-success-alert,
 #delete-success-alert {
-   animation-name: fadeInAndOut;
-   animation-duration: 4s;
+    animation-name: fadeInAndOut;
+    animation-duration: 4s;
 }
 
 #logoutModal .modal-body {

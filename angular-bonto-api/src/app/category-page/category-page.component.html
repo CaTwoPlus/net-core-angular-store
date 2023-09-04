@@ -1,4 +1,4 @@
-<ng-container *ngIf="(showCategoryPage$ | async) && (alkatreszList$ | async) as filteredAlkatreszek">  
+<ng-container *ngIf="(showCategoryPage$ | async) && (alkatreszList) as filteredAlkatreszek">  
   <div class="container-fluid">
     <div class="row mb-3">
       <ng-container *ngFor="let item of filteredAlkatreszek; trackBy: trackByItemId">

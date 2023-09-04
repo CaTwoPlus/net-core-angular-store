@@ -1,35 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, Subscription } from "rxjs";
-import { BontoApiService } from 'src/app/bonto-api.service';
-import { ViewAlkatreszService } from "src/app/view-alkatresz.service";
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-view-alkatresz',
   templateUrl: './view-alkatresz.component.html',
   styleUrls: ['./view-alkatresz.component.css']
 })
-export class ViewAlkatreszComponent implements OnInit{
-  alkatresz$!:Observable<any>;
-  selectedId: number = 0;
-  selectedImage: string | null = null;
+export class ViewAlkatreszComponent { 
+  @Input() alkatresz: any;
+
+  constructor() {}
+
   activateImageGallery: boolean = false;
-  kepek: string = '';
-
-  constructor(private service: BontoApiService, private ViewAlkatresz: ViewAlkatreszService) {}
-
-  ngOnInit(): void {
-    this.fetchAlkatresz();
-  }
-
-  fetchAlkatresz() {
-    this.selectedId = this.ViewAlkatresz.getSelectedId();
-    this.alkatresz$ = this.service.getAlkatresz(this.selectedId);
-    this.ViewAlkatresz.setViewAlkatresz(this.alkatresz$);
-  }
-
-  getAlkatreszForEdit(): Observable<any> {
-    return this.alkatresz$;
-  }
 
   onHover(event: MouseEvent) {
     const target = event.target as HTMLImageElement;

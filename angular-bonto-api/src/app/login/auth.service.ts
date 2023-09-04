@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, map, of, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { SearchService } from '../search/search.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,12 +15,15 @@ export class AuthenticationService {
   refTokExpirationTimestamp = 0;
   currentTime = 0;
   accessToken = '';
+  validAccessToken = false;
+  accessTokenToRefresh = false;
   credentials = {
     username: '',
     refreshToken: ''
   };
 
-  constructor(private http: HttpClient, private router: Router, private cookie: CookieService) { }
+  constructor(private http: HttpClient, private router: Router, private cookie: CookieService, 
+    private searchService: SearchService) { }
 
   authenticate(credentials: any) {
     this.http.post<any>(this.bontoAPIUrl + '/auth/login', credentials).subscribe({
@@ -78,11 +82,18 @@ export class AuthenticationService {
     this.http.post<any>(this.bontoAPIUrl + '/auth/logout', this.credentials).subscribe({
       next: (response) => {
         if (response.status === 200) {
-          var closeModalBtn = document.getElementById('close-logout-modal');
-          if (closeModalBtn) {
-            closeModalBtn.click();
-          }
+          const backdropElements = document.querySelectorAll('.modal-backdrop');
+          backdropElements.forEach(backdrop => {
+            backdrop.remove();
+          });
+          const modalElements = document.querySelectorAll('.modal');
+          modalElements.forEach(modal => {
+            if (modal.classList.contains('show')) {
+              modal.remove();
+            }
+          });
           this.cookie.deleteAll();
+          this.searchService.setSearchTerm('', true);
           this.setGuard = false;
           this.router.navigate(['/admin/bejelentkezes']);
         }
@@ -91,21 +102,71 @@ export class AuthenticationService {
         if (error.status === 400) {
           alert("Hiba történt a kijelentkezés során!");
           throwError(() => new Error(error));
+          return; 
         }
       }
     });
   }
 
-  checkTokenExpiration(): Observable<boolean> {
+  checkRefreshTokenExpiration(): boolean {
     const currentTime = new Date().getTime();
-    if (this.accessToken && this.accTokExpirationTimestamp <= currentTime) {
-      if (this.credentials.refreshToken && !(this.refTokExpirationTimestamp <= currentTime)) {
-        return this.refreshAccessToken().pipe(map(() => false));
-      } else {
-        return of(true);
-      } 
+    if (this.credentials.refreshToken && this.refTokExpirationTimestamp <= currentTime) {
+      return true;
     }
-    return of(false);
+    return false;
+  }
+  
+  checkAccessTokenExpiration() {
+    const currentTime = new Date().getTime();
+    if (this.accessToken !== '' && this.accTokExpirationTimestamp <= currentTime) {
+      // Token is expired or missing, try to refresh
+      const isTokenExpired = this.checkRefreshTokenExpiration();
+      if (isTokenExpired) {
+        // Refresh token is expired or missing, signal to interceptor that logout must happen
+        this.accessToken = '';
+        this.validAccessToken = false;
+        this.accessTokenToRefresh = false;
+      } else {
+        this.accessTokenToRefresh = true;
+      }
+    } else if (this.accessToken === '') {
+      // Just in case there is an issue with the relevant API call, and user still doesn't get signed out
+      this.validAccessToken = false;
+      this.accessTokenToRefresh = false;
+    } else {
+      this.validAccessToken = true;
+    }
+  }
+
+  refreshAccessToken() {
+    const refreshToken = this.cookie.get('refreshToken');
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post<any>(this.bontoAPIUrl + '/auth/refresh-token', JSON.stringify(refreshToken), {headers: headers}).subscribe({
+      next: (response) => {
+        if (response.status === 200) {
+          const data = response.data;
+          if (data.accessToken) {
+            this.accessToken = data.accessToken;
+            this.cookie.set('accessToken', data.accessToken);
+            this.accTokExpirationTimestamp = this.getTokenExpiration();
+            this.validAccessToken = true;
+            this.accessTokenToRefresh = false;
+          } else {
+            alert('Hiba történt a belépési token eltárolásában!');
+            this.accessToken = '';
+            this.accessTokenToRefresh = false;
+            this.validAccessToken = false;
+          }
+        }
+      },
+      error: (error) => {
+        alert('Hiba történt a belépési token frissítése során!');
+        console.error('Error refreshing access token:', error);
+        this.accessToken = '';
+        this.accessTokenToRefresh = false;
+        this.validAccessToken = false;
+      }
+    });
   }  
 
   getTokenExpiration(isRefreshToken = false): number {
@@ -132,20 +193,13 @@ export class AuthenticationService {
     }
     return 0;
   }
-
-  refreshAccessToken(): Observable<any> {
-    const refreshToken = this.cookie.get('refreshToken');
-    if (!refreshToken) {
-      return throwError(() => new Error('Refresh token not found.'));
-    }
-    return this.http.post<any>(this.bontoAPIUrl + '/auth/refresh-token', refreshToken);
-  }
-
+    
   checkLogin(): Observable<boolean> {
     if (this.setGuard) {
       return of(true);
     } else {
-      return throwError(() => new Error('Az oldal eléréséhez, előbb azonosítás szükséges!'));
+      console.log('Az oldal eléréséhez, előbb azonosítás szükséges!');
+      return throwError(() => new Error('Not authorized'));
     }
   }
 }
