@@ -11,6 +11,7 @@ import { SearchService } from '../search/search.service';
 export class AuthenticationService {
   readonly bontoAPIUrl = "https://localhost:7094/api";
   private setGuard = false;
+  private logoutActivated: boolean = false;
   accTokExpirationTimestamp = 0;
   refTokExpirationTimestamp = 0;
   currentTime = 0;
@@ -67,6 +68,7 @@ export class AuthenticationService {
   }
 
   signIn() {
+    this.logoutActivated = false;
     this.credentials = {
       username: this.cookie.get('username'),
       refreshToken: this.cookie.get('refreshToken')
@@ -78,34 +80,42 @@ export class AuthenticationService {
     this.router.navigate(['/admin/alkatreszek']); 
   }
 
-  logout() {
-    this.http.post<any>(this.bontoAPIUrl + '/auth/logout', this.credentials).subscribe({
-      next: (response) => {
-        if (response.status === 200) {
-          const backdropElements = document.querySelectorAll('.modal-backdrop');
-          backdropElements.forEach(backdrop => {
-            backdrop.remove();
-          });
-          const modalElements = document.querySelectorAll('.modal');
-          modalElements.forEach(modal => {
-            if (modal.classList.contains('show')) {
-              modal.remove();
+  logout(manual = false) {
+    if (!this.logoutActivated) {
+      this.logoutActivated = true;
+      this.http.post<any>(this.bontoAPIUrl + '/auth/logout', this.credentials).subscribe({
+        next: (response) => {
+          if (response.status === 200) {
+            if (!manual) {
+              alert("A munkamenet lejárt, jelentkezz be újra!");
             }
-          });
-          this.cookie.deleteAll();
-          this.searchService.setSearchTerm('', true);
-          this.setGuard = false;
-          this.router.navigate(['/admin/bejelentkezes']);
+            const backdropElements = document.querySelectorAll('.modal-backdrop');
+            backdropElements.forEach(backdrop => {
+              backdrop.remove();
+            });
+            const modalElements = document.querySelectorAll('.modal');
+            modalElements.forEach(modal => {
+              if (modal.classList.contains('show')) {
+                modal.remove();
+              }
+            });
+            this.cookie.deleteAll();
+            this.searchService.setSearchTerm('', true);
+            this.setGuard = false;
+            this.router.navigate(['/admin/bejelentkezes']);
+          }
+        },
+        error: (error) => {
+          if (error.status === 400) {
+            alert("Hiba történt a kijelentkezés során!");
+            throwError(() => new Error(error));
+            return; 
+          }
         }
-      },
-      error: (error) => {
-        if (error.status === 400) {
-          alert("Hiba történt a kijelentkezés során!");
-          throwError(() => new Error(error));
-          return; 
-        }
-      }
-    });
+      });
+    } else {
+      return;
+    }
   }
 
   checkRefreshTokenExpiration(): boolean {

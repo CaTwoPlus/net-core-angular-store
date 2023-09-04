@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, combineLatest, forkJoin } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, forkJoin, interval } from 'rxjs';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { BontoApiService } from "src/app/bonto-api.service";
 import { AuthenticationService } from 'src/app/login/auth.service';
@@ -20,29 +20,37 @@ export class ShowAlkatreszComponent implements OnInit{
   kategoriaList$!:Observable<any[]>;
   autoTipusList$!:Observable<any[]>;
   private filteredAlkatreszekSubject$ = new BehaviorSubject<any[]>([]);
+  private unsubscribe$ = new Subject<void>();
+  private countdownSubscription: Subscription | undefined;
   filteredAlkatreszek$ = this.filteredAlkatreszekSubject$.asObservable();
-
   categoryFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   kategoriakSubject$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   kategoriak$ = this.kategoriakSubject$.asObservable();
-
-  private unsubscribe$ = new Subject<void>();
-  
   modalTitle: string = '';
   filterOrder: string = '';
   kategoriakInput: string[] = [];
   kategoriakLabel: string = '';
   autoTipusokInput: string[] = [];
-
   alkatresz:any;
   kategoriakOutput:any[] = [];
   autoTipusokOutput:any[] = [];
-
   activateAddEditAlkatreszComponent:boolean = false;
   activateViewAlkatreszComponent:boolean = false;
   isFilterActive:boolean = false;
+  showSessionExpiry:boolean = false;
+  countdown: number = 0;
 
   async ngOnInit() {
+    this.countdown = this.getSessionTimeout();
+    // Start the countdown timer
+    this.countdownSubscription = interval(1000).subscribe(() => {
+      if (this.countdown <= 0) {
+        // Session expired, log the user out
+        this.authService.logout();
+      } else {
+        this.countdown--;
+      }
+    });
     this.kategoriaList$ = this.service.getKategoriaList(true);
     this.kategoriaList$.subscribe(array => {
       array.forEach(item => {
@@ -56,6 +64,32 @@ export class ShowAlkatreszComponent implements OnInit{
       });
     });
     this.performSearch();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+    if (this.countdownSubscription) {
+      this.countdownSubscription.unsubscribe();
+    }
+  }
+
+  getSessionTimeout(): number {
+    const refreshTokenExpiration = this.authService.getTokenExpiration(true);
+    const refreshTokenExpirationInSeconds = Math.floor(refreshTokenExpiration / 1000);
+    const currentTime = Math.floor(Date.now() / 1000);
+    const remainingTime = refreshTokenExpirationInSeconds - currentTime;
+    return remainingTime > 0 ? remainingTime : 0;
+  }
+
+  formatTime(seconds: number): string {
+    const hours = Math.floor(seconds / 3600);
+    const remainingMinutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+    const hoursString = String(hours).padStart(2, '0');
+    const minutesString = String(remainingMinutes).padStart(2, '0');
+    const secondsString = String(remainingSeconds).padStart(2, '0');
+    return `${hoursString}:${minutesString}:${secondsString}`;
   }
 
   performSearch() {
@@ -86,11 +120,6 @@ export class ShowAlkatreszComponent implements OnInit{
   
   private combineResults(filtered: any[], alkatreszList: any[]): any[] {
     return alkatreszList.filter((item) => filtered.some((filteredItem) => filteredItem.id === item.id));
-  }
-  
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
   
   modalAdd(){ 
@@ -190,7 +219,7 @@ export class ShowAlkatreszComponent implements OnInit{
   }
 
   logOut() {
-    this.authService.logout();
+    this.authService.logout(true);
   }
 }
 

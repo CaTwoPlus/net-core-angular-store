@@ -7,12 +7,10 @@ import { AuthenticationService } from './auth.service';
 export class TokenInterceptor implements HttpInterceptor {
   constructor(private authService: AuthenticationService) {}
 
-  private logoutActivated: boolean = false;
-
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const adminRequest = request.headers.get('admin') ? true : false;
-    if (request.url.includes('/auth/login') || request.url.includes('/auth/logout') || request.url.includes('/auth/refresh-token')
-        || this.logoutActivated || !adminRequest) {
+    if (request.url.includes('/auth/login') || request.url.includes('/auth/logout') 
+    || request.url.includes('/auth/refresh-token') || !adminRequest) {
       return next.handle(request);
     }
     this.authService.checkAccessTokenExpiration();
@@ -21,11 +19,11 @@ export class TokenInterceptor implements HttpInterceptor {
       const modifiedRequest = this.modifyRequestWithNewAccessToken(request);
       return next.handle(modifiedRequest);
     } else if (!this.authService.validAccessToken) {
-      if (!this.logoutActivated) {
-        this.logoutActivated = true;
+      /*if (!this.authService.logoutActivated) {
+        this.authService.logoutActivated = true;
         alert("A munkamenet lejárt, jelentkezz be újra!");
         this.authService.logout();
-      }
+      }*/
       return EMPTY;
     } else {
       return next.handle(request);

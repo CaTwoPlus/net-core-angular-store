@@ -9,18 +9,20 @@
 </div>
 
 <nav class="navbar">
-  <div>
-    <button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
+  <div style="display: flex; align-items: baseline;">
+    <button type="button" class="btn btn-primary float-start m-2" data-bs-toggle="modal" data-bs-target="#logoutModal">
       Kijelentkezés
     </button>
+    <p>Időzár:</p>
+    <p style="margin-left: 10px; color: yellow;">{{ formatTime(countdown) }}</p>
+  </div>
+  <div style="display: flex; align-items: center;">
     <button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#addNewAlkatresz" (click)="modalAdd()">
       Alkatrész hozzáadása
     </button>
-    <button type="button" class="btn btn-primary float-start m-2" data-bs-toggle="modal" data-bs-target="#filterAlkatreszList">
+    <button type="button" class="btn btn-primary float-end m-2" data-bs-toggle="modal" data-bs-target="#filterAlkatreszList">
       Szűrés
     </button>
-  </div>
-  <div>
     <app-admin-search-bar></app-admin-search-bar>
   </div>
 </nav>
