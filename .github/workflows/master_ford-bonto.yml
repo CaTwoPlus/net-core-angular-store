@@ -28,10 +28,10 @@ jobs:
           ls -R
 
       - name: Build with dotnet
-        run: dotnet build net-core-angular-store/BontoAPIApp.sln --configuration Release  
+        run: dotnet build /home/runner/work/net-core-angular-store/net-core-angular-store/BontoAPIApp.sln --configuration Release  
 
       - name: dotnet publish
-        run: dotnet publish net-core-angular-store/BontoAPIApp.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp  
+        run: dotnet publish /home/runner/work/net-core-angular-store/net-core-angular-store/BontoAPIApp.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp  
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
