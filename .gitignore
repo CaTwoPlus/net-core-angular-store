@@ -4,15 +4,16 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # User-specific files
+*.csproj.user
 *.rsuser
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-#*.jpg
-#*.jpeg
-#*.png
-#*.gif
+*.jpg
+*.jpeg
+*.png
+*.gif
 .DS_Store             # macOS specific file
 Thumbs.db             # Windows specific file
 *.log                 # Log files
