@@ -1,0 +1,19 @@
+$primary: #3F51B5;
+
+.btn-primary {
+    color: $white;
+    background-color: $primary;
+    border-color: $primary;
+  
+    &:hover {
+      color: $white;
+      background-color: darken($primary, 10%);
+      border-color: darken($primary, 10%);
+    }
+  
+    &:active {
+      color: $primary;
+      background-color: darken($primary, 20%);
+      border-color: darken($primary, 20%);
+    }
+  }

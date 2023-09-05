@@ -9,10 +9,10 @@
 *.user
 *.userosscache
 *.sln.docstates
-*.jpg
-*.jpeg
-*.png
-*.gif
+#*.jpg
+#*.jpeg
+#*.png
+#*.gif
 .DS_Store             # macOS specific file
 Thumbs.db             # Windows specific file
 *.log                 # Log files
@@ -62,11 +62,10 @@ bld/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
-wwwroot/
+wwwroot/scripts
 Migrations/
 angular/.vscode/
 angular/node_modules/         # Directory where npm packages are installed
-angular/dist/                 # Directory where the build output is generated
 angular/.tmp/                 # Directory used for temporary files during development
 angular/src/assets/uploads/   # Directory for uploaded files or user-generated content
 angular/.angular/cache/       # Directory for Angular CLI cache files
@@ -77,7 +76,7 @@ angular/logs/                 # Directory for application logs
 angular/tmp/                  # Directory for temporary files
 angular/public/uploads/       # Directory for public file uploads
 angular/node_modules
-angular/src/assets/bootstrap-main
+angular/src/assets/
 angular/dist/
 
 # Visual Studio 2017 auto generated files
