@@ -64,20 +64,20 @@ bld/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 wwwroot/
 Migrations/
-angular-bonto-api/node_modules/         # Directory where npm packages are installed
-angular-bonto-api/dist/                 # Directory where the build output is generated
-angular-bonto-api/.tmp/                 # Directory used for temporary files during development
-angular-bonto-api/src/assets/uploads/   # Directory for uploaded files or user-generated content
-angular-bonto-api/.angular/cache/       # Directory for Angular CLI cache files
-angular-bonto-api/.angular/cache/15.2.9 
-angular-bonto-api/.env/                 # Directory for environment-specific configuration files
-angular-bonto-api/coverage/             # Directory for code coverage reports
-angular-bonto-api/logs/                 # Directory for application logs
-angular-bonto-api/tmp/                  # Directory for temporary files
-angular-bonto-api/public/uploads/       # Directory for public file uploads
-angular-bonto-api/node_modules
-angular-bonto-api/src/assets/bootstrap-main
-angular-bonto-api/dist/
+angular/node_modules/         # Directory where npm packages are installed
+angular/dist/                 # Directory where the build output is generated
+angular/.tmp/                 # Directory used for temporary files during development
+angular/src/assets/uploads/   # Directory for uploaded files or user-generated content
+angular/.angular/cache/       # Directory for Angular CLI cache files
+angular/.angular/cache/15.2.9 
+angular/.env/                 # Directory for environment-specific configuration files
+angular/coverage/             # Directory for code coverage reports
+angular/logs/                 # Directory for application logs
+angular/tmp/                  # Directory for temporary files
+angular/public/uploads/       # Directory for public file uploads
+angular/node_modules
+angular/src/assets/bootstrap-main
+angular/dist/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
@@ -403,4 +403,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/angular-bonto-api/.angular/cache/15.2.2
+/angular/.angular/cache/15.2.2

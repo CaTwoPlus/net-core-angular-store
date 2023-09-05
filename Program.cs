@@ -64,12 +64,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 };
 
-app.UseRouting();
 app.UseHttpsRedirection();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseCors(myAllowSpecificOrigins);
 app.UseAuthorization();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
 app.Run();

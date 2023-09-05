@@ -76,7 +76,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       });
     });
     this.route.paramMap.subscribe(params => {
-      this.category = params.get('category') ?? '';
+      this.category = params.get('kategoria') ?? '';
       this.keyword = params.get('talalatok') ?? '';
       const currentUrlSegments = this.location.path().split('/');
       const anchorId = currentUrlSegments.find(segment => {

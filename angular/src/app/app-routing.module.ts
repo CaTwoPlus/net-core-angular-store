@@ -10,7 +10,7 @@ const routes: Routes = [
   { path: 'admin/alkatreszek', component: ShowAlkatreszComponent, canActivate: [canActivate] },
   { path: 'admin/alkatresz_hozzaad_v_modosit', component: AddEditAlkatreszComponent, canActivate: [canActivate] },
   { path: 'admin/bejelentkezes', component: LoginComponent },
-  { path: '', component: VisitorPageComponent, pathMatch: 'full', data:{ category: '' } },
+  { path: '', component: VisitorPageComponent, pathMatch: 'full', data:{ kategoria: '' } },
   { path: 'szolgaltatasok', component: VisitorPageComponent },
   { path: 'vasarlasi_infok', component: VisitorPageComponent },
   { path: 'kapcsolat', component: VisitorPageComponent },

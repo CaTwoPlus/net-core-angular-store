@@ -32,27 +32,27 @@
       </div>
       <div>
         <mat-menu #alkatreszekMenu="matMenu">
-          <a [routerLink]="['/alkatreszek', { category: 'Autóhifi' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Autóhifi' }]" style="text-decoration: none;">
             <button mat-menu-item>Autóhifi</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Biztonsági alkatrészek' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Biztonsági alkatrészek' }]" style="text-decoration: none;">
             <button mat-menu-item>Biztonsági alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Elektromos alkatrészek' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Elektromos alkatrészek' }]" style="text-decoration: none;">
             <button mat-menu-item>Elektromos alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Fényszórók, lámpák' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Fényszórók, lámpák' }]" style="text-decoration: none;">
             <button mat-menu-item>Fényszórók, lámpák</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Futómű, kormánymű és fék alkatrészek' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Futómű, kormánymű és fék alkatrészek' }]" style="text-decoration: none;">
             <button mat-menu-item>Futómű, kormánymű és fék alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Karosszéria elemek és alkatrészek' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Karosszéria elemek és alkatrészek' }]" style="text-decoration: none;">
             <button mat-menu-item>Karosszéria elemek és alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Klíma, fűtés' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Klíma, fűtés' }]" style="text-decoration: none;">
             <button mat-menu-item>Klíma, fűtés</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Kuplung, sebességváltó és alkatrészei' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Kuplung, sebességváltó és alkatrészei' }]" style="text-decoration: none;">
             <button mat-menu-item>Kuplung, sebességváltó és alkatrészei</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Motoralkatrészek' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Motoralkatrészek' }]" style="text-decoration: none;">
             <button mat-menu-item>Motoralkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Utastér, csomagtér, egyéb' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Utastér, csomagtér, egyéb' }]" style="text-decoration: none;">
             <button mat-menu-item>Utastér, csomagtér, egyéb</button></a>
-          <a [routerLink]="['/alkatreszek', { category: 'Üzemanyag ellátó rendszer' }]" style="text-decoration: none;">
+          <a [routerLink]="['/alkatreszek', { kategoria: 'Üzemanyag ellátó rendszer' }]" style="text-decoration: none;">
             <button mat-menu-item>Üzemanyag ellátó rendszer</button></a>
         </mat-menu>
         <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"></app-search-bar>
