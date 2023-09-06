@@ -1,0 +1,23 @@
+ Volume in drive C has no label.
+ Volume Serial Number is 7C3D-95B3
+
+ Directory of C:\Users\ReBorn\Desktop\FOCUS MK3
+
+2020.07.27.  00:44    <DIR>          .
+2020.07.27.  00:44    <DIR>          ..
+2020.07.26.  23:54    <DIR>          autóhifi
+2020.07.26.  23:56    <DIR>          biztonsági alkatrészek
+2020.07.26.  23:57    <DIR>          elektromos alkatrészek
+2020.07.27.  00:44                 0 focus_mk3-1250.txt
+2020.07.27.  00:30                86 focus_mk3_dir_list.bat
+2020.07.26.  23:59    <DIR>          futómû,kormánymû és fék alkatrészek
+2020.07.26.  23:58    <DIR>          fényszórók,lámpák
+2020.07.26.  23:59    <DIR>          karosszéria elemek és alkatrészek
+2020.07.27.  00:01    <DIR>          klíma,fûtés
+2020.07.05.  23:22    <DIR>          kuplung,sebességvátó és alkatrészei
+2020.07.27.  00:02    <DIR>          motor alkatrészek és tartozékaik
+2020.07.27.  00:02    <DIR>          szélvédõk-ablakok
+2020.07.27.  00:03    <DIR>          utastér,csomagtér.egyéb
+2020.07.27.  00:04    <DIR>          üzemanyag ellátó rendszer
+               2 File(s)             86 bytes
+              14 Dir(s)   1 872 707 584 bytes free
