@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { prodEnvironment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-view-alkatresz',
@@ -11,6 +12,8 @@ export class ViewAlkatreszComponent {
   constructor() {}
 
   activateImageGallery: boolean = false;
+  baseUrl: string = prodEnvironment.baseUrl;
+  imgUrl: string = this.baseUrl + "/images/";
 
   onHover(event: MouseEvent) {
     const target = event.target as HTMLImageElement;

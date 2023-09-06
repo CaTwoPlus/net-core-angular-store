@@ -22,14 +22,13 @@
     <div class="image-container" *ngIf="activateImageGallery === false">
         <ng-container *ngFor="let img of alkatresz.kepek.split(';')">
           <div *ngIf="img.trim() !== ''">
-            <img class="img-thumbnail" [lazyLoad]="'http://localhost:7094/images/' + img" style="max-height: 100px;"
-            [defaultImage]="'http://localhost:7094/images/placeholder.png'"
+            <img class="img-thumbnail" [lazyLoad]="imgUrl + img" style="max-height: 100px;"
+            [defaultImage]="imgUrl + 'placeholder.png'"
             (mouseenter)="onHover($event)" (mouseleave)="onHover($event)" (click)="openCarousel()"
             >
           </div>
           <div *ngIf="img.trim() === '' || !img">
-            <img class="img-thumbnail" src="http://localhost:7094/images/placeholder.png" style="max-height: 100px;"
-            >
+            <img class="img-thumbnail" [src]="imgUrl + 'placeholder.png'" style="max-height: 100px;">
           </div>
         </ng-container>
     </div>
@@ -41,11 +40,11 @@
         <div class="carousel-inner">
             <div class="carousel-item" [class.active]="i === 0" *ngFor="let img of alkatresz.kepek.split(';'); let i = index">
                 <ng-container *ngIf="img.trim() !== ''">
-                    <img class="d-block w-100" [lazyLoad]="'http://localhost:7094/images/' + img"
+                    <img class="d-block w-100" [lazyLoad]="imgUrl + img"
                     style="max-height: 100vh; max-width: 100%;">
                 </ng-container>
                 <ng-container *ngIf="img.trim() === '' || !img">
-                    <img class="d-block w-100" src="http://localhost:7094/images/placeholder.png"
+                    <img class="d-block w-100" [src]="imgUrl + 'placeholder.png'"
                     style="max-height: 100vh; max-width: 100%;">
                 </ng-container>
             </div>

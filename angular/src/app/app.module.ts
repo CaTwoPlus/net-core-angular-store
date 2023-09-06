@@ -12,7 +12,6 @@ import { SearchBarComponent } from './search/search.component';
 import { AdminSearchBarComponent } from './search/search.admin.component';
 import { ViewAlkatreszComponent } from './admin/view-alkatresz/view-alkatresz.component';
 import { LoginComponent } from './login/login.component';
-import { JwtModule } from '@auth0/angular-jwt';
 import { VisitorPageComponent } from './visitor-page/visitor-page.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
@@ -72,14 +71,6 @@ export function tokenGetter() {
     LazyLoadImageModule,
     RecaptchaModule,
     RecaptchaFormsModule, 
-
-    JwtModule.forRoot({
-      config: {
-        tokenGetter: tokenGetter,
-        allowedDomains: ["localhost:4200/admin/login"],
-        disallowedRoutes: [""],
-      },
-    }),
   ],
   exports: [
     SearchBarComponent,

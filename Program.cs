@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-var httpUrl = "http://localhost:7094";
+var httpUrl = "https://ford-bonto.azurewebsites.net";
 
 builder.WebHost.ConfigureKestrel((context, options) =>
 {

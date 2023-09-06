@@ -35,7 +35,7 @@
     <div *ngIf="activateImagePreview" class="image-container">
         <ng-container *ngFor="let img of kepek.split(';')">
           <div style="padding: 0px 5px 5px 0px;">
-            <img class="img-thumbnail" [src]="'http://localhost:7094/images/' + img" style="max-height: 100px;">
+            <img class="img-thumbnail" [src]="imgUrl + img" style="max-height: 100px;">
           </div>
         </ng-container>
     </div>
