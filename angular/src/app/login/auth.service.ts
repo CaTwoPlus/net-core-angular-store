@@ -9,7 +9,7 @@ import { SearchService } from '../search/search.service';
   providedIn: 'root'
 })
 export class AuthenticationService {
-  readonly bontoAPIUrl = "https://localhost:7094/api";
+  readonly bontoAPIUrl = "http://localhost:7094/api";
   private setGuard = false;
   private logoutActivated: boolean = false;
   accTokExpirationTimestamp = 0;

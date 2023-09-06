@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -51,23 +52,43 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
         ValidIssuer = configuration["JwtSettings:Issuer"],
-        ValidAudience =configuration["JwtSettings:Audience"],
+        ValidAudience = configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]))
     };
 });
 
+var httpUrl = "http://localhost:7094";
+
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    options.Listen(IPAddress.Loopback, new Uri(httpUrl).Port); // HTTP
+});
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())    
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-};
+}
+else
+{
+    app.Use(async (context, next) =>
+    {
+        await next();
 
-app.UseHttpsRedirection();
-app.UseDefaultFiles();
-app.UseStaticFiles();
+        if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
+        {
+            context.Request.Path = "/index.html";
+            await next();
+        }
+    });
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+//app.UseHttpsRedirection();
 app.UseCors(myAllowSpecificOrigins);
-app.UseAuthorization();
+//app.UseAuthorization();
 app.MapControllers();
 app.Run();

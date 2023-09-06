@@ -19,10 +19,10 @@ data-bs-backdrop="static">
             <div class="carousel-item" [class.active]="j === 0" *ngFor="let img of selectedItem.kepek.split(';'); let j = index"
             style="background-color: black;">
               <ng-container *ngIf="img.trim() !== ''">
-                  <img class="carousel-img" [lazyLoad]="'https://localhost:7094/images/' + img"/>
+                  <img class="carousel-img" [lazyLoad]="'http://localhost:7094/images/' + img"/>
               </ng-container>
               <ng-container *ngIf="img.trim() === '' || !img">
-                <img src="https://localhost:7094/images/placeholder.png"/>
+                <img src="http://localhost:7094/images/placeholder.png"/>
               </ng-container>
               <div class="carousel-caption d-none d-md-block">
                 <h5>{{ selectedItem.nev }}</h5>
@@ -70,8 +70,8 @@ data-bs-backdrop="static">
   <div class="carousel-inner">
     <div class="carousel-item reactive" [class.active]="i === activeIndexCarousel" *ngFor="let img of item.kepek.split(';'); let i = index">
       <ng-container *ngIf="img.trim() !== ''">
-        <img [defaultImage]="'https://localhost:7094/images/placeholder.png'"
-          [lazyLoad]="'https://localhost:7094/images/' + img" style="height: 250px"
+        <img [defaultImage]="'http://localhost:7094/images/placeholder.png'"
+          [lazyLoad]="'http://localhost:7094/images/' + img" style="height: 250px"
           (onStateChange)="lazyLoadSpinner(i, $event)"
           (mouseenter)="onHover($event)" (mouseleave)="onHover($event)"
           (click)="selectItem(item)"/>
@@ -85,7 +85,7 @@ data-bs-backdrop="static">
           </div>
       </ng-container>
       <ng-container *ngIf="img.trim() === '' || !img">
-        <img src="https://localhost:7094/images/placeholder.png" style="height: 250px; opacity: 25%;"/>
+        <img src="http://localhost:7094/images/placeholder.png" style="height: 250px; opacity: 25%;"/>
         <div class="carousel-caption d-none d-md-block" style="color: black;">
           <h5>{{ item.nev }}</h5>
           <p>{{ item.ar }} Ft</p>

@@ -7,7 +7,7 @@ import { Observable, catchError, combineLatest, map, of } from 'rxjs';
 })
 
 export class BontoApiService {
-  readonly bontoAPIUrl = "https://localhost:7094/api";
+  readonly bontoAPIUrl = "http://localhost:7094/api";
   readonly headers = new HttpHeaders().set('Cache-Control', 'must-revalidate');
   
   cachedCategorizedAlkatreszek: { [category: string]: { data: any[], eTag: string } } = {};
