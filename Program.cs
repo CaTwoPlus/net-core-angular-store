@@ -10,7 +10,7 @@ var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Load configuration from appsettings.json file
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile("appsettings.Development.json", optional: false, reloadOnChange: true);
 
 // Access the Configuration object
 var configuration = builder.Configuration;
