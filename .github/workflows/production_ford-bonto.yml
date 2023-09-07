@@ -25,14 +25,11 @@ jobs:
       - name: Build with dotnet
         run: dotnet build BontoAPIApp.sln --configuration Release
 
-      - name: List build output contents
-        run: ls ${{env.DOTNET_ROOT}}
-
-      - name: Debug Environment Variables
-        run: env
-
       - name: dotnet publish
-        run: dotnet publish BontoAPIApp.sln -c Release --clean -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish BontoAPIApp.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Copy appsettings.json
+        run: cp appsettings.json ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
