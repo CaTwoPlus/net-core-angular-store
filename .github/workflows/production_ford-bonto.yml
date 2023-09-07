@@ -26,7 +26,7 @@ jobs:
         run: dotnet build BontoAPIApp.sln --configuration Release
 
       - name: List build output contents
-        run: ls ${{env.DOTNET_ROOT}}/myapp
+        run: ls ${{env.DOTNET_ROOT}}
 
       - name: Debug Environment Variables
         run: env
