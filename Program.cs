@@ -57,17 +57,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-var httpUrl = "https://ford-bonto.azurewebsites.net";
-
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
-    options.Listen(IPAddress.Loopback, new Uri(httpUrl).Port); // HTTP
+    options.Listen(IPAddress.Loopback, 8080);
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-/*if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -86,19 +84,7 @@ else
     });
     app.UseDefaultFiles();
     app.UseStaticFiles();
-}*/
-app.Use(async (context, next) =>
-{
-    await next();
-
-    if (context.Response.StatusCode == 404 && !Path.HasExtension(context.Request.Path.Value))
-    {
-        context.Request.Path = "/index.html";
-        await next();
-    }
-});
-app.UseDefaultFiles();
-app.UseStaticFiles();
+}
 app.UseCors(myAllowSpecificOrigins);
 app.MapControllers();
 app.Run();
