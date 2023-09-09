@@ -354,4 +354,8 @@ export class BontoApiService {
   private filterByCategories(filtered: any[], categorized: any[]): any[] {
     return filtered.filter((item) => categorized.some((categorizedItem) => categorizedItem.id === item.id));
   }
+
+  sendEmail() {
+    
+  }
 }

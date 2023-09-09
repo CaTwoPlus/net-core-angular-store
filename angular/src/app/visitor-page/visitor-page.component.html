@@ -105,14 +105,19 @@
       </div></a>
     </div>
     <a id="kapcsolat"><div class="container" *ngIf="!(showCategoryPage$ | async)">
-      <label for="nev" class="form-label">Név</label>
-      <input type="text" class="form-control" id="nev">
+      <label for="nev" class="form-label">Név *</label>
+      <input type="text" class="form-control" id="nev" [class.is-invalid]="!nev" [(ngModel)]="nev">
+      <label for="nev" *ngIf="!nev">Név megadása kötelező!</label>
       <label for="email" class="form-label">Email-cím *</label>
-      <input type="email" class="form-control" id="email">
-      <label for="telszam" class="form-label">Telefonszám</label>
-      <input type="text" class="form-control" id="telszam">
+      <input type="email" class="form-control" id="email"  [class.is-invalid]="!emailcim" [(ngModel)]="emailcim">
+      <label for="email" *ngIf="!emailcim">Email-cím megadása kötelező!</label>
+      <label for="telszam" class="form-label">Telefonszám *</label>
+      <input type="text" class="form-control" id="telszam" [class.is-invalid]="!telszam" [(ngModel)]="telszam">
+      <label for="telszam" *ngIf="!telszam">Telefonszám megadása kötelező!</label>
       <label for="uzenet" class="form-label">Üzenet *</label>
-      <textarea class="form-control" id="uzenet" rows="3"></textarea>
+      <textarea class="form-control" id="uzenet" rows="3" [class.is-invalid]="uzenet.length < 100" [(ngModel)]="uzenet"></textarea>
+      <label for="uzenet" *ngIf="uzenet.length < 100">Az üzenet legyen legalább 100 karakter hosszú!</label>
+      <button type="button" class="btn btn-secondary">Küldés</button>
     </div></a>
   </div>
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">

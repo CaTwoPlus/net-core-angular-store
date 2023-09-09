@@ -62,6 +62,10 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   filterOrder: string = '';
   keyword: string | null = '';
   category: string | null = '';
+  nev: string = '';
+  telszam: string = '';
+  emailcim: string = '';
+  uzenet: string = '';
   [key: string]: any;
   yearFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
