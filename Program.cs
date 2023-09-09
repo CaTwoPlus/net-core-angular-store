@@ -59,7 +59,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
-    options.Listen(IPAddress.Loopback, 8080);
+    options.ListenAnyIP(8080);
 });
 
 var app = builder.Build();
