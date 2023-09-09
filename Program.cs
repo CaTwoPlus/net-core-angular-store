@@ -57,11 +57,9 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-var httpUrl = "https://ford-bonto.azurewebsites.net";
-
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
-    options.Listen(IPAddress.Loopback, new Uri(httpUrl).Port); // HTTP
+    options.Listen(IPAddress.Loopback, 8080);
 });
 
 var app = builder.Build();
