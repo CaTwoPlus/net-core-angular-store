@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, } from '@angular/core';
-import { Observable } from "rxjs";
 import { BontoApiService } from 'src/app/bonto-api.service';
+import { prodEnvironment } from 'src/environments/environment.prod';
 
 @Component({
   selector: 'app-add-edit-alkatresz',
@@ -22,6 +22,8 @@ export class AddEditAlkatreszComponent implements OnInit {
   ar: number = 0;
   kepek: string = "";
   kepekInput: string = "";
+  baseUrl: string = prodEnvironment.baseUrl;
+  imgUrl: string = this.baseUrl + "/images/";
   kategoriakInput: string[] = [];
   autoTipusokInput: string[] = [];
   activateImagePreview: boolean = false;
