@@ -3,7 +3,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Modal } from 'bootstrap'
 import { StateChange } from 'ng-lazyload-image';
 import Panzoom from '@panzoom/panzoom';
-import { prodEnvironment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-carousel',
@@ -29,7 +29,7 @@ export class CarouselComponent {
   elem : any;
   panzoom: any[] = [];
   startScale: any;
-  baseUrl: string = prodEnvironment.baseUrl;
+  baseUrl: string = environment.baseUrl;
   imgUrl: string = this.baseUrl + "/images/";
 
   openCarousel() {

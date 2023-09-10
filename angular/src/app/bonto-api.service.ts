@@ -1,14 +1,14 @@
 import { HttpClient, HttpParams, HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, combineLatest, map, of } from 'rxjs';
-import { prodEnvironment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class BontoApiService {
-  readonly bontoAPIUrl = prodEnvironment.apiUrl;
+  readonly bontoAPIUrl = environment.apiUrl;
   readonly headers = new HttpHeaders().set('Cache-Control', 'must-revalidate');
   
   cachedCategorizedAlkatreszek: { [category: string]: { data: any[], eTag: string } } = {};

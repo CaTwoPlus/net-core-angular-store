@@ -4,13 +4,13 @@ import { Observable, of, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { SearchService } from '../search/search.service';
-import { prodEnvironment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  readonly bontoAPIUrl = prodEnvironment.apiUrl;
+  readonly bontoAPIUrl = environment.apiUrl;
   private setGuard = false;
   private logoutActivated: boolean = false;
   accTokExpirationTimestamp = 0;
