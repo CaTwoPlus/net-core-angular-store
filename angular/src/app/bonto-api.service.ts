@@ -355,7 +355,7 @@ export class BontoApiService {
     return filtered.filter((item) => categorized.some((categorizedItem) => categorizedItem.id === item.id));
   }
 
-  sendEmail() {
-    
+  sendEmail(message: any) {
+    return this.http.post<any>(this.bontoAPIUrl + "/uzenet/kuld", message);
   }
 }

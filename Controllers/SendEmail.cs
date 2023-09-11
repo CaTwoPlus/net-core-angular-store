@@ -4,42 +4,43 @@ using SendGrid.Helpers.Mail;
 
 namespace BontoAPI.Controllers
 {
-    public class SendEmail : Controller
+    [Route("api/uzenet")]
+    [ApiController]
+    public class EmailController : ControllerBase
     {
-        [Route("api/uzenet")]
-        [ApiController]
-        public class EmailController : ControllerBase
+        [HttpPost("kuld")]
+        public async Task<IActionResult> SendEmailAsync([FromBody] EmailRequest request)
         {
-            [HttpPost("send")]
-            public async Task<IActionResult> SendEmailAsync([FromBody] EmailRequest request)
+            try
             {
-                try
+                var plainTextMessage = request.EmailAddress + Environment.NewLine + request.PhoneNumber + Environment.NewLine +
+                    Environment.NewLine + request.Message;
+                var HTMLMessage = $"<p><strong>{request.Name}</strong></p><p><strong>{request.EmailAddress}</strong></p><p><strong>{request.PhoneNumber}</strong></p><br><p>{request.Message}</p>";
+                var apiKey = System.Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+                var client = new SendGridClient(apiKey);
+                var from = new EmailAddress("fordfocuskombibonto17@gmail.com", request.Name);
+                var subject = "Ford Bontó - Új vásárlói üzenet";
+                var to = new EmailAddress("fordfocuskombibonto17@gmail.com", "Admin");
+                var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextMessage, HTMLMessage);
+                var response = await client.SendEmailAsync(msg);
+                if (response != null && response.IsSuccessStatusCode)
                 {
-                    var apiKey = System.Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
-                    var client = new SendGridClient(apiKey);
-                    var from = new EmailAddress("test@example.com", "Example User");
-                    var subject = "Sending with SendGrid is Fun";
-                    var to = new EmailAddress("test@example.com", "Example User");
-                    var plainTextContent = "and easy to do anywhere, even with C#";
-                    var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
-                    var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
-                    var response = await client.SendEmailAsync(msg);
-                    return Ok("Email sent successfully");
+                    return Ok(response);
                 }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"Internal server error: {ex.Message}");
-                }
+                return BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+    }
 
-        public class EmailRequest
-        {
-            public string Name { get; set; }
-            public string EmailAddress { get; set; }
-            public string PhoneNumber { get; set; }
-            public string Message { get; set; }
-        }
-
+    public class EmailRequest
+    {
+        public string Name { get; set; }
+        public string EmailAddress { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Message { get; set; }
     }
 }

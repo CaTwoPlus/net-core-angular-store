@@ -104,20 +104,29 @@
         <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
       </div></a>
     </div>
-    <a id="kapcsolat"><div class="container" *ngIf="!(showCategoryPage$ | async)">
-      <label for="nev" class="form-label">Név *</label>
-      <input type="text" class="form-control" id="nev" [class.is-invalid]="!nev" [(ngModel)]="nev">
-      <label for="nev" *ngIf="!nev">Név megadása kötelező!</label>
-      <label for="email" class="form-label">Email-cím *</label>
-      <input type="email" class="form-control" id="email"  [class.is-invalid]="!emailcim" [(ngModel)]="emailcim">
-      <label for="email" *ngIf="!emailcim">Email-cím megadása kötelező!</label>
-      <label for="telszam" class="form-label">Telefonszám *</label>
-      <input type="text" class="form-control" id="telszam" [class.is-invalid]="!telszam" [(ngModel)]="telszam">
-      <label for="telszam" *ngIf="!telszam">Telefonszám megadása kötelező!</label>
-      <label for="uzenet" class="form-label">Üzenet *</label>
-      <textarea class="form-control" id="uzenet" rows="3" [class.is-invalid]="uzenet.length < 100" [(ngModel)]="uzenet"></textarea>
-      <label for="uzenet" *ngIf="uzenet.length < 100">Az üzenet legyen legalább 100 karakter hosszú!</label>
-      <button type="button" class="btn btn-secondary">Küldés</button>
+    <a id="kapcsolat"><div class="contact-container" *ngIf="!(showCategoryPage$ | async)">
+      <h2 style="display: flex; justify-content: center;">Lépjen velünk kapcsolatba!</h2>
+      <div><label for="nev" class="form-label">Név *</label></div>
+      <input type="text" class="form-control" id="nev" [class.is-invalid]="!nev && formSubmit" [(ngModel)]="nev">
+      <label class="input-error" for="nev" *ngIf="!nev && formSubmit">Név megadása kötelező!</label>
+      <div><label for="email" class="form-label">Email-cím *</label></div>
+      <input type="email" class="form-control" id="email"  [class.is-invalid]="!emailcim && formSubmit" [(ngModel)]="emailcim">
+      <label class="input-error" for="email" *ngIf="!emailcim && formSubmit">Email-cím megadása kötelező!</label>
+      <div><label for="telszam" class="form-label">Telefonszám *</label></div>
+      <div class="input-group">
+        <span class="input-group-text">+36</span>
+        <input type="tel" class="form-control" id="telszam" [class.is-invalid]="(!telszam || !validTelNumber) && formSubmit" [(ngModel)]="telszam">
+      </div>
+      <label class="input-error" for="telszam" *ngIf="!telszam && formSubmit">Telefonszám megadása kötelező!</label>
+      <label class="input-error" for="telszam" *ngIf="!validTelNumber && formSubmit && telszam">Hibás telefonszám formátum lett megadva!</label>
+      <div><label for="uzenet" class="form-label">Üzenet *</label></div>
+      <textarea class="form-control" id="uzenet" rows="3" [class.is-invalid]="uzenet.length < 100 && formSubmit" [(ngModel)]="uzenet"></textarea>
+      <div><label class="input-error" for="uzenet" *ngIf="uzenet.length < 100 && formSubmit">Az üzenet legyen legalább 100 karakter hosszú!</label></div>
+      <div style="display: flex; justify-content: center;"><button type="button" class="btn btn-secondary" style="margin-top: 0.5rem;" (click)="validateForm()">Küldés</button></div>
+      <div class="alert alert-success alert-dismissible fade show" role="alert" id="email-success-alert" style="display: none;">
+        Sikeresen elküldve!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
     </div></a>
   </div>
   <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">

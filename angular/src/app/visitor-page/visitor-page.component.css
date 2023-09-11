@@ -72,7 +72,7 @@ body {
   mix-blend-mode: multiply;
 }
 
-#kapcsolat .container{
+.contact-container{
   max-width: 720px !important;
   margin: 5vh auto 5vh;
 }
@@ -234,9 +234,27 @@ footer {
   z-index: 3;
 }
 
+#email-success-alert {
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  padding-right: 1.5rem;
+  transform: translate(0px, -46px);
+}
+
 .alert-danger {
   --bs-alert-color: #dc3545;
   --bs-alert-border-color: #dc3545;
+}
+
+.input-error {
+  display: flex;
+  justify-content: center;
+}
+
+#kapcsolat .form-label{
+  margin-bottom: 0px;
+  margin-top: 0.5rem;
 }
 
 /*Desktop resolutions*/
@@ -261,7 +279,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 5vw !important;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3.3vw !important;
   }
   #filter-failure-alert {
@@ -294,7 +312,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 4vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3vw;
   }
 }
@@ -324,7 +342,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 4.7rem;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 2.1rem;
   }
   #filter-failure-alert {
@@ -360,7 +378,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 8vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 5.5vw;
   }
   #orderButton {
@@ -382,7 +400,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 10vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 5.5vw;
   }
   #logo {
@@ -407,7 +425,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 8vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 4.5vw;
   }
   #logo {
@@ -439,7 +457,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 9vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 5.4vw;
   }
   #logo {
@@ -461,7 +479,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 7.5vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 5vw;
   }
   #logo {
@@ -483,7 +501,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 10vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 6vw;
   }
   #logo {
@@ -505,7 +523,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 5vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3w;
   }
   #logo {
@@ -530,7 +548,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 5.2vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 4vw;
   }
   #logo {
@@ -552,7 +570,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 6vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 4vw;
   }
   #logo {
@@ -577,7 +595,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 6.5vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 4vw;
   }
   #logo {
@@ -596,7 +614,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 6vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3.6vw;
   }
   #search-failure-alert {
@@ -621,7 +639,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 6vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3vw;
   }
   #logo {
@@ -642,7 +660,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 5vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3vw;
   }
   #logo {
@@ -669,7 +687,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 9vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 6vw;
   }
   #rights-notice h6,
@@ -702,7 +720,7 @@ footer {
   .sections-wrapper h1 {
     font-size: 4.5vw;
   }
-  .sections-wrapper h2 {
+  .sections-wrapper h2, .contact-container h2 {
     font-size: 3vw;
   }
   #logo {
