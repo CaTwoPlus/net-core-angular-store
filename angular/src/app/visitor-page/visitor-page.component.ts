@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, HostListener, OnDestroy  } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, exhaustMap, of, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, exhaustMap, of, takeUntil, tap, throwError } from 'rxjs';
 import { BontoApiService } from 'src/app/bonto-api.service';
 import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
@@ -58,6 +58,8 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   isSearchResultEmptyAlert: boolean = false;
   isFilterResultEmptyAlert: boolean = false;
   isVisitorQuery: boolean = true;
+  formSubmit: boolean = false;
+  validTelNumber: boolean = false;
   lastScrollPosition: number = 0;
   filterOrder: string = '';
   keyword: string | null = '';
@@ -399,5 +401,54 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       }, 2000);
       this.showInvalidSearchAlert = !value;
     }
+  }
+
+  validateForm() {
+    if (this.telszam !== "") {
+      const phoneRegex = /^\d{10}$/;
+      this.validTelNumber = phoneRegex.test(this.telszam);
+    }
+    this.formSubmit = true;
+    if (this.nev !== "" && this.emailcim !== "" && (this.telszam !== "" && this.validTelNumber) && this.uzenet !== "") {
+      this.submitForm();
+    } else {
+      setTimeout(() => {
+        this.validTelNumber = true;
+      }, 2000)
+    }
+  }
+
+  submitForm() {
+    let message = {
+      Name: this.nev,
+      EmailAddress: this.emailcim,
+      PhoneNumber: this.telszam,
+      Message: this.uzenet
+    };
+    this.service.sendEmail(message).subscribe({
+      next: (response) => {
+        if (response) {
+          var successAlert = document.getElementById("email-success-alert");
+          if (successAlert) {
+            successAlert.style.display = "flex";
+            setTimeout(() => {
+              successAlert!.style.display = "none";
+            }, 2000)
+          }
+          this.nev = "";
+          this.telszam = "";
+          this.emailcim = "";
+          this.uzenet = "";
+          this.formSubmit = false;
+        }
+      },
+      error: (error) => {
+        if (error)  {
+          alert("Hiba történt az üzenet küldése közben, próbálja újra!")
+          throwError(() => new Error(error));
+        }
+      }
+    }
+    );
   }
 }
