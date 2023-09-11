@@ -57,12 +57,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-var httpUrl = "http://localhost:7094";
+/*var httpUrl = "http://localhost:7094";
 
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
     options.Listen(IPAddress.Loopback, new Uri(httpUrl).Port); // HTTP
-});
+});*/
 
 var app = builder.Build();
 
@@ -84,9 +84,9 @@ else
             await next();
         }
     });
-    app.UseDefaultFiles();
-    app.UseStaticFiles();
 }
+app.UseDefaultFiles();
+app.UseStaticFiles();
 //app.UseHttpsRedirection();
 app.UseCors(myAllowSpecificOrigins);
 //app.UseAuthorization();
