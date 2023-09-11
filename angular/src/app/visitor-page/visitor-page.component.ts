@@ -405,7 +405,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
 
   validateForm() {
     if (this.telszam !== "") {
-      const phoneRegex = /^\d{10}$/;
+      const phoneRegex = /^\d{6,10}$/;
       this.validTelNumber = phoneRegex.test(this.telszam);
     }
     this.formSubmit = true;

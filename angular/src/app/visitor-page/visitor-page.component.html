@@ -105,7 +105,7 @@
       </div></a>
     </div>
     <a id="kapcsolat"><div class="contact-container" *ngIf="!(showCategoryPage$ | async)">
-      <h2 style="display: flex; justify-content: center;">Lépjen velünk kapcsolatba!</h2>
+      <h2 style="display: flex; justify-content: center; margin-bottom: 20px;">Lépjen velünk kapcsolatba!</h2>
       <div><label for="nev" class="form-label">Név *</label></div>
       <input type="text" class="form-control" id="nev" [class.is-invalid]="!nev && formSubmit" [(ngModel)]="nev">
       <label class="input-error" for="nev" *ngIf="!nev && formSubmit">Név megadása kötelező!</label>
