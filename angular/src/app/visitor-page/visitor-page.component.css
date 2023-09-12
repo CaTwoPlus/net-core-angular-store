@@ -12,7 +12,7 @@ body {
 .main-container {
   position: relative;
   height: 100vh;
-  background-image: url('../../assets/20170822_180636.jpg');
+  background-image: url('../../assets/20170822_180636.avif');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: bottom 55% right 70%;
@@ -27,7 +27,7 @@ body {
   align-items: center;
   text-align: center;
   height: 50vh;
-  background-image: url('../../assets/services.jpg');
+  background-image: url('../../assets/services.avif');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: bottom 55% right 50%;

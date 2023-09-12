@@ -22,7 +22,7 @@ data-bs-backdrop="static">
                   <img class="carousel-img" [lazyLoad]="imgUrl + img"/>
               </ng-container>
               <ng-container *ngIf="img.trim() === '' || !img">
-                <img [src]="imgUrl + 'placeholder.png'"/>
+                <img [src]="imgUrl + 'placeholder.avif'"/>
               </ng-container>
               <div class="carousel-caption d-none d-md-block">
                 <h5>{{ selectedItem.nev }}</h5>
@@ -70,7 +70,7 @@ data-bs-backdrop="static">
   <div class="carousel-inner">
     <div class="carousel-item reactive" [class.active]="i === activeIndexCarousel" *ngFor="let img of item.kepek.split(';'); let i = index">
       <ng-container *ngIf="img.trim() !== ''">
-        <img [defaultImage]="imgUrl + 'placeholder.png'"
+        <img [defaultImage]="imgUrl + 'placeholder.avif'"
           [lazyLoad]="imgUrl + img" style="height: 250px"
           (onStateChange)="lazyLoadSpinner(i, $event)"
           (mouseenter)="onHover($event)" (mouseleave)="onHover($event)"
@@ -85,7 +85,7 @@ data-bs-backdrop="static">
           </div>
       </ng-container>
       <ng-container *ngIf="img.trim() === '' || !img">
-        <img [src]="imgUrl + 'placeholder.png'" style="height: 250px; opacity: 25%;"/>
+        <img [src]="imgUrl + 'placeholder.avif'" style="height: 250px; opacity: 25%;"/>
         <div class="carousel-caption d-none d-md-block" style="color: black;">
           <h5>{{ item.nev }}</h5>
           <p>{{ item.ar }} Ft</p>
