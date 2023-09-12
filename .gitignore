@@ -10,10 +10,10 @@
 *.user
 *.userosscache
 *.sln.docstates
-#*.jpg
-#*.jpeg
-#*.png
-#*.gif
+*.jpg
+*.jpeg
+*.png
+*.gif
 .DS_Store             # macOS specific file
 Thumbs.db             # Windows specific file
 *.log                 # Log files
