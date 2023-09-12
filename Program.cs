@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Net;
+using Microsoft.AspNetCore.StaticFiles;
 
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -85,10 +86,15 @@ else
         }
     });
 }
+
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".avif"] = "image/avif";
+
 app.UseDefaultFiles();
-app.UseStaticFiles();
-//app.UseHttpsRedirection();
+app.UseStaticFiles(new StaticFileOptions
+{
+    ContentTypeProvider = provider
+});
 app.UseCors(myAllowSpecificOrigins);
-//app.UseAuthorization();
 app.MapControllers();
 app.Run();
