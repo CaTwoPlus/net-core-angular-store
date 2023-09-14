@@ -1,9 +1,14 @@
 <ng-container *ngIf="(showCategoryPage$ | async) && (alkatreszList) as filteredAlkatreszek">  
   <div class="container-fluid">
     <div class="row mb-3">
+      <div class="spinner-container-category-page">
+        <div class="spinner-border text-secondary" [ngClass]="{ 'd-none': imageLoaded }" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
       <ng-container *ngFor="let item of filteredAlkatreszek; trackBy: trackByItemId">
         <div class="column">
-          <app-carousel [item]="item" (loadingSucceeded)="triggerChangeDetection()"></app-carousel>
+          <app-carousel [item]="item" (loadingSucceeded)="triggerChangeDetection($event)"></app-carousel>
         </div>
       </ng-container>
     </div>
