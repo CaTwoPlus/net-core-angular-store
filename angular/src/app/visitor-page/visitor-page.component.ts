@@ -6,6 +6,7 @@ import { CategoryPageService } from '../category-page.service';
 import { ViewportScroller } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
+import { prodEnvironment } from 'src/environments/environment.prod';  
 
 @Component({ 
   selector: 'app-visitor-page',
@@ -60,6 +61,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   isVisitorQuery: boolean = true;
   formSubmit: boolean = false;
   validTelNumber: boolean = false;
+  reCAPTCHAValidated: boolean = false;
   lastScrollPosition: number = 0;
   filterOrder: string = '';
   keyword: string | null = '';
@@ -68,6 +70,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   telszam: string = '';
   emailcim: string = '';
   uzenet: string = '';
+  siteKey: string = prodEnvironment.reCAPTCHASiteKey;
   [key: string]: any;
   yearFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
@@ -127,6 +130,13 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
         this.router.navigateByUrl('');
       }
     });
+    this.service.getReCAPTCHAKey().subscribe({
+      next: (response) => {
+        if (response.status === 200) {
+          this.siteKey = response.data;
+        }
+      }
+    })
   }
 
   ngOnDestroy() {
@@ -440,6 +450,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
           this.emailcim = "";
           this.uzenet = "";
           this.formSubmit = false;
+          this.reCAPTCHAValidated = false;
         }
       },
       error: (error) => {
@@ -450,5 +461,9 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       }
     }
     );
+  }
+
+  resolved(event: any) {
+    this.reCAPTCHAValidated = true;
   }
 }

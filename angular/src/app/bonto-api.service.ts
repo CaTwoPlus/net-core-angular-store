@@ -358,4 +358,8 @@ export class BontoApiService {
   sendEmail(message: any) {
     return this.http.post<any>(this.bontoAPIUrl + "/uzenet/kuld", message);
   }
+
+  getReCAPTCHAKey() {
+    return this.http.get<any>(this.bontoAPIUrl + "/validate");
+  }
 }
