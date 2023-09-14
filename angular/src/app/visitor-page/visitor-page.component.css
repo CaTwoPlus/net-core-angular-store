@@ -709,7 +709,7 @@ footer {
 
 @media (min-width: 680px) and (max-height: 412px){
   .welcome {
-    height: 41vh;
+    height: 0vh;
   }
   .welcome-title {
     font-size: 3vw;
