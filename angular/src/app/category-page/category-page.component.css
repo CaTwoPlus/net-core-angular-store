@@ -18,6 +18,12 @@
     width: 100%;
 }
 
+.spinner-container-category-page {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+}
+
 /* Responsive layout - three columns instead of four */
 @media screen and (max-width: 1080px) {
     .column {
