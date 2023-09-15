@@ -363,7 +363,7 @@ export class BontoApiService {
     return this.http.get<any>(this.bontoAPIUrl + "/recaptcha");
   }
 
-  validateReCAPTCHA(captchaResponse: string, headers: HttpHeaders) {
+  validateReCAPTCHA(captchaResponse: { response: string }, headers: HttpHeaders) {
     return this.http.post<any>(this.bontoAPIUrl + "/recaptcha/verify", captchaResponse,  { headers: headers });
   }
 }

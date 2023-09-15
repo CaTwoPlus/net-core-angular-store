@@ -21,7 +21,7 @@ namespace BontoAPI.Controllers
         }
 
         [HttpPost("verify")]
-        public async Task<IActionResult> VerifyRecaptchaAsync([FromBody] string recaptchaResponse)
+        public async Task<IActionResult> VerifyRecaptchaAsync([FromBody] CaptchaVerificationRequest request)
         {
             var secretKey = Environment.GetEnvironmentVariable("reCAPTCHA_SERVER_API_KEY");
             using (var httpClient = new HttpClient())
@@ -29,7 +29,7 @@ namespace BontoAPI.Controllers
                 var content = new FormUrlEncodedContent(new[]
                 {
                 new KeyValuePair<string, string>("secret", secretKey),
-                new KeyValuePair<string, string>("response", recaptchaResponse),
+                new KeyValuePair<string, string>("response", request.Response),
             });
 
             var response = await httpClient.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
@@ -46,5 +46,11 @@ namespace BontoAPI.Controllers
 
             }
         }
+
+        public class CaptchaVerificationRequest
+        {
+            public string Response { get; set; }
+        }
+
     }
 }

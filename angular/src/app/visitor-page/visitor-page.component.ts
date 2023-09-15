@@ -464,9 +464,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   resolved() {
     const captchaResponse = document.getElementById('g-recaptcha-response') as HTMLInputElement;
     if (captchaResponse) {
-      const requestData = JSON.stringify({
-        response: captchaResponse.value,
-      });
+      const requestData = { response: captchaResponse.value };
       const headers = new HttpHeaders ({
         'Content-Type': 'application/json',
       });
