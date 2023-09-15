@@ -360,6 +360,10 @@ export class BontoApiService {
   }
 
   getReCAPTCHAKey() {
-    return this.http.get<any>(this.bontoAPIUrl + "/validate");
+    return this.http.get<any>(this.bontoAPIUrl + "/recaptcha");
+  }
+
+  validateReCAPTCHA(captchaResponse: string) {
+    return this.http.post<any>(this.bontoAPIUrl + "/recaptcha/verify", captchaResponse);
   }
 }
