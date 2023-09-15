@@ -6,6 +6,7 @@ import { CategoryPageService } from '../category-page.service';
 import { ViewportScroller } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common'; 
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({ 
   selector: 'app-visitor-page',
@@ -463,7 +464,13 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   resolved() {
     const captchaResponse = document.getElementById('g-recaptcha-response') as HTMLInputElement;
     if (captchaResponse) {
-      this.service.validateReCAPTCHA(captchaResponse.value).subscribe({
+      const requestData = JSON.stringify({
+        response: captchaResponse.value,
+      });
+      const headers = new HttpHeaders ({
+        'Content-Type': 'application/json',
+      });
+      this.service.validateReCAPTCHA(requestData, headers).subscribe({
         next: (response) => {
           if (response.status === 200) {
             this.reCAPTCHAValidated = true;
