@@ -8,9 +8,10 @@ namespace BontoAPI.Controllers
     public class EmailKey : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetValidationKey()
+        public IActionResult GetValidationKey()
         {
             var apiKey = System.Environment.GetEnvironmentVariable("reCAPTCHA_CLIENT_API_KEY");
+            System.Diagnostics.Trace.WriteLine("Client API Key: " + apiKey);
             if (apiKey == null)
             {
                 return BadRequest("Could not retrieve reCAPTCHA API key!");
@@ -24,6 +25,7 @@ namespace BontoAPI.Controllers
         public async Task<IActionResult> VerifyRecaptchaAsync([FromBody] string recaptchaResponse)
         {
             var secretKey = Environment.GetEnvironmentVariable("reCAPTCHA_SERVER_API_KEY");
+            System.Diagnostics.Trace.WriteLine("Server API Key: " + secretKey);
             using (var httpClient = new HttpClient())
             {
                 var content = new FormUrlEncodedContent(new[]

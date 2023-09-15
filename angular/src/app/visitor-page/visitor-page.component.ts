@@ -70,7 +70,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
   telszam: string = '';
   emailcim: string = '';
   uzenet: string = '';
-  siteKey: string = prodEnvironment.reCAPTCHASiteKey;
+  siteKey: string = '';
   [key: string]: any;
   yearFilter: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
   orderFilter: BehaviorSubject<string> = new BehaviorSubject<string>('');
