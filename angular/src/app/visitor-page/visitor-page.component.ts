@@ -5,8 +5,7 @@ import { SearchService } from '../search/search.service';
 import { CategoryPageService } from '../category-page.service';
 import { ViewportScroller } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { prodEnvironment } from 'src/environments/environment.prod';  
+import { Location } from '@angular/common'; 
 
 @Component({ 
   selector: 'app-visitor-page',
