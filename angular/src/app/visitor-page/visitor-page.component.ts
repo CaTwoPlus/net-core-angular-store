@@ -132,9 +132,7 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     });
     this.service.getReCAPTCHAKey().subscribe({
       next: (response) => {
-        if (response.status === 200) {
-          this.siteKey = response.data;
-        }
+        this.siteKey = response.apiKey;
       }
     })
   }
@@ -463,7 +461,20 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
     );
   }
 
-  resolved(event: any) {
-    this.reCAPTCHAValidated = true;
+  resolved() {
+    const captchaResponse = document.getElementById('g-recaptcha-response') as HTMLInputElement;
+    if (captchaResponse) {
+      this.service.validateReCAPTCHA(captchaResponse.value).subscribe({
+        next: (response) => {
+          if (response.status === 200) {
+            this.reCAPTCHAValidated = true;
+          }
+        },
+        error: (error) => {
+          alert("Hiba történt reCAPTCHA azonosítás során!")
+          throwError(() => new Error(error));
+        }
+      });
+    }
   }
 }
