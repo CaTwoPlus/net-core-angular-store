@@ -1,7 +1,6 @@
 export const prodEnvironment = {
     production: true,
-    baseUrl: 'https://ford-bonto.azurewebsites.net', 
-    apiUrl: 'https://ford-bonto.azurewebsites.net/api', 
+    baseUrl: 'https://fordfocus-cmaxbonto.hu', 
+    apiUrl: 'https://fordfocus-cmaxbonto.hu/api', 
     reCAPTCHASiteKey: 'reCAPTCHA_CLIENT_API_KEY'
   };
-  
