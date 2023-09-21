@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 
 namespace BontoAPI.Controllers
 {
@@ -32,24 +33,31 @@ namespace BontoAPI.Controllers
                 new KeyValuePair<string, string>("response", request.Response),
             });
 
-            var response = await httpClient.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
-            var responseContent = await response.Content.ReadAsStringAsync();
+                var response = await httpClient.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-            if (responseContent == "success")
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest("Error during reCAPTCHA server key validation!");
-            }
+                var captchaResponse = JsonConvert.DeserializeObject<RecaptchaResponse>(responseContent);
 
+                if (captchaResponse.Success)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    // Handle reCAPTCHA validation failure
+                    return BadRequest("reCAPTCHA validation failed.");
+                }
             }
         }
 
         public class CaptchaVerificationRequest
         {
             public string Response { get; set; }
+        }
+        public class RecaptchaResponse
+        {
+            [JsonProperty("success")]
+            public bool Success { get; set; }
         }
 
     }
