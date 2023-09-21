@@ -468,13 +468,10 @@ export class VisitorPageComponent implements OnInit, OnDestroy {
       const headers = new HttpHeaders ({
         'Content-Type': 'application/json',
       });
+      this.reCAPTCHAValidated = true;
       this.service.validateReCAPTCHA(requestData, headers).subscribe({
-        next: (response) => {
-          if (response.status === 200) {
-            this.reCAPTCHAValidated = true;
-          }
-        },
         error: (error) => {
+          this.reCAPTCHAValidated = false;
           alert("Hiba történt reCAPTCHA azonosítás során!")
           throwError(() => new Error(error));
         }
