@@ -1,219 +1,226 @@
-<!-- Header -->
-<header>
-  <div>
-    <nav class="navbar">
-      <div class="d-flex justify-content-start align-items-center">
-        <a mat-icon-button routerLink="" class="icon-button">
-          <mat-icon>home</mat-icon>
-        </a>
-        <span fxHide.gt-sm>
-          <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menuSm"> 
-            <mat-icon>menu</mat-icon>
-          </button>
-          <mat-menu #menuSm="matMenu">
-              <button mat-menu-item [matMenuTriggerFor]="alkatreszekMenu">Alkatrészek</button>
-            <a routerLink="/szolgaltatasok" style="text-decoration: none;"><button mat-menu-item
-              >Szolgáltatások</button></a>
-            <a routerLink="/vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item
-              >Vásárlási információk</button></a>
-            <a routerLink="/kapcsolat" style="text-decoration: none;"><button mat-menu-item 
-              >Kapcsolat</button></a>
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <title>Főoldal</title>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet" href="./visitor-page.component.css"/>
+  </head>
+  <!-- Header -->
+  <header>
+    <div>
+      <ul>
+        <div class="d-flex justify-content-start align-items-center">
+          <!--https://www.w3schools.com/css/css_dropdowns.asp-->
+          <!--a mat-icon-button routerLink="" class="icon-button">
+            <mat-icon>home</mat-icon>
+          </a-->
+          <!--span fxHide.gt-sm>
+            <button mat-icon-button class="icon-button" [matMenuTriggerFor]="menuSm"> 
+              <mat-icon>menu</mat-icon>
+            </button>
+            <li><a href="./visitor-page.component.html">Alkatrészek</a></li>
+            <li><a href="./visitor-page.component.html">Szolgáltatások</a></li>
+            <li><a href="./visitor-page.component.html">Vásárlási információk</a></li>
+            <li><a href="./visitor-page.component.html">Kapcsolat</a></li>
+            <mat-menu #menuSm="matMenu">
+                <button mat-menu-item [matMenuTriggerFor]="alkatreszekMenu">Alkatrészek</button>
+              <a routerLink="/szolgaltatasok" style="text-decoration: none;"><button mat-menu-item
+                >Szolgáltatások</button></a>
+              <a routerLink="/vasarlasi_infok" style="text-decoration: none;"><button mat-menu-item
+                >Vásárlási információk</button></a>
+              <a routerLink="/kapcsolat" style="text-decoration: none;"><button mat-menu-item 
+                >Kapcsolat</button></a>
+            </mat-menu>
+          </span-->
+          <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
+            <li><a href="./visitor-page.component.html">Főoldal</a></li>
+            <li><a href="">Alkatrészek</a></li>
+            <li><a href="">Szolgáltatások</a></li>
+            <li><a href="">Vásárlási információk</a></li>
+            <li><a href="">Kapcsolat</a></li>
+          </span>
+        </div>
+        <!--https://www.w3schools.com/css/css_dropdowns.asp-->
+        <!--div>
+          <mat-menu #alkatreszekMenu="matMenu">
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Autóhifi' }]" style="text-decoration: none;">
+              <button mat-menu-item>Autóhifi</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Biztonsági alkatrészek' }]" style="text-decoration: none;">
+              <button mat-menu-item>Biztonsági alkatrészek</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Elektromos alkatrészek' }]" style="text-decoration: none;">
+              <button mat-menu-item>Elektromos alkatrészek</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Fényszórók, lámpák' }]" style="text-decoration: none;">
+              <button mat-menu-item>Fényszórók, lámpák</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Futómű, kormánymű és fék alkatrészek' }]" style="text-decoration: none;">
+              <button mat-menu-item>Futómű, kormánymű és fék alkatrészek</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Karosszéria elemek és alkatrészek' }]" style="text-decoration: none;">
+              <button mat-menu-item>Karosszéria elemek és alkatrészek</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Klíma, fűtés' }]" style="text-decoration: none;">
+              <button mat-menu-item>Klíma, fűtés</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Kuplung, sebességváltó és alkatrészei' }]" style="text-decoration: none;">
+              <button mat-menu-item>Kuplung, sebességváltó és alkatrészei</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Motoralkatrészek' }]" style="text-decoration: none;">
+              <button mat-menu-item>Motoralkatrészek</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Utastér, csomagtér, egyéb' }]" style="text-decoration: none;">
+              <button mat-menu-item>Utastér, csomagtér, egyéb</button></a>
+            <a [routerLink]="['/alkatreszek', { kategoria: 'Üzemanyag ellátó rendszer' }]" style="text-decoration: none;">
+              <button mat-menu-item>Üzemanyag ellátó rendszer</button></a>
           </mat-menu>
-        </span>
-        <span class="page-sections-scrollspy" fxHide.lt-md id="page-sections">
-          <button type="button" class="btn btn-primary" [matMenuTriggerFor]="alkatreszekMenu"><b>Alkatrészek</b></button>
-          <a routerLink="/szolgaltatasok"><button type="button" class="btn btn-primary"
-            ><b>Szolgáltatások</b></button></a>
-          <a routerLink="/vasarlasi_infok"><button type="button" class="btn btn-primary"
-            ><b>Vásárlási információk</b></button></a>
-          <a routerLink="/kapcsolat" style="color: transparent; text-decoration: none;"><button type="button" class="btn btn-primary" 
-            ><b>Kapcsolat</b></button></a>
-        </span>
-      </div>
-      <div>
-        <mat-menu #alkatreszekMenu="matMenu">
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Autóhifi' }]" style="text-decoration: none;">
-            <button mat-menu-item>Autóhifi</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Biztonsági alkatrészek' }]" style="text-decoration: none;">
-            <button mat-menu-item>Biztonsági alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Elektromos alkatrészek' }]" style="text-decoration: none;">
-            <button mat-menu-item>Elektromos alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Fényszórók, lámpák' }]" style="text-decoration: none;">
-            <button mat-menu-item>Fényszórók, lámpák</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Futómű, kormánymű és fék alkatrészek' }]" style="text-decoration: none;">
-            <button mat-menu-item>Futómű, kormánymű és fék alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Karosszéria elemek és alkatrészek' }]" style="text-decoration: none;">
-            <button mat-menu-item>Karosszéria elemek és alkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Klíma, fűtés' }]" style="text-decoration: none;">
-            <button mat-menu-item>Klíma, fűtés</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Kuplung, sebességváltó és alkatrészei' }]" style="text-decoration: none;">
-            <button mat-menu-item>Kuplung, sebességváltó és alkatrészei</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Motoralkatrészek' }]" style="text-decoration: none;">
-            <button mat-menu-item>Motoralkatrészek</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Utastér, csomagtér, egyéb' }]" style="text-decoration: none;">
-            <button mat-menu-item>Utastér, csomagtér, egyéb</button></a>
-          <a [routerLink]="['/alkatreszek', { kategoria: 'Üzemanyag ellátó rendszer' }]" style="text-decoration: none;">
-            <button mat-menu-item>Üzemanyag ellátó rendszer</button></a>
-        </mat-menu>
-        <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"></app-search-bar>
-        <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
-          <b>Nincs ilyen találat!</b>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-          (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
-        </div>
-      </div>
-    </nav>
-  </div>
-</header>
-  
-<!-- Body -->
-<body data-bs-spy="scroll" data-bs-target="#page-sections" data-bs-offset="0" data-bs-smooth-scroll="true">
-  <div *ngIf="showInvalidSearchAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert-type-err">
-    A kereséshez írjon be minimum 3 karaktert!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-    (click)="showInvalidSearchAlert = !showInvalidSearchAlert"></button>
-  </div>
-  <div *ngIf="isFilterResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="filter-failure-alert">
-    Nincs ilyen találat!
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-    (click)="deleteFilter()"></button>
-  </div>
-  <div *ngIf="!(showCategoryPage$ | async)">
-    <div class="main-container">
-      <div class="welcome">
-        <div class="welcome-body">
-          <img src="/assets/logo.png" id="logo">
-          <h1 class="welcome-title">Ford Focus II-III,</h1>
-          <h1 class="welcome-title">C-Max I-II</h1>
-          <p class="welcome-text">Ford Focus Mk2 2005-2010-ig,</p>
-          <p class="welcome-text">Ford Focus Mk3 2011-2017-ig,</p>
-          <p class="welcome-text">Ford C-Max I-II</p>
-          <p class="welcome-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
-        </div>
-      </div>
+          <app-search-bar (isSearchTermInvalid)="onSearchTermInvalid($event)" (isSearchTermShort)="onSearchTermShort($event)"></app-search-bar>
+          <div *ngIf="isSearchResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert">
+            <b>Nincs ilyen találat!</b>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+            (click)="isSearchResultEmptyAlert = !isSearchResultEmptyAlert"></button>
+          </div>
+        </div-->
+      </ul>
     </div>
-    <div class="sections-wrapper">
-      <a><div class="info-container" id="vasarlasi_infok">
-        <div class="overlay"></div>
-        <h1>Budapesten és Pest megyén belül akár ingyenes kiszállítás!</h1>
-        <h2>Az ország teljes területén belül postai úton, vagy futárszolgálattal való 24 órán belüli csomagküldés!</h2>
-      </div></a>
-      <a><div class="services-container" id="szolgaltatasok">
-        <div class="overlay"></div>
-        <h1>Automata váltóját átalakítjuk manuálisra!</h1>
-        <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
+  </header>
+  <!-- Body -->
+  <body data-bs-spy="scroll" data-bs-target="#page-sections" data-bs-offset="0" data-bs-smooth-scroll="true">
+    <!--div *ngIf="showInvalidSearchAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="search-failure-alert-type-err">
+      A kereséshez írjon be minimum 3 karaktert!
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+      (click)="showInvalidSearchAlert = !showInvalidSearchAlert"></button>
+    </div-->
+    <!--div *ngIf="isFilterResultEmptyAlert" class="alert alert-danger alert-dismissible fade show" role="alert" id="filter-failure-alert">
+      Nincs ilyen találat!
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+      (click)="deleteFilter()"></button>
+    </div-->
+    <div>
+      <div class="main-container">
+        <div class="welcome">
+          <div class="welcome-body">
+            <img src="../../assets/logo.png" id="logo">
+            <h1 class="welcome-title">Ford Focus II-III,</h1>
+            <h1 class="welcome-title">C-Max I-II</h1>
+            <p class="welcome-text">Ford Focus Mk2 2005-2010-ig,</p>
+            <p class="welcome-text">Ford Focus Mk3 2011-2017-ig,</p>
+            <p class="welcome-text">Ford C-Max I-II</p>
+            <p class="welcome-text" id="p-white">bontott alkatrészek eladása-beszerzése a legjobb áron!</p>
+          </div>
+        </div>
+      </div>
+      <div class="sections-wrapper">
+        <a><div class="info-container" id="vasarlasi_infok">
+          <div class="overlay"></div>
+          <h1>Budapesten és Pest megyén belül akár ingyenes kiszállítás!</h1>
+          <h2>Az ország teljes területén belül postai úton, vagy futárszolgálattal való 24 órán belüli csomagküldés!</h2>
+        </div></a>
+        <a><div class="services-container" id="szolgaltatasok">
+          <div class="overlay"></div>
+          <h1>Automata váltóját átalakítjuk manuálisra!</h1>
+          <h2>Vállaljuk Ford Focus és C-Max 1.6 és 2.0tdci típusú modellek automata váltójának átalakítását manuális váltóra, gyári alkatrészekkel és garanciával.</h2>
+        </div></a>
+      </div>
+      <a id="kapcsolat"><div class="contact-container">
+        <h2 style="display: flex; justify-content: center; margin-bottom: 20px;">Lépjen velünk kapcsolatba!</h2>
+        <div><label for="nev" class="form-label">Név *</label></div>
+        <input type="text" id="nev">
+        <!--label class="input-error" for="nev" *ngIf="!nev && formSubmit">Név megadása kötelező!</label-->
+        <div><label for="email" class="form-label">Email-cím *</label></div>
+        <input type="email" id="email">
+        <!--label class="input-error" for="email" *ngIf="!emailcim && formSubmit">Email-cím megadása kötelező!</label-->
+        <div><label for="telszam" class="form-label">Telefonszám *</label></div>
+        <div class="input-group">
+          <span class="input-group-text">+36</span>
+          <input type="tel" id="telszam" style="margin: 0vw -0.1vw;">
+        </div>
+        <!--label class="input-error" for="telszam" *ngIf="!telszam && formSubmit">Telefonszám megadása kötelező!</label-->
+        <!--label class="input-error" for="telszam" *ngIf="!validTelNumber && formSubmit && telszam">Hibás telefonszám formátum lett megadva!</label-->
+        <div><label for="uzenet" class="form-label">Üzenet *</label></div>
+        <textarea id="uzenet" rows="3" style="max-width: 720px; min-width: 720px; min-height: 45px;"></textarea>
+        <!--div><label class="input-error" for="uzenet" *ngIf="uzenet.length < 100 && formSubmit">Az üzenet legyen legalább 100 karakter hosszú!</label></div-->
+        <div style="display: flex; justify-content: center; margin-top: 12px;"><re-captcha (resolved)="resolved()" [siteKey]="siteKey"></re-captcha></div>
+        <div style="display: flex; justify-content: center;"><button type="button" class="btn btn-secondary" style="margin-top: 0.5rem;">Küldés</button></div>
+        <!--div class="alert alert-success alert-dismissible fade show" role="alert" id="email-success-alert" style="display: none;">
+          Sikeresen elküldve!
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div-->
       </div></a>
     </div>
-    <a id="kapcsolat"><div class="contact-container" *ngIf="!(showCategoryPage$ | async)">
-      <h2 style="display: flex; justify-content: center; margin-bottom: 20px;">Lépjen velünk kapcsolatba!</h2>
-      <div><label for="nev" class="form-label">Név *</label></div>
-      <input type="text" class="form-control" id="nev" [class.is-invalid]="!nev && formSubmit" [(ngModel)]="nev">
-      <label class="input-error" for="nev" *ngIf="!nev && formSubmit">Név megadása kötelező!</label>
-      <div><label for="email" class="form-label">Email-cím *</label></div>
-      <input type="email" class="form-control" id="email"  [class.is-invalid]="!emailcim && formSubmit" [(ngModel)]="emailcim">
-      <label class="input-error" for="email" *ngIf="!emailcim && formSubmit">Email-cím megadása kötelező!</label>
-      <div><label for="telszam" class="form-label">Telefonszám *</label></div>
-      <div class="input-group">
-        <span class="input-group-text">+36</span>
-        <input type="tel" class="form-control" id="telszam" [class.is-invalid]="(!telszam || !validTelNumber) && formSubmit" [(ngModel)]="telszam">
-      </div>
-      <label class="input-error" for="telszam" *ngIf="!telszam && formSubmit">Telefonszám megadása kötelező!</label>
-      <label class="input-error" for="telszam" *ngIf="!validTelNumber && formSubmit && telszam">Hibás telefonszám formátum lett megadva!</label>
-      <div><label for="uzenet" class="form-label">Üzenet *</label></div>
-      <textarea class="form-control" id="uzenet" rows="3" [class.is-invalid]="uzenet.length < 100 && formSubmit" [(ngModel)]="uzenet"></textarea>
-      <div><label class="input-error" for="uzenet" *ngIf="uzenet.length < 100 && formSubmit">Az üzenet legyen legalább 100 karakter hosszú!</label></div>
-      <div style="display: flex; justify-content: center; margin-top: 12px;"><re-captcha (resolved)="resolved()" [siteKey]="siteKey"></re-captcha></div>
-      <div style="display: flex; justify-content: center;"><button type="button" class="btn btn-secondary" style="margin-top: 0.5rem;" (click)="validateForm()"
-        [disabled]="!reCAPTCHAValidated">Küldés</button></div>
-      <div class="alert alert-success alert-dismissible fade show" role="alert" id="email-success-alert" style="display: none;">
-        Sikeresen elküldve!
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    </div></a>
-  </div>
-  <div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">
-    <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
-      <button type="button" class="btn btn-secondary" [disabled]="orderButtonDisabled"
-      (click)="orderBy()" id="orderButton">Rendezés</button>
-      <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
-      style="margin-left: -10px; z-index: 1;">
-        <span class="visually-hidden">Toggle Dropdown</span>
-      </button>
-      <div class="dropdown-menu" id="dropdown-menu-order" data-bs-display="static">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" [(ngModel)]="isDescPriceChecked" id="dropdownFilterOrderOptionDescPrice"
-          (change)="onCheckboxChange('descPrice', $event)">
-          <label class="form-check-label" for="dropdownFilterOrderOptionDescPrice">
-            Ár (csökkenő)
-          </label>
+    <!--Has to be moved to Alkatrészek page-->
+    <!--div *ngIf="(showCategoryPage$ | async) && filteredAlkatreszek$" class="row">
+      <div class="dropdown" id="dropdownFilters" style="display: flex; justify-content: center;">
+        <button type="button" class="btn btn-secondary" [disabled]="orderButtonDisabled"
+        (click)="orderBy()" id="orderButton">Rendezés</button>
+        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
+        style="margin-left: -10px; z-index: 1;">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu" id="dropdown-menu-order" data-bs-display="static">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="isDescPriceChecked" id="dropdownFilterOrderOptionDescPrice"
+            (change)="onCheckboxChange('descPrice', $event)">
+            <label class="form-check-label" for="dropdownFilterOrderOptionDescPrice">
+              Ár (csökkenő)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="isAscPriceChecked" id="dropdownFilterOrderOptionAscPrice"
+            (change)="onCheckboxChange('ascPrice', $event)">
+            <label class="form-check-label" for="dropdownFilterOrderOptionAscPrice">
+              Ár (növekvő)
+            </label>
+          </div>  
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="isDescNameChecked" id="dropdownFilterOrderOptionDescName"
+            (change)="onCheckboxChange('descName', $event)">
+            <label class="form-check-label" for="dropdownFilterOrderOptionDescName">
+              Név (csökkenő)
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="isAscNameChecked" id="dropdownFilterOrderOptionAscName"
+            (change)="onCheckboxChange('ascName', $event)">
+            <label class="form-check-label" for="dropdownFilterOrderOptionAscName">
+              Név (növekvő)
+            </label>
+          </div>
+          <hr class="dropdown-divider">
+          <button type="button" class="btn btn-primary" id="dropdownOrderDelete" [disabled]="orderDeleteBtnDisabled"
+          (click)="deleteOrder()">Rendezés visszaállítása</button>  
         </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" [(ngModel)]="isAscPriceChecked" id="dropdownFilterOrderOptionAscPrice"
-          (change)="onCheckboxChange('ascPrice', $event)">
-          <label class="form-check-label" for="dropdownFilterOrderOptionAscPrice">
-            Ár (növekvő)
-          </label>
-        </div>  
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" [(ngModel)]="isDescNameChecked" id="dropdownFilterOrderOptionDescName"
-          (change)="onCheckboxChange('descName', $event)">
-          <label class="form-check-label" for="dropdownFilterOrderOptionDescName">
-            Név (csökkenő)
-          </label>
+        <button type="button" class="btn btn-secondary" style="margin-left: 10px;"
+        (click)="filterByYear()" id="filterButton" [disabled]="filterButtonDisabled">Szűrés</button>
+        <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
+        style="margin-left: -10px; z-index: 1;">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <div class="dropdown-menu" id="dropdown-menu-filter" data-bs-display="static">
+          <div class="form-check" *ngFor="let item of autoTipusok; let i = index">
+            <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
+            (change)="onCheckboxChange('', $event, item.nev)">
+            <label class="form-check-label" [attr.for]="'dropdownFilterOrderOption' + i">
+              {{item.nev}}
+            </label>
+          </div>
+          <hr class="dropdown-divider">
+          <button type="button" class="btn btn-primary" style="margin-left: 20%;" id="dropdownFilterDelete" [disabled]="filterDeleteBtnDisabled"
+          (click)="deleteFilter()">Szűrő törlése</button>
         </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" [(ngModel)]="isAscNameChecked" id="dropdownFilterOrderOptionAscName"
-          (change)="onCheckboxChange('ascName', $event)">
-          <label class="form-check-label" for="dropdownFilterOrderOptionAscName">
-            Név (növekvő)
-          </label>
-        </div>
-        <hr class="dropdown-divider">
-        <button type="button" class="btn btn-primary" id="dropdownOrderDelete" [disabled]="orderDeleteBtnDisabled"
-        (click)="deleteOrder()">Rendezés visszaállítása</button>  
-      </div>
-      <button type="button" class="btn btn-secondary" style="margin-left: 10px;"
-      (click)="filterByYear()" id="filterButton" [disabled]="filterButtonDisabled">Szűrés</button>
-      <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false"
-      style="margin-left: -10px; z-index: 1;">
-        <span class="visually-hidden">Toggle Dropdown</span>
-      </button>
-      <div class="dropdown-menu" id="dropdown-menu-filter" data-bs-display="static">
-        <div class="form-check" *ngFor="let item of autoTipusok; let i = index">
-          <input class="form-check-input" type="checkbox" [(ngModel)]="autoTipusokInput[item.nev]" id="dropdownFilterOption{{i}}"
-          (change)="onCheckboxChange('', $event, item.nev)">
-          <label class="form-check-label" [attr.for]="'dropdownFilterOrderOption' + i">
-            {{item.nev}}
-          </label>
-        </div>
-        <hr class="dropdown-divider">
-        <button type="button" class="btn btn-primary" style="margin-left: 20%;" id="dropdownFilterDelete" [disabled]="filterDeleteBtnDisabled"
-        (click)="deleteFilter()">Szűrő törlése</button>
-      </div>
+      </div-->
     </div>
-  </div>
-  <app-category-page [alkatreszList]="alkatreszekOutput"></app-category-page>
-</body>
-
-<!--Footer-->
-<footer>
-  <nav class="footer">
+  </body>
+  <!--Footer-->
+  <footer>
     <div id="rights-notice">
       <h6>Minden jog fenntartva - Ford Focus C-Max Bontó</h6>
     </div>
     <div id="elerhetoseg">
-      <div style="display: flex; margin-right: 10px;">
+      <div style="margin-top: 1vh;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
           <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
         </svg>
       </div>
       <h6>info@fordfocus-cmaxbonto.hu</h6>
-      <div style="display: flex; margin-left: 10px;">
+      <div style="margin-top: 1vh;">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-fill" viewBox="0 0 16 16">
           <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.678.678 0 0 0 .178.643l2.457 2.457a.678.678 0 0 0 .644.178l2.189-.547a1.745 1.745 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.634 18.634 0 0 1-7.01-4.42 18.634 18.634 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877L1.885.511z"/>
         </svg>
       </div>
       <h6>+36702173200</h6>
     </div>
-  </nav>
-</footer>  
+  </footer>  
+</html>

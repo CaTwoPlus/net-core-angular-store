@@ -59,7 +59,7 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  height: 50vh;
+  height: 45vh;
 }
 
 .overlay {
@@ -75,6 +75,8 @@ body {
 .contact-container{
   max-width: 720px !important;
   margin: 5vh auto 5vh;
+  display: grid;
+  row-gap: 0.5vh;
 }
 
 @keyframes fadeIn {
@@ -98,12 +100,8 @@ body {
 }
 
 .welcome-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   text-align: center;
-  height: 100%;
 }
 
 .welcome-title {
@@ -111,6 +109,7 @@ body {
   font-weight: 900;
   font-size: 2.85rem;
   text-shadow: 0 0 5px black;
+  margin: 0vh;
 }
 
 .welcome-text {
@@ -121,9 +120,10 @@ body {
 }
 
 #logo {
-  width: 13vw; 
+  width: 16vw;
   height: auto;
   z-index: -1;
+  margin-bottom: -3vh;
 }
 
 #p-white {
@@ -145,9 +145,32 @@ footer {
   padding: 0.5rem;
 }
 
-.navbar {
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   color: white;
   background-color: #3F51B5;
+  display: flex;
+  justify-content: center;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover {
+  background-color: #3045b9;
+  font-weight: bold;
 }
 
 .icon-button {
@@ -160,6 +183,7 @@ footer {
   font-size: 0.9rem;
   display: flex;
   justify-content: center;
+  margin: 1vh;
 }
 
 #elerhetoseg {
@@ -170,6 +194,7 @@ footer {
 
 #elerhetoseg h6 {
   font-size: 0.9rem;
+  margin: 1vh;
 }
 
 #orderButton {
@@ -278,9 +303,11 @@ footer {
 @media (width: 1024px) and (min-height: 619px) {
   .sections-wrapper h1 {
     font-size: 5vw !important;
+    top: 0vh;
   }
   .sections-wrapper h2, .contact-container h2 {
-    font-size: 3.3vw !important;
+    font-size: 3.6vw !important;
+    bottom: 3vh;
   }
   #filter-failure-alert {
     transform: translate(-50%, 12vh) !important;
@@ -304,10 +331,10 @@ footer {
 
 @media (min-width: 960px) {
   .welcome-title {
-    font-size: 2.5vw;
+    font-size: 3vw;
   }
   .welcome-text {
-    font-size: 1.2vw;
+    font-size: 1.5vw;
   }
   .sections-wrapper h1 {
     font-size: 4vw;
